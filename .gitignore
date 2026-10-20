@@ -1,0 +1,29 @@
+# Secrets - never commit
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / web / mobile
+node_modules/
+dist/
+.expo/
+
+# .NET / Visual Studio
+bin/
+obj/
+.vs/
+*.user
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
