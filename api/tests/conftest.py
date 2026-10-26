@@ -10,6 +10,7 @@ import os
 os.environ.setdefault("ENVIRONMENT", "test")
 os.environ.setdefault("JWT_SECRET", "test-only-secret-not-used-anywhere-else-0123456789")
 os.environ.setdefault("FIELD_ENCRYPTION_KEY", "rQ0kC2Jx0c3kWbqgJzQvYQe0m2lJ3H6xg5D2K8nWZ4o=")
+os.environ.setdefault("COOKIE_SECURE", "false")  # the test client uses http, not https
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
