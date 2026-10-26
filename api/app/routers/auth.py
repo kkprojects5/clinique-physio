@@ -10,11 +10,15 @@ from app.dependencies import DbSession
 from app.schemas.auth import (
     LoginRequest,
     MessageResponse,
+    MfaChallengeResponse,
+    MfaSetupRequest,
+    MfaSetupResponse,
+    MfaVerifyRequest,
     RegisterRequest,
     TokenResponse,
     VerifyEmailRequest,
 )
-from app.services import auth_service, session_service
+from app.services import auth_service, mfa_service, session_service
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -72,8 +76,14 @@ def verify_email(data: VerifyEmailRequest, db: DbSession) -> MessageResponse:
 
 
 @router.post("/login")
-def login(data: LoginRequest, response: Response, db: DbSession) -> TokenResponse:
-    """Log in. Wrong email and wrong password get the same answer."""
+def login(
+    data: LoginRequest, response: Response, db: DbSession
+) -> TokenResponse | MfaChallengeResponse:
+    """Log in. Wrong email and wrong password get the same answer.
+
+    Patients get their tokens directly. Staff get an MFA ticket and must then
+    send a 6-digit code to /auth/mfa/verify (B-AUTH-04).
+    """
     try:
         user = session_service.authenticate(db, data.email, data.password)
     except session_service.InvalidCredentials:
@@ -86,7 +96,55 @@ def login(data: LoginRequest, response: Response, db: DbSession) -> TokenRespons
             detail="Please confirm your email address before logging in.",
         ) from None
 
+    if mfa_service.is_staff(user):
+        db.commit()  # saves last_login_at
+        return MfaChallengeResponse(
+            mfa_setup_required=user.mfa_enabled_at is None,
+            mfa_token=mfa_service.create_mfa_ticket(user),
+            expires_in=mfa_service.MFA_PENDING_MINUTES * 60,
+        )
+
     access_token, refresh_token = session_service.start_session(db, user)
+    _set_refresh_cookie(response, refresh_token)
+    return _token_response(access_token)
+
+
+_INVALID_TICKET = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Your login step has expired. Please log in again.",
+)
+
+
+@router.post("/mfa/setup")
+def mfa_setup(data: MfaSetupRequest, db: DbSession) -> MfaSetupResponse:
+    """First staff login: create the authenticator secret and return it as a QR code link."""
+    try:
+        user = mfa_service.user_from_ticket(db, data.mfa_token)
+        secret, uri = mfa_service.start_enrolment(db, user)
+    except mfa_service.InvalidMfaTicket:
+        raise _INVALID_TICKET from None
+    except mfa_service.AlreadyEnrolled:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Two-factor authentication is already set up for this account.",
+        ) from None
+    return MfaSetupResponse(secret=secret, otpauth_uri=uri)
+
+
+@router.post("/mfa/verify")
+def mfa_verify(data: MfaVerifyRequest, response: Response, db: DbSession) -> TokenResponse:
+    """Staff login, step 2: check the 6-digit code, then open the session with mfa=true."""
+    try:
+        user = mfa_service.user_from_ticket(db, data.mfa_token)
+        mfa_service.verify_code(db, user, data.code)
+    except mfa_service.InvalidMfaTicket:
+        raise _INVALID_TICKET from None
+    except mfa_service.InvalidCode:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid code."
+        ) from None
+
+    access_token, refresh_token = session_service.start_session(db, user, mfa=True)
     _set_refresh_cookie(response, refresh_token)
     return _token_response(access_token)
 

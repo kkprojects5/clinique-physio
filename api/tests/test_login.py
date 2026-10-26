@@ -3,10 +3,12 @@
 from datetime import UTC, datetime, timedelta
 
 import jwt
+import pyotp
 import pytest
 from sqlalchemy import select
 
 from app.core.config import settings
+from app.core.crypto import encrypt
 from app.core.security import create_token, hash_password
 from app.models import RefreshToken, User
 
@@ -153,7 +155,13 @@ def test_refresh_without_cookie_is_refused(client):
 
 def test_staff_session_expires_after_15_minutes_of_inactivity(client, db):
     therapist = make_user(db, "therapist@example.com", role="therapist")
-    login(client, email="therapist@example.com")
+    secret = pyotp.random_base32()
+    therapist.mfa_secret_enc = encrypt(secret)
+    therapist.mfa_enabled_at = datetime.now(UTC)
+    db.commit()
+    ticket = login(client, email="therapist@example.com").json()["mfa_token"]
+    code = pyotp.TOTP(secret).now()
+    client.post("/api/v1/auth/mfa/verify", json={"mfa_token": ticket, "code": code})
 
     stored = db.scalar(select(RefreshToken).where(RefreshToken.user_id == therapist.id))
     lifetime = stored.expires_at - stored.created_at

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import auth, me
+from app.routers import auth, me, staff
 
 app = FastAPI(
     title="Clinique Physio Mont-Royal API",
@@ -10,6 +10,7 @@ app = FastAPI(
 # Versioned API: every business route lives under /api/v1 (spec section 5).
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(me.router, prefix="/api/v1")
+app.include_router(staff.router, prefix="/api/v1")
 
 
 @app.get("/health")

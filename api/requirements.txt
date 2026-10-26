@@ -8,3 +8,4 @@ argon2-cffi
 pyjwt
 cryptography
 email-validator
+pyotp

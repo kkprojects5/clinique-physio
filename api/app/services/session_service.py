@@ -57,12 +57,13 @@ def refresh_lifetime(user: User) -> timedelta:
     return timedelta(minutes=settings.staff_inactivity_minutes)
 
 
-def access_token_for(user: User) -> str:
+def access_token_for(user: User, mfa: bool) -> str:
+    """'mfa' says whether the user passed the two-factor check (required for staff)."""
     return create_token(
         str(user.id),
         ACCESS_PURPOSE,
         timedelta(minutes=settings.access_token_minutes),
-        extra={"role": user.role, "mfa": False},  # MFA is added in the next step (B-AUTH-04)
+        extra={"role": user.role, "mfa": mfa},
     )
 
 
@@ -78,11 +79,11 @@ def _issue_refresh_token(db: Session, user: User) -> str:
     return raw
 
 
-def start_session(db: Session, user: User) -> tuple[str, str]:
+def start_session(db: Session, user: User, mfa: bool = False) -> tuple[str, str]:
     """Return (access token, refresh token) for a user who just logged in."""
     refresh = _issue_refresh_token(db, user)
     db.commit()
-    return access_token_for(user), refresh
+    return access_token_for(user, mfa), refresh
 
 
 def refresh_session(db: Session, raw_refresh: str | None) -> tuple[User, str, str]:
@@ -115,7 +116,8 @@ def refresh_session(db: Session, raw_refresh: str | None) -> tuple[User, str, st
     stored.revoked_at = now
     new_refresh = _issue_refresh_token(db, user)
     db.commit()
-    return user, access_token_for(user), new_refresh
+    # Staff only receive a refresh token after passing MFA, so their session keeps mfa=True.
+    return user, access_token_for(user, mfa=user.role != "patient"), new_refresh
 
 
 def end_session(db: Session, raw_refresh: str | None) -> None:

@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, ForeignKey, LargeBinary, Text, func, text
+from sqlalchemy import BigInteger, CheckConstraint, ForeignKey, LargeBinary, Text, func, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -29,6 +29,8 @@ class User(Base):
     role: Mapped[str] = mapped_column(Text)
     language: Mapped[str] = mapped_column(Text, server_default="fr")  # French by default
     mfa_secret_enc: Mapped[bytes | None] = mapped_column(LargeBinary)  # encrypted TOTP secret
+    mfa_enabled_at: Mapped[datetime | None]  # set when the first code is confirmed
+    mfa_last_used_step: Mapped[int | None] = mapped_column(BigInteger)  # blocks code reuse
     is_active: Mapped[bool] = mapped_column(server_default=text("true"))
     email_verified_at: Mapped[datetime | None]
     last_login_at: Mapped[datetime | None]

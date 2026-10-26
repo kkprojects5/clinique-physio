@@ -69,3 +69,32 @@ class MeResponse(BaseModel):
     role: str
     language: str
     email_verified: bool
+
+
+class MfaChallengeResponse(BaseModel):
+    """Staff login, step 1 of 2: the password was correct, now a code is needed."""
+
+    mfa_required: bool = True
+    mfa_setup_required: bool  # True the first time: the user must scan a QR code first
+    mfa_token: str
+    expires_in: int  # seconds
+
+
+class MfaSetupRequest(BaseModel):
+    mfa_token: str = Field(min_length=1, max_length=2000)
+
+
+class MfaSetupResponse(BaseModel):
+    secret: str  # for manual entry in the authenticator app
+    otpauth_uri: str  # shown as a QR code by the client
+
+
+class MfaVerifyRequest(BaseModel):
+    mfa_token: str = Field(min_length=1, max_length=2000)
+    code: str = Field(pattern=r"^\d{6}$")
+
+
+class StaffSessionResponse(BaseModel):
+    email: str
+    role: str
+    mfa: bool
