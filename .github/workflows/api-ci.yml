@@ -39,8 +39,11 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
+    # Throwaway values used only by CI. Real secrets live in .env and on the host.
     env:
       DATABASE_URL: postgresql+psycopg://physio:ci-only-password@localhost:5432/physio
+      JWT_SECRET: ci-only-jwt-secret-not-used-anywhere-else-0123456789
+      FIELD_ENCRYPTION_KEY: rQ0kC2Jx0c3kWbqgJzQvYQe0m2lJ3H6xg5D2K8nWZ4o=
 
     steps:
       - name: Check out the code
