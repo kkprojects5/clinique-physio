@@ -1,0 +1,28 @@
+# Tool settings for the API (linting, tests, coverage, security scan).
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = ["alembic/versions"]  # generated migration files
+
+[tool.ruff.lint]
+# E/W: style errors, F: real bugs (unused imports, undefined names),
+# I: import order, B: likely bugs, UP: modern Python syntax, S: security checks
+select = ["E", "W", "F", "I", "B", "UP", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "S105", "S106"]  # assert and fake test passwords are fine in tests
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["app"]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "alembic"]
+
+[tool.ruff.lint.isort]
+# The local "alembic/" folder must not be mistaken for our own code.
+known-third-party = ["alembic"]
+known-first-party = ["app"]

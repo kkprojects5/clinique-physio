@@ -8,7 +8,7 @@ Needs a running database with the migrations applied (alembic upgrade head).
 
 import threading
 import uuid
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 
 import pytest
 from psycopg.errors import ExclusionViolation
@@ -36,8 +36,11 @@ def setup_data():
         therapist_user = make_user(session, "therapist")
         therapist = Therapist(user_id=therapist_user.id, licence_number=f"TEST-{uuid.uuid4()}")
         service = Service(
-            name_fr="Suivi 30 min", name_en="Follow-up 30 min",
-            duration_min=30, price_cents=8000, deposit_cents=2000,
+            name_fr="Suivi 30 min",
+            name_en="Follow-up 30 min",
+            duration_min=30,
+            price_cents=8000,
+            deposit_cents=2000,
         )
         session.add_all([therapist, service])
         session.flush()
@@ -46,8 +49,11 @@ def setup_data():
         for i in range(REQUESTS):
             user = make_user(session, "patient")
             patient = Patient(
-                user_id=user.id, first_name="Test", last_name=f"Patient{i}",
-                date_of_birth=date(1990, 1, 1), phone="514-555-0000",
+                user_id=user.id,
+                first_name="Test",
+                last_name=f"Patient{i}",
+                date_of_birth=date(1990, 1, 1),
+                phone="514-555-0000",
             )
             session.add(patient)
             patients.append(patient)
@@ -71,7 +77,7 @@ def setup_data():
 
 
 def test_30_concurrent_bookings_only_one_succeeds(setup_data):
-    start = datetime(2030, 3, 4, 15, 0, tzinfo=timezone.utc)
+    start = datetime(2030, 3, 4, 15, 0, tzinfo=UTC)
     slot = Range(start, start + timedelta(minutes=30))  # same slot for everybody
     barrier = threading.Barrier(REQUESTS)  # makes all threads insert at the same moment
     results: list[str] = []
@@ -79,11 +85,16 @@ def test_30_concurrent_bookings_only_one_succeeds(setup_data):
 
     def book(patient_id, user_id):
         with SessionLocal() as session:
-            session.add(Appointment(
-                patient_id=patient_id, therapist_id=setup_data["therapist_id"],
-                service_id=setup_data["service_id"], during=slot,
-                status="pending_payment", created_by=user_id,
-            ))
+            session.add(
+                Appointment(
+                    patient_id=patient_id,
+                    therapist_id=setup_data["therapist_id"],
+                    service_id=setup_data["service_id"],
+                    during=slot,
+                    status="pending_payment",
+                    created_by=user_id,
+                )
+            )
             barrier.wait()
             try:
                 session.commit()
@@ -107,15 +118,18 @@ def test_30_concurrent_bookings_only_one_succeeds(setup_data):
 
 
 def test_cancelled_appointment_frees_the_slot(setup_data):
-    start = datetime(2030, 3, 5, 15, 0, tzinfo=timezone.utc)
+    start = datetime(2030, 3, 5, 15, 0, tzinfo=UTC)
     slot = Range(start, start + timedelta(minutes=30))
     (p1, u1), (p2, u2) = setup_data["patients"][:2]
 
     with SessionLocal() as session:
         first = Appointment(
-            patient_id=p1, therapist_id=setup_data["therapist_id"],
-            service_id=setup_data["service_id"], during=slot,
-            status="confirmed", created_by=u1,
+            patient_id=p1,
+            therapist_id=setup_data["therapist_id"],
+            service_id=setup_data["service_id"],
+            during=slot,
+            status="confirmed",
+            created_by=u1,
         )
         session.add(first)
         session.commit()
@@ -124,9 +138,14 @@ def test_cancelled_appointment_frees_the_slot(setup_data):
         session.commit()
 
         # The constraint ignores cancelled appointments, so the slot can be booked again.
-        session.add(Appointment(
-            patient_id=p2, therapist_id=setup_data["therapist_id"],
-            service_id=setup_data["service_id"], during=slot,
-            status="confirmed", created_by=u2,
-        ))
+        session.add(
+            Appointment(
+                patient_id=p2,
+                therapist_id=setup_data["therapist_id"],
+                service_id=setup_data["service_id"],
+                during=slot,
+                status="confirmed",
+                created_by=u2,
+            )
+        )
         session.commit()

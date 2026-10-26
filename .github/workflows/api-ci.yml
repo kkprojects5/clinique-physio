@@ -1,0 +1,74 @@
+# API continuous integration (spec section 7.2).
+# Runs on every pull request and every push to main that changes the API.
+name: api-ci
+
+on:
+  pull_request:
+    paths:
+      - "api/**"
+      - ".github/workflows/api-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "api/**"
+      - ".github/workflows/api-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+
+    # A throwaway PostgreSQL 16 + pgvector database, same image as docker-compose.yml.
+    services:
+      db:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: physio
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: physio
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U physio -d physio"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql+psycopg://physio:ci-only-password@localhost:5432/physio
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: api/requirements*.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Apply database migrations
+        run: alembic upgrade head
+
+      - name: Tests with coverage (pytest)
+        run: python -m pytest --cov --cov-report=term
+
+      - name: Security scan of the code (Bandit)
+        run: bandit -c pyproject.toml -r app
+
+      - name: Known vulnerabilities in dependencies (pip-audit)
+        run: pip-audit -r requirements.txt

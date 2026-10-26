@@ -55,9 +55,7 @@ class Consent(Base):
 
     __tablename__ = "consents"
     __table_args__ = (
-        CheckConstraint(
-            "type IN ('privacy_policy', 'electronic_comms')", name="ck_consents_type"
-        ),
+        CheckConstraint("type IN ('privacy_policy', 'electronic_comms')", name="ck_consents_type"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(

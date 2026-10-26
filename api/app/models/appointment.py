@@ -38,9 +38,7 @@ class Appointment(Base):
             ("during", "&&"),
             name="ex_appointments_no_overlap",
             using="gist",
-            where=text(
-                "status IN ('held', 'pending_payment', 'confirmed', 'checked_in')"
-            ),
+            where=text("status IN ('held', 'pending_payment', 'confirmed', 'checked_in')"),
         ),
         CheckConstraint(
             "status IN ('held', 'pending_payment', 'confirmed', 'checked_in', 'completed',"

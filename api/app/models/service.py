@@ -38,7 +38,5 @@ class TherapistService(Base):
 
     __tablename__ = "therapist_services"
 
-    therapist_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("therapists.id"), primary_key=True
-    )
+    therapist_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("therapists.id"), primary_key=True)
     service_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("services.id"), primary_key=True)

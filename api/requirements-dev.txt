@@ -1,2 +1,7 @@
 -r requirements.txt
 pytest
+httpx
+pytest-cov
+ruff
+bandit
+pip-audit
