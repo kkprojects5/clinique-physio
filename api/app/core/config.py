@@ -37,5 +37,9 @@ class Settings(BaseSettings):
     max_failed_logins: int = 5
     lockout_minutes: int = 15
 
+    # Demo data passwords (python -m app.seed). Never in code or README (spec 7.3).
+    seed_staff_password: str | None = None
+    seed_patient_password: str | None = None
+
 
 settings = Settings()
