@@ -32,5 +32,10 @@ class Settings(BaseSettings):
     cookie_secure: bool = True
     cookie_samesite: str = "strict"
 
+    # Brute-force protection (B-AUTH-06, NFR-05)
+    rate_limit_enabled: bool = True
+    max_failed_logins: int = 5
+    lockout_minutes: int = 15
+
 
 settings = Settings()

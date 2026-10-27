@@ -2,10 +2,12 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, HTTPException, Response, status
+from fastapi import APIRouter, Cookie, HTTPException, Request, Response, status
 from fastapi.responses import JSONResponse
 
+from app.core import rate_limit
 from app.core.config import settings
+from app.core.rate_limit import limiter
 from app.dependencies import DbSession
 from app.schemas.auth import (
     LoginRequest,
@@ -58,14 +60,16 @@ def _token_response(access_token: str) -> TokenResponse:
 
 
 @router.post("/register", status_code=status.HTTP_202_ACCEPTED)
-def register(data: RegisterRequest, db: DbSession) -> MessageResponse:
+@limiter.limit(rate_limit.REGISTER_LIMIT)
+def register(request: Request, data: RegisterRequest, db: DbSession) -> MessageResponse:
     """Create a patient account. Same answer whether or not the email already exists."""
     auth_service.register_patient(db, data)
     return MessageResponse(message=REGISTER_MESSAGE)
 
 
 @router.post("/verify-email")
-def verify_email(data: VerifyEmailRequest, db: DbSession) -> MessageResponse:
+@limiter.limit(rate_limit.VERIFY_EMAIL_LIMIT)
+def verify_email(request: Request, data: VerifyEmailRequest, db: DbSession) -> MessageResponse:
     """Confirm the email address with the token sent by email."""
     if not auth_service.verify_email(db, data.token):
         raise HTTPException(
@@ -76,8 +80,9 @@ def verify_email(data: VerifyEmailRequest, db: DbSession) -> MessageResponse:
 
 
 @router.post("/login")
+@limiter.limit(rate_limit.LOGIN_LIMIT)
 def login(
-    data: LoginRequest, response: Response, db: DbSession
+    request: Request, data: LoginRequest, response: Response, db: DbSession
 ) -> TokenResponse | MfaChallengeResponse:
     """Log in. Wrong email and wrong password get the same answer.
 
@@ -116,7 +121,8 @@ _INVALID_TICKET = HTTPException(
 
 
 @router.post("/mfa/setup")
-def mfa_setup(data: MfaSetupRequest, db: DbSession) -> MfaSetupResponse:
+@limiter.limit(rate_limit.MFA_LIMIT)
+def mfa_setup(request: Request, data: MfaSetupRequest, db: DbSession) -> MfaSetupResponse:
     """First staff login: create the authenticator secret and return it as a QR code link."""
     try:
         user = mfa_service.user_from_ticket(db, data.mfa_token)
@@ -132,7 +138,10 @@ def mfa_setup(data: MfaSetupRequest, db: DbSession) -> MfaSetupResponse:
 
 
 @router.post("/mfa/verify")
-def mfa_verify(data: MfaVerifyRequest, response: Response, db: DbSession) -> TokenResponse:
+@limiter.limit(rate_limit.MFA_LIMIT)
+def mfa_verify(
+    request: Request, data: MfaVerifyRequest, response: Response, db: DbSession
+) -> TokenResponse:
     """Staff login, step 2: check the 6-digit code, then open the session with mfa=true."""
     try:
         user = mfa_service.user_from_ticket(db, data.mfa_token)
@@ -150,7 +159,10 @@ def mfa_verify(data: MfaVerifyRequest, response: Response, db: DbSession) -> Tok
 
 
 @router.post("/refresh", response_model=TokenResponse)
-def refresh(response: Response, db: DbSession, refresh_token: RefreshCookie = None):
+@limiter.limit(rate_limit.REFRESH_LIMIT)
+def refresh(
+    request: Request, response: Response, db: DbSession, refresh_token: RefreshCookie = None
+):
     """Get a new access token using the refresh cookie. The cookie is replaced too."""
     try:
         _, access_token, new_refresh = session_service.refresh_session(db, refresh_token)

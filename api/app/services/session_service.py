@@ -21,6 +21,7 @@ from app.core.security import (
     verify_password,
 )
 from app.models import RefreshToken, User
+from app.services import lockout
 
 ACCESS_PURPOSE = "access"
 
@@ -42,10 +43,17 @@ def authenticate(db: Session, email: str, password: str) -> User:
     if user is None:
         verify_password(DUMMY_HASH, password)  # same work, so timing reveals nothing
         raise InvalidCredentials
-    if not verify_password(user.password_hash, password) or not user.is_active:
+    if lockout.is_locked(user):
+        verify_password(DUMMY_HASH, password)  # same answer and timing as a wrong password
+        raise InvalidCredentials
+    if not verify_password(user.password_hash, password):
+        lockout.register_failure(db, user)
+        raise InvalidCredentials
+    if not user.is_active:
         raise InvalidCredentials
     if user.email_verified_at is None:
         raise EmailNotVerified
+    lockout.register_success(user)
     user.last_login_at = datetime.now(UTC)
     return user
 

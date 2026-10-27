@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from app.core.crypto import decrypt, encrypt
 from app.core.security import create_token, read_token
 from app.models import User
+from app.services import lockout
 
 STAFF_ROLES = ("therapist", "front_desk", "admin")
 MFA_PENDING_PURPOSE = "mfa_pending"
@@ -51,7 +52,7 @@ def user_from_ticket(db: Session, ticket: str) -> User:
         user = db.get(User, uuid.UUID(subject))
     except ValueError:
         raise InvalidMfaTicket from None
-    if user is None or not user.is_active or not is_staff(user):
+    if user is None or not user.is_active or not is_staff(user) or lockout.is_locked(user):
         raise InvalidMfaTicket
     return user
 
@@ -81,6 +82,8 @@ def verify_code(db: Session, user: User, code: str) -> None:
             user.mfa_last_used_step = step
             if user.mfa_enabled_at is None:
                 user.mfa_enabled_at = datetime.now(UTC)  # first code confirms enrolment
+            lockout.register_success(user)
             db.commit()
             return
+    lockout.register_failure(db, user)  # wrong codes count toward the lockout too
     raise InvalidCode

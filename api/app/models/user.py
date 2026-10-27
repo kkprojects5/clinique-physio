@@ -31,6 +31,9 @@ class User(Base):
     mfa_secret_enc: Mapped[bytes | None] = mapped_column(LargeBinary)  # encrypted TOTP secret
     mfa_enabled_at: Mapped[datetime | None]  # set when the first code is confirmed
     mfa_last_used_step: Mapped[int | None] = mapped_column(BigInteger)  # blocks code reuse
+    # Lockout after repeated failures (B-AUTH-06)
+    failed_login_count: Mapped[int] = mapped_column(server_default=text("0"))
+    locked_until: Mapped[datetime | None]
     is_active: Mapped[bool] = mapped_column(server_default=text("true"))
     email_verified_at: Mapped[datetime | None]
     last_login_at: Mapped[datetime | None]
