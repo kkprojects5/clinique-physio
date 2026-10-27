@@ -1,0 +1,53 @@
+# Web app continuous integration (spec section 7.2).
+name: web-ci
+
+on:
+  pull_request:
+    paths:
+      - "web/**"
+      - ".github/workflows/web-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - ".github/workflows/web-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install exact dependencies (npm ci)
+        run: npm ci
+
+      - name: Lint (ESLint, incl. accessibility rules)
+        run: npm run lint
+
+      - name: Formatting (Prettier)
+        run: npm run format:check
+
+      - name: Tests (Vitest)
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+        env:
+          VITE_API_URL: https://clinique-physio-api.onrender.com
+
+      - name: Known vulnerabilities (npm audit, high and critical)
+        run: npm audit --audit-level=high

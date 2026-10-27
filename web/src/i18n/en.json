@@ -1,0 +1,69 @@
+{
+  "skipToContent": "Skip to content",
+  "nav": {
+    "home": "Home",
+    "services": "Services and prices",
+    "team": "Our team",
+    "availability": "Availability",
+    "label": "Main navigation"
+  },
+  "language": {
+    "label": "Language",
+    "switchTo": "Français",
+    "switchToLabel": "Passer en français"
+  },
+  "home": {
+    "title": "Physiotherapy in the Plateau-Mont-Royal",
+    "intro": "Assessment, treatment, and sports or post-surgery rehabilitation with a team of six physiotherapists.",
+    "cta": "See availability",
+    "hoursTitle": "Book online, 24/7",
+    "hoursText": "Choose your service, your physiotherapist and a time that suits you."
+  },
+  "services": {
+    "title": "Services and prices",
+    "duration": "{{minutes}} min",
+    "price": "Price",
+    "deposit": "Deposit when booking",
+    "initial": "Required before a first treatment",
+    "book": "See availability"
+  },
+  "team": {
+    "title": "Our team",
+    "specialties": "Clinical interests",
+    "languages": "Languages spoken"
+  },
+  "availability": {
+    "title": "Availability",
+    "service": "Service",
+    "therapist": "Physiotherapist",
+    "anyTherapist": "First available",
+    "week": "Week starting",
+    "choose": "Choose",
+    "noSlots": "No availability this week. Try another week or another physiotherapist.",
+    "with": "with {{name}}",
+    "timezone": "Times shown in Montréal time.",
+    "count_one": "{{count}} available time",
+    "count_other": "{{count}} available times"
+  },
+  "status": {
+    "loading": "Loading…",
+    "error": "The service is temporarily unavailable. Please try again in a moment.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "back": "Back to home"
+  },
+  "footer": {
+    "address": "4200 Saint-Denis Street, Montréal (fictional)",
+    "fictional": "Student project: fictional clinic and data.",
+    "privacy": "Privacy policy"
+  },
+  "languageNames": {
+    "fr": "French",
+    "en": "English",
+    "ar": "Arabic",
+    "vi": "Vietnamese",
+    "ru": "Russian"
+  }
+}

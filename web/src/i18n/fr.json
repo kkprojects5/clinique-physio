@@ -1,0 +1,69 @@
+{
+  "skipToContent": "Aller au contenu",
+  "nav": {
+    "home": "Accueil",
+    "services": "Services et tarifs",
+    "team": "Notre équipe",
+    "availability": "Disponibilités",
+    "label": "Navigation principale"
+  },
+  "language": {
+    "label": "Langue",
+    "switchTo": "English",
+    "switchToLabel": "Switch to English"
+  },
+  "home": {
+    "title": "Physiothérapie sur le Plateau-Mont-Royal",
+    "intro": "Évaluation, traitement et réadaptation sportive ou post-chirurgicale avec une équipe de six physiothérapeutes.",
+    "cta": "Voir les disponibilités",
+    "hoursTitle": "Réservez en ligne, 24 h sur 24",
+    "hoursText": "Choisissez votre service, votre physiothérapeute et une plage horaire qui vous convient."
+  },
+  "services": {
+    "title": "Services et tarifs",
+    "duration": "{{minutes}} min",
+    "price": "Prix",
+    "deposit": "Dépôt à la réservation",
+    "initial": "Requis avant un premier traitement",
+    "book": "Voir les disponibilités"
+  },
+  "team": {
+    "title": "Notre équipe",
+    "specialties": "Intérêts cliniques",
+    "languages": "Langues parlées"
+  },
+  "availability": {
+    "title": "Disponibilités",
+    "service": "Service",
+    "therapist": "Physiothérapeute",
+    "anyTherapist": "Premier disponible",
+    "week": "Semaine à partir du",
+    "choose": "Choisissez",
+    "noSlots": "Aucune disponibilité pour cette semaine. Essayez une autre semaine ou un autre physiothérapeute.",
+    "with": "avec {{name}}",
+    "timezone": "Heures affichées à l’heure de Montréal.",
+    "count_one": "{{count}} plage disponible",
+    "count_other": "{{count}} plages disponibles"
+  },
+  "status": {
+    "loading": "Chargement…",
+    "error": "Le service est momentanément indisponible. Réessayez dans un instant.",
+    "retry": "Réessayer"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "back": "Retour à l’accueil"
+  },
+  "footer": {
+    "address": "4200, rue Saint-Denis, Montréal (fictif)",
+    "fictional": "Projet étudiant : clinique et données fictives.",
+    "privacy": "Politique de confidentialité"
+  },
+  "languageNames": {
+    "fr": "français",
+    "en": "anglais",
+    "ar": "arabe",
+    "vi": "vietnamien",
+    "ru": "russe"
+  }
+}
