@@ -3,6 +3,7 @@
 Secrets (database password, keys) are never written in the code (NFR-02).
 """
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -40,6 +41,22 @@ class Settings(BaseSettings):
     # Demo data passwords (python -m app.seed). Never in code or README (spec 7.3).
     seed_staff_password: str | None = None
     seed_patient_password: str | None = None
+
+    # Web apps allowed to call the API from a browser (CORS, NFR-03). Comma-separated.
+    allowed_origins: str = "http://localhost:5173"
+
+    @field_validator("database_url")
+    @classmethod
+    def use_psycopg_driver(cls, value: str) -> str:
+        """Hosts like Neon give 'postgresql://...'; SQLAlchemy needs to know the driver."""
+        for prefix in ("postgresql://", "postgres://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg://" + value[len(prefix) :]
+        return value
+
+    @property
+    def allowed_origin_list(self) -> list[str]:
+        return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
 
 
 settings = Settings()
