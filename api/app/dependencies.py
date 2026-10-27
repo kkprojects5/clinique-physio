@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import read_token_payload
 from app.db.session import get_db
-from app.models import Therapist, User
+from app.models import Patient, Therapist, User
 from app.services.mfa_service import STAFF_ROLES
 from app.services.session_service import ACCESS_PURPOSE
 
@@ -81,3 +81,24 @@ def require_therapist(db: DbSession, user: StaffUser) -> Therapist:
 
 
 CurrentTherapist = Annotated[Therapist, Depends(require_therapist)]
+
+
+def require_front_desk(user: StaffUser) -> User:
+    """Front-desk endpoints: front desk or admin, with MFA. Therapists use their own workspace."""
+    if user.role not in ("front_desk", "admin"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Front desk only.")
+    return user
+
+
+FrontDeskUser = Annotated[User, Depends(require_front_desk)]
+
+
+def require_patient(db: DbSession, user: CurrentUser) -> Patient:
+    """Patient endpoints: the logged-in user's own patient record."""
+    patient = db.scalar(select(Patient).where(Patient.user_id == user.id))
+    if user.role != "patient" or patient is None:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Patients only.")
+    return patient
+
+
+CurrentPatient = Annotated[Patient, Depends(require_patient)]
