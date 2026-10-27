@@ -3,7 +3,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.core.rate_limit import limiter
-from app.routers import auth, me, staff
+from app.routers import auth, catalog, me, staff, therapist
 
 app = FastAPI(
     title="Clinique Physio Mont-Royal API",
@@ -18,6 +18,8 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(me.router, prefix="/api/v1")
 app.include_router(staff.router, prefix="/api/v1")
+app.include_router(catalog.router, prefix="/api/v1")
+app.include_router(therapist.router, prefix="/api/v1")
 
 
 @app.get("/health")

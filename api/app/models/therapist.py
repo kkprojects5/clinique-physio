@@ -16,6 +16,8 @@ class Therapist(Base):
         UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
     )
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), unique=True)
+    first_name: Mapped[str] = mapped_column(Text)  # shown on the public team page
+    last_name: Mapped[str] = mapped_column(Text)
     licence_number: Mapped[str] = mapped_column(Text, unique=True)  # fictional
     specialties: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
     languages: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")

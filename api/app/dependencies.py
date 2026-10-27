@@ -5,11 +5,12 @@ from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.security import read_token_payload
 from app.db.session import get_db
-from app.models import User
+from app.models import Therapist, User
 from app.services.mfa_service import STAFF_ROLES
 from app.services.session_service import ACCESS_PURPOSE
 
@@ -69,3 +70,14 @@ def require_staff(user: CurrentUser, claims: AccessClaims) -> User:
 
 
 StaffUser = Annotated[User, Depends(require_staff)]
+
+
+def require_therapist(db: DbSession, user: StaffUser) -> Therapist:
+    """Therapist endpoints: a staff session (with MFA) whose role is therapist."""
+    therapist = db.scalar(select(Therapist).where(Therapist.user_id == user.id))
+    if user.role != "therapist" or therapist is None:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Therapists only.")
+    return therapist
+
+
+CurrentTherapist = Annotated[Therapist, Depends(require_therapist)]

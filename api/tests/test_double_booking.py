@@ -37,7 +37,12 @@ def setup_data():
     """Create 1 therapist, 1 service and 30 patients; delete everything afterwards."""
     with SessionLocal() as session:
         therapist_user = make_user(session, "therapist")
-        therapist = Therapist(user_id=therapist_user.id, licence_number=f"TEST-{uuid.uuid4()}")
+        therapist = Therapist(
+            user_id=therapist_user.id,
+            first_name="Test",
+            last_name="Therapist",
+            licence_number=f"TEST-{uuid.uuid4()}",
+        )
         service = Service(
             name_fr="Suivi 30 min",
             name_en="Follow-up 30 min",
