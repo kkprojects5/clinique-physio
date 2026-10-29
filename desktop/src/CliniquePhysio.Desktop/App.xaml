@@ -1,0 +1,52 @@
+<Application x:Class="CliniquePhysio.Desktop.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CliniquePhysio.Desktop.Core.ViewModels;assembly=CliniquePhysio.Desktop.Core"
+             xmlns:views="clr-namespace:CliniquePhysio.Desktop.Views"
+             xmlns:conv="clr-namespace:CliniquePhysio.Desktop.Converters"
+             ShutdownMode="OnMainWindowClose">
+    <Application.Resources>
+        <!-- Colours of the clinic (same as the web app). -->
+        <SolidColorBrush x:Key="Teal" Color="#1F5F5B" />
+        <SolidColorBrush x:Key="TealDark" Color="#164542" />
+        <SolidColorBrush x:Key="Cream" Color="#F6F2EA" />
+        <SolidColorBrush x:Key="Paper" Color="#FFFDF9" />
+        <SolidColorBrush x:Key="Line" Color="#E2DCCF" />
+        <SolidColorBrush x:Key="InkSoft" Color="#4A5A59" />
+        <SolidColorBrush x:Key="ErrorText" Color="#7A2C19" />
+
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <conv:NullToCollapsedConverter x:Key="NullToCollapsed" />
+        <conv:StatusToBrushConverter x:Key="StatusToBrush" />
+        <conv:QrCodeConverter x:Key="QrCode" />
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource Teal}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style TargetType="PasswordBox">
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <!-- Which screen to show for each view model (MVVM). -->
+        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+            <views:LoginView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MfaViewModel}">
+            <views:MfaView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScheduleViewModel}">
+            <views:ScheduleView />
+        </DataTemplate>
+    </Application.Resources>
+</Application>

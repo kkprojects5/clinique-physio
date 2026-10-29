@@ -1,0 +1,43 @@
+<UserControl x:Class="CliniquePhysio.Desktop.Views.MfaView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:CliniquePhysio.Desktop.Core.Localization;assembly=CliniquePhysio.Desktop.Core">
+    <Border Width="440" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="28"
+            Background="{StaticResource Paper}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="12">
+        <StackPanel>
+            <TextBlock FontSize="22" FontWeight="Bold" Foreground="{StaticResource TealDark}" Margin="0,0,0,14"
+                       Text="{Binding [mfa.title], Source={x:Static loc:Localizer.Instance}}" />
+
+            <!-- First login only: QR code to scan, and the key for manual entry. -->
+            <StackPanel Visibility="{Binding SetupRequired, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,12"
+                           Text="{Binding [mfa.setupIntro], Source={x:Static loc:Localizer.Instance}}" />
+                <Image Width="200" Height="200" HorizontalAlignment="Center" Margin="0,0,0,8"
+                       Source="{Binding OtpauthUri, Converter={StaticResource QrCode}}"
+                       RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                <TextBlock Foreground="{StaticResource InkSoft}"
+                           Text="{Binding [mfa.secret], Source={x:Static loc:Localizer.Instance}}" />
+                <TextBox IsReadOnly="True" Text="{Binding Secret, Mode=OneWay}" FontFamily="Consolas" Margin="0,4,0,14" />
+            </StackPanel>
+
+            <Label Padding="0,0,0,4" Target="{Binding ElementName=CodeBox}"
+                   Content="{Binding [mfa.code], Source={x:Static loc:Localizer.Instance}}" />
+            <TextBox x:Name="CodeBox" MaxLength="6" FontSize="20" FontFamily="Consolas" Width="140"
+                     HorizontalAlignment="Left" Margin="0,0,0,16"
+                     Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" />
+
+            <StackPanel Orientation="Horizontal">
+                <Button IsDefault="True" Command="{Binding VerifyCommand}"
+                        Content="{Binding [mfa.submit], Source={x:Static loc:Localizer.Instance}}" />
+                <Button Background="Transparent" Foreground="{StaticResource TealDark}" Command="{Binding BackCommand}"
+                        Content="{Binding [mfa.back], Source={x:Static loc:Localizer.Instance}}" />
+            </StackPanel>
+
+            <ProgressBar IsIndeterminate="True" Height="4" Margin="0,12,0,0"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+            <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" Foreground="{StaticResource ErrorText}"
+                       Text="{Binding Error}"
+                       Visibility="{Binding Error, Converter={StaticResource NullToCollapsed}}" />
+        </StackPanel>
+    </Border>
+</UserControl>

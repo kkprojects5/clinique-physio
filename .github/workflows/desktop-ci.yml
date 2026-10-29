@@ -1,0 +1,43 @@
+# Desktop app continuous integration (spec section 7.2). WPF needs Windows.
+name: desktop-ci
+
+on:
+  pull_request:
+    paths:
+      - "desktop/**"
+      - ".github/workflows/desktop-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "desktop/**"
+      - ".github/workflows/desktop-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore packages
+        run: dotnet restore CliniquePhysio.Desktop.sln
+
+      - name: Formatting (dotnet format)
+        run: dotnet format CliniquePhysio.Desktop.sln --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build CliniquePhysio.Desktop.sln --configuration Release --no-restore
+
+      - name: Tests (xUnit)
+        run: dotnet test CliniquePhysio.Desktop.sln --configuration Release --no-build --verbosity normal

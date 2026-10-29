@@ -1,0 +1,51 @@
+<Window x:Class="CliniquePhysio.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:CliniquePhysio.Desktop.Core.Localization;assembly=CliniquePhysio.Desktop.Core"
+        Title="{Binding [app.title], Source={x:Static loc:Localizer.Instance}}"
+        Width="1200" Height="760" MinWidth="800" MinHeight="560"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource Cream}"
+        FontFamily="Segoe UI" FontSize="14">
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="{StaticResource Paper}"
+                BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="16,10">
+            <DockPanel LastChildFill="False">
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"
+                           Foreground="{StaticResource TealDark}" Text="Clinique Physio Mont-Royal" />
+                <Button DockPanel.Dock="Right" Margin="12,0,0,0"
+                        Command="{Binding SwitchLanguageCommand}"
+                        Content="{Binding [lang.switch], Source={x:Static loc:Localizer.Instance}}" />
+                <!-- Connection indicator (spec B.8.3). -->
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="10" Height="10" Margin="0,0,6,0">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="#2E8B57" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                        <Setter Property="Fill" Value="#B4492E" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <TextBlock>
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="{Binding [conn.online], Source={x:Static loc:Localizer.Instance}}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                        <Setter Property="Text" Value="{Binding [conn.offline], Source={x:Static loc:Localizer.Instance}}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+        <!-- The current screen (login, MFA or schedule), chosen by the DataTemplates in App.xaml. -->
+        <ContentControl Content="{Binding CurrentView}" Margin="16" />
+    </DockPanel>
+</Window>

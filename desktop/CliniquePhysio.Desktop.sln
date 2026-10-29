@@ -1,0 +1,34 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CliniquePhysio.Desktop.Core", "src\CliniquePhysio.Desktop.Core\CliniquePhysio.Desktop.Core.csproj", "{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CliniquePhysio.Desktop", "src\CliniquePhysio.Desktop\CliniquePhysio.Desktop.csproj", "{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CliniquePhysio.Desktop.Tests", "tests\CliniquePhysio.Desktop.Tests\CliniquePhysio.Desktop.Tests.csproj", "{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F03}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B1E2A10-3C1D-4E5F-8A90-1B2C3D4E5F03}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
