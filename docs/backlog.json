@@ -1,0 +1,861 @@
+{
+  "repository": "stevatak/Khadizhat-Synth",
+  "stories": [
+    {
+      "id": "US-AUTH-01",
+      "requirement": "B-AUTH-01",
+      "title": "Patient registration with consent",
+      "actor": "patient",
+      "want": "to create an account with my email, password and contact details",
+      "so_that": "I can book appointments online",
+      "priority": "Must",
+      "module": "auth",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "Name, date of birth, email, phone, preferred language; optional emergency contact (encrypted)",
+        "Privacy policy consent required; electronic communications consent optional; consent version and date stored",
+        "Email address confirmed with a link",
+        "Only the minimum data is collected (justified in docs/data-classification.md)"
+      ],
+      "evidence": "api/tests/test_register.py"
+    },
+    {
+      "id": "US-AUTH-02",
+      "requirement": "B-AUTH-02",
+      "title": "Login and secure sessions",
+      "actor": "user",
+      "want": "to log in and stay logged in safely",
+      "so_that": "I do not have to type my password at every action",
+      "priority": "Must",
+      "module": "auth",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "Access token valid at most 10 minutes",
+        "Refresh token in an httpOnly cookie, rotated at each use; reuse of an old token cancels all sessions",
+        "Logout revokes the session",
+        "Staff are logged out after 15 minutes of inactivity"
+      ],
+      "evidence": "api/tests/test_login.py"
+    },
+    {
+      "id": "US-AUTH-03",
+      "requirement": "B-AUTH-03",
+      "title": "Strong password storage and password policy",
+      "actor": "user",
+      "want": "my password to be stored safely and to be refused if it is too weak",
+      "so_that": "a database leak does not expose my password",
+      "priority": "Must",
+      "module": "auth",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "Argon2id hashing",
+        "At least 12 characters, not containing the email",
+        "Wrong password and unknown email get the same answer (no user enumeration)"
+      ],
+      "evidence": "api/tests/test_register.py, api/tests/test_login.py"
+    },
+    {
+      "id": "US-AUTH-03b",
+      "requirement": "B-AUTH-03",
+      "title": "Password reset without user enumeration",
+      "actor": "user",
+      "want": "to reset my password with a link sent by email",
+      "so_that": "I can get back into my account if I forget my password",
+      "priority": "Must",
+      "module": "auth",
+      "deliverable": "D1",
+      "status": "open",
+      "acceptance": [
+        "Request answers the same whether or not the email exists",
+        "Single-use reset link, valid a short time",
+        "All sessions are cancelled after a reset",
+        "Rate limited"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-AUTH-04",
+      "requirement": "B-AUTH-04",
+      "title": "Mandatory two-factor authentication for staff",
+      "actor": "staff member",
+      "want": "to confirm my login with a 6-digit code from an authenticator app",
+      "so_that": "a stolen password alone cannot open patient data",
+      "priority": "Must",
+      "module": "auth",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "Mandatory for therapists, front desk and admin; optional for patients (later)",
+        "QR code enrolment at the first login; secret stored encrypted",
+        "Each code usable once",
+        "Staff endpoints refuse tokens without the MFA claim"
+      ],
+      "evidence": "api/tests/test_mfa.py"
+    },
+    {
+      "id": "US-AUTH-05",
+      "requirement": "B-AUTH-05",
+      "title": "Role and care-relationship access control",
+      "actor": "physiotherapist",
+      "want": "to open only the files of patients I treat",
+      "so_that": "patients' privacy is respected",
+      "priority": "Must",
+      "module": "auth",
+      "deliverable": "D2",
+      "status": "partial",
+      "acceptance": [
+        "Roles checked on every endpoint, role read from the database (done)",
+        "Ownership checks: patients see only their own data (done)",
+        "A therapist reads a patient file only with a care relationship (D2)",
+        "Tests prove therapist A cannot read notes of therapist B's patients (D2)"
+      ],
+      "evidence": "api/tests/test_schedules.py, api/tests/test_availability.py (partial)"
+    },
+    {
+      "id": "US-AUTH-06",
+      "requirement": "B-AUTH-06",
+      "title": "Protection against password guessing",
+      "actor": "clinic",
+      "want": "logins to be limited and accounts locked after repeated failures",
+      "so_that": "attackers cannot guess passwords",
+      "priority": "Must",
+      "module": "auth",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "5 attempts per minute per IP on login, MFA and registration (429 above)",
+        "Account locked 15 minutes after 5 failures, with the same answer as a wrong password",
+        "Owner notified by email"
+      ],
+      "evidence": "api/tests/test_brute_force.py"
+    },
+    {
+      "id": "US-AUTH-07",
+      "requirement": "B-AUTH-07",
+      "title": "Break-the-glass emergency access",
+      "actor": "clinic administrator",
+      "want": "to open a clinical file in an emergency with a mandatory reason",
+      "so_that": "care can continue when the therapist is unavailable",
+      "priority": "Could",
+      "module": "auth",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Mandatory reason",
+        "Logged and flagged in the audit dashboard"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-AVL-01",
+      "requirement": "B-AVL-01",
+      "title": "Service catalog",
+      "actor": "visitor",
+      "want": "to see the services with their duration, price and deposit",
+      "so_that": "I know what I book and what I pay",
+      "priority": "Must",
+      "module": "availability",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "Name in French and English, duration, price, deposit, description",
+        "Which therapists provide each service"
+      ],
+      "evidence": "api/tests/test_availability.py, web/src/pages/pages.test.jsx"
+    },
+    {
+      "id": "US-AVL-02",
+      "requirement": "B-AVL-02",
+      "title": "Therapist working hours and time off",
+      "actor": "physiotherapist",
+      "want": "to set my weekly hours and my time off",
+      "so_that": "patients can only book when I am available",
+      "priority": "Must",
+      "module": "availability",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "Weekly hours per weekday, no overlap on the same day",
+        "Time off as date-time ranges; a therapist can delete only their own"
+      ],
+      "evidence": "api/tests/test_availability.py"
+    },
+    {
+      "id": "US-AVL-03",
+      "requirement": "B-AVL-03",
+      "title": "Bookable slot computation",
+      "actor": "patient",
+      "want": "to see the free times for a service",
+      "so_that": "I can choose a time that suits me",
+      "priority": "Must",
+      "module": "availability",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "Free slots = hours - time off - appointments, on a 15-minute grid with a 5-minute buffer",
+        "No slots in the past or more than 60 days ahead",
+        "Tests cover end of day, overlapping time off and both daylight saving changes"
+      ],
+      "evidence": "api/tests/test_slots.py, api/tests/test_availability.py"
+    },
+    {
+      "id": "US-AVL-04",
+      "requirement": "B-AVL-04",
+      "title": "Rooms as a resource",
+      "actor": "front-desk agent",
+      "want": "each appointment to also reserve a treatment room",
+      "so_that": "two treatments never share a room",
+      "priority": "Should",
+      "module": "availability",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "4 rooms",
+        "Same no-overlap guarantee as therapists"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-AVL-05",
+      "requirement": "B-AVL-05",
+      "title": "Therapist profile page",
+      "actor": "visitor",
+      "want": "to see each therapist's specialties, languages and photo",
+      "so_that": "I can choose who treats me",
+      "priority": "Should",
+      "module": "availability",
+      "deliverable": "D2",
+      "status": "partial",
+      "acceptance": [
+        "Team page with names, specialties, languages, bio (done)",
+        "Photo (D2)"
+      ],
+      "evidence": "web/src/pages/Team.jsx"
+    },
+    {
+      "id": "US-BKG-01",
+      "requirement": "B-BKG-01",
+      "title": "Online booking with deposit",
+      "actor": "patient",
+      "want": "to choose a service, a therapist (or first available), a date and a time, then pay the deposit",
+      "so_that": "I can book 24/7 without calling",
+      "priority": "Must",
+      "module": "booking",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Works on the website and the mobile app",
+        "Confirmation shown and sent by email"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BKG-02",
+      "requirement": "B-BKG-02",
+      "title": "No double booking under concurrency",
+      "actor": "patient",
+      "want": "two patients never to get the same slot",
+      "so_that": "the schedule is always right",
+      "priority": "Must",
+      "module": "booking",
+      "deliverable": "D2",
+      "status": "partial",
+      "acceptance": [
+        "Database exclusion constraint (done in D1)",
+        "30 simultaneous requests: 1 success, 29 clear 'slot no longer available' errors (constraint test done in D1; API 409 answer in D2)"
+      ],
+      "evidence": "api/tests/test_double_booking.py (constraint)"
+    },
+    {
+      "id": "US-BKG-03",
+      "requirement": "B-BKG-03",
+      "title": "Temporary hold during payment",
+      "actor": "patient",
+      "want": "the slot to be held 10 minutes while I pay",
+      "so_that": "nobody takes it while I type my card",
+      "priority": "Must",
+      "module": "booking",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Released automatically if payment is not completed"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BKG-04",
+      "requirement": "B-BKG-04",
+      "title": "Deposit payment confirmed by Stripe",
+      "actor": "patient",
+      "want": "my booking to be confirmed only when the deposit is paid",
+      "so_that": "the clinic is protected against no-shows",
+      "priority": "Must",
+      "module": "booking",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Stripe test mode",
+        "Signed, idempotent webhook; status pending_payment to confirmed"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BKG-05",
+      "requirement": "B-BKG-05",
+      "title": "Appointment lifecycle",
+      "actor": "patient",
+      "want": "every status change to be recorded with who made it",
+      "so_that": "the clinic can explain what happened",
+      "priority": "Must",
+      "module": "booking",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "held, pending_payment, confirmed, checked_in, completed, cancelled_by_patient, cancelled_by_clinic, no_show",
+        "Transitions logged with the actor"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BKG-06",
+      "requirement": "B-BKG-06",
+      "title": "Reschedule and cancel with the 24-hour rule",
+      "actor": "patient",
+      "want": "to reschedule or cancel my appointment",
+      "so_that": "I can adapt to changes",
+      "priority": "Must",
+      "module": "booking",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "More than 24 h before: deposit refunded; less: kept as a fee",
+        "Rule tested at the 24 h boundary, including across a DST change"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BKG-07",
+      "requirement": "B-BKG-07",
+      "title": "Times shown in Montréal time",
+      "actor": "user",
+      "want": "every time to be shown in the clinic's time zone, also after a daylight saving change",
+      "so_that": "I never come at the wrong hour",
+      "priority": "Must",
+      "module": "booking",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "Stored in UTC, shown in America/Toronto",
+        "An appointment at 10:00 on the Monday after the November change shows 10:00"
+      ],
+      "evidence": "api/tests/test_slots.py, web/src/utils/format.test.js, mobile/src/__tests__/format.test.ts"
+    },
+    {
+      "id": "US-BKG-08",
+      "requirement": "B-BKG-08",
+      "title": "Appointment reminders",
+      "actor": "patient",
+      "want": "reminders 48 h and 24 h before my appointment",
+      "so_that": "I do not forget it",
+      "priority": "Should",
+      "module": "booking",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Email and mobile push",
+        "No clinical information in the message"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BKG-09",
+      "requirement": "B-BKG-09",
+      "title": "Waiting list",
+      "actor": "patient",
+      "want": "to be told if an earlier slot frees up",
+      "so_that": "I can be treated sooner",
+      "priority": "Could",
+      "module": "booking",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Subscribe and unsubscribe",
+        "Notification when a matching slot frees up"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BKG-10",
+      "requirement": "B-BKG-10",
+      "title": "Insurance receipt",
+      "actor": "patient",
+      "want": "an official PDF receipt after my appointment",
+      "so_that": "I can claim from my insurer",
+      "priority": "Should",
+      "module": "booking",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Clinic info, therapist name and licence number, service, date, amount paid"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-CLN-01",
+      "requirement": "B-CLN-01",
+      "title": "My patients and their history",
+      "actor": "physiotherapist",
+      "want": "to see the list of my patients and each one's appointment history",
+      "so_that": "I prepare each session",
+      "priority": "Must",
+      "module": "clinical",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Only patients with a care relationship"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-CLN-02",
+      "requirement": "B-CLN-02",
+      "title": "Encrypted SOAP session notes",
+      "actor": "physiotherapist",
+      "want": "to write a SOAP note for a completed appointment",
+      "so_that": "the treatment is documented",
+      "priority": "Must",
+      "module": "clinical",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Note encrypted by the application, key outside the database"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-CLN-03",
+      "requirement": "B-CLN-03",
+      "title": "Signed notes and amendments",
+      "actor": "physiotherapist",
+      "want": "notes to be locked once signed, with corrections as amendments",
+      "so_that": "the record cannot be altered",
+      "priority": "Should",
+      "module": "clinical",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Original kept; amendment linked to it"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-CLN-04",
+      "requirement": "B-CLN-04",
+      "title": "Audit of clinical access",
+      "actor": "clinic",
+      "want": "every read and write of a note to be recorded",
+      "so_that": "access can be checked",
+      "priority": "Must",
+      "module": "clinical",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Who, what, when, from which IP and app"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-CLN-05",
+      "requirement": "B-CLN-05",
+      "title": "No clinical notes for front desk and admin",
+      "actor": "clinic",
+      "want": "front desk and admin to be refused clinical notes",
+      "so_that": "health data stays need-to-know",
+      "priority": "Must",
+      "module": "clinical",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Tested for both roles"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-CLN-06",
+      "requirement": "B-CLN-06",
+      "title": "Document upload",
+      "actor": "physiotherapist",
+      "want": "to attach documents such as a doctor's referral",
+      "so_that": "everything is in one place",
+      "priority": "Could",
+      "module": "clinical",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Type and size checks; private storage; short-lived signed links"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-EXE-01",
+      "requirement": "B-EXE-01",
+      "title": "Exercise library",
+      "actor": "physiotherapist",
+      "want": "a library of exercises in French and English",
+      "so_that": "I can build programs quickly",
+      "priority": "Must",
+      "module": "exercises",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Name, description, instructions, illustration, default sets and reps"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-EXE-02",
+      "requirement": "B-EXE-02",
+      "title": "Assign a program",
+      "actor": "physiotherapist",
+      "want": "to assign a program of exercises to a patient",
+      "so_that": "the patient knows what to do at home",
+      "priority": "Must",
+      "module": "exercises",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Exercises, frequency, duration in weeks, notes"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-EXE-03",
+      "requirement": "B-EXE-03",
+      "title": "Follow my program",
+      "actor": "patient",
+      "want": "to see my program on my phone and check off each session with a pain level",
+      "so_that": "I stay on track",
+      "priority": "Must",
+      "module": "exercises",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Mobile and website",
+        "Pain level 0 to 10"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-EXE-04",
+      "requirement": "B-EXE-04",
+      "title": "Adherence chart",
+      "actor": "physiotherapist",
+      "want": "to see how many sessions my patient completed",
+      "so_that": "I can adjust the program",
+      "priority": "Should",
+      "module": "exercises",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Completed versus planned"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-EXE-05",
+      "requirement": "B-EXE-05",
+      "title": "Daily exercise reminder",
+      "actor": "patient",
+      "want": "a daily reminder on my phone",
+      "so_that": "I do not forget my exercises",
+      "priority": "Could",
+      "module": "exercises",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Configurable by the patient"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-FRD-01",
+      "requirement": "B-FRD-01",
+      "title": "Day schedule of all therapists",
+      "actor": "front-desk agent",
+      "want": "to see today's appointments of every therapist in columns, with status colours",
+      "so_that": "I can manage the day at a glance",
+      "priority": "Must",
+      "module": "front-desk",
+      "deliverable": "D1",
+      "status": "done",
+      "acceptance": [
+        "One column per therapist",
+        "Status shown by colour and in words",
+        "No clinical information"
+      ],
+      "evidence": "desktop/tests (ScheduleViewModelTests), api/tests/test_schedules.py"
+    },
+    {
+      "id": "US-FRD-02",
+      "requirement": "B-FRD-02",
+      "title": "Book for a patient on the phone",
+      "actor": "front-desk agent",
+      "want": "to book, reschedule or cancel for a patient and search patients",
+      "so_that": "I can help patients who call",
+      "priority": "Must",
+      "module": "front-desk",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Search by name, phone or date of birth"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-FRD-03",
+      "requirement": "B-FRD-03",
+      "title": "Check-in and no-show",
+      "actor": "front-desk agent",
+      "want": "to check patients in and mark no-shows",
+      "so_that": "the schedule reflects reality",
+      "priority": "Must",
+      "module": "front-desk",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "No-show possible 15 minutes after the start"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-FRD-04",
+      "requirement": "B-FRD-04",
+      "title": "Walk-in patients",
+      "actor": "front-desk agent",
+      "want": "to create a patient quickly and book the next free slot",
+      "so_that": "walk-ins are served quickly",
+      "priority": "Should",
+      "module": "front-desk",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [],
+      "evidence": null
+    },
+    {
+      "id": "US-FRD-05",
+      "requirement": "B-FRD-05",
+      "title": "Record payments at the desk",
+      "actor": "front-desk agent",
+      "want": "to record the balance paid by cash or debit and print a receipt",
+      "so_that": "payments are complete",
+      "priority": "Should",
+      "module": "front-desk",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [],
+      "evidence": null
+    },
+    {
+      "id": "US-FRD-06",
+      "requirement": "B-FRD-06",
+      "title": "Offline mode with conflict detection",
+      "actor": "front-desk agent",
+      "want": "the desktop app to keep working when the API is unreachable",
+      "so_that": "the desk keeps running during outages",
+      "priority": "Should",
+      "module": "front-desk",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Encrypted read-only cache of today's schedule",
+        "Queued check-ins synchronized later, conflicts detected and reported"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-ADM-01",
+      "requirement": "B-ADM-01",
+      "title": "Manage services, staff and rooms",
+      "actor": "clinic administrator",
+      "want": "to manage services, therapists, rooms, staff accounts and roles",
+      "so_that": "the system matches the clinic",
+      "priority": "Must",
+      "module": "admin",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Fictional licence numbers"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-ADM-02",
+      "requirement": "B-ADM-02",
+      "title": "Reports",
+      "actor": "clinic administrator",
+      "want": "weekly reports: appointments, occupancy, cancellations, no-shows, revenue",
+      "so_that": "I can manage the clinic",
+      "priority": "Should",
+      "module": "admin",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [],
+      "evidence": null
+    },
+    {
+      "id": "US-ADM-03",
+      "requirement": "B-ADM-03",
+      "title": "Audit log viewer",
+      "actor": "clinic administrator",
+      "want": "to search the audit log and see unusual access highlighted",
+      "so_that": "I can detect abuse",
+      "priority": "Must",
+      "module": "admin",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Filters by user, patient, action, date",
+        "Highlight many files read in a short time"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-ADM-04",
+      "requirement": "B-ADM-04",
+      "title": "Privacy requests",
+      "actor": "clinic administrator",
+      "want": "to handle access, correction and deletion requests within the deadline",
+      "so_that": "the clinic respects Law 25",
+      "priority": "Should",
+      "module": "admin",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Health records under retention are anonymized or kept with a reason"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-ADM-05",
+      "requirement": "B-ADM-05",
+      "title": "Confidentiality incident register",
+      "actor": "clinic administrator",
+      "want": "to record confidentiality incidents",
+      "so_that": "the clinic meets its Law 25 obligations",
+      "priority": "Should",
+      "module": "admin",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Date, description, data concerned, risk, measures, notifications"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-ADM-06",
+      "requirement": "B-ADM-06",
+      "title": "Knowledge base management",
+      "actor": "clinic administrator",
+      "want": "to upload documents and reindex the chatbot's knowledge base",
+      "so_that": "answers stay up to date",
+      "priority": "Should",
+      "module": "admin",
+      "deliverable": "D3",
+      "status": "open",
+      "acceptance": [
+        "Feedback statistics"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BOT-01",
+      "requirement": "B.9 / spec 8",
+      "title": "Ask practical questions",
+      "actor": "visitor",
+      "want": "to ask the assistant about cancellations, insurance, parking or what to bring",
+      "so_that": "I get answers at any time",
+      "priority": "Must",
+      "module": "chatbot",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Answers in French and English from the clinic's documents only",
+        "Cites the documents used",
+        "Says 'I don't know' instead of inventing"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BOT-02",
+      "requirement": "B.9 / spec 8",
+      "title": "Refuse diagnosis and handle emergencies",
+      "actor": "clinic",
+      "want": "the assistant to refuse diagnoses and treatment advice and to send emergencies to 911 or 811",
+      "so_that": "no patient is harmed by a chatbot answer",
+      "priority": "Must",
+      "module": "chatbot",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "100% of diagnosis requests refused",
+        "Emergency messages detected",
+        "Discloses that it is an automated assistant"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BOT-03",
+      "requirement": "B.9 / spec 8",
+      "title": "Resist prompt injection and protect privacy",
+      "actor": "clinic",
+      "want": "the assistant to ignore instructions hidden in questions or documents and never reveal patient data",
+      "so_that": "it cannot be turned against the clinic",
+      "priority": "Must",
+      "module": "chatbot",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Not connected to patient files",
+        "Personal data masked in logs, kept 30 days",
+        "Rate limited"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BOT-04",
+      "requirement": "B.9 / spec 8",
+      "title": "Measured answer quality",
+      "actor": "clinic",
+      "want": "the assistant's quality to be measured on a set of test questions",
+      "so_that": "we know it works",
+      "priority": "Must",
+      "module": "chatbot",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "20 questions at D2, 40 with adversarial ones at D3",
+        "Hit rate, correctness, citation accuracy, refusal accuracy, latency"
+      ],
+      "evidence": null
+    },
+    {
+      "id": "US-BOT-05",
+      "requirement": "B.9 / spec 8",
+      "title": "Answer feedback",
+      "actor": "visitor",
+      "want": "to mark an answer as useful or not",
+      "so_that": "the clinic can improve the assistant",
+      "priority": "Should",
+      "module": "chatbot",
+      "deliverable": "D2",
+      "status": "open",
+      "acceptance": [
+        "Feedback stored"
+      ],
+      "evidence": null
+    }
+  ]
+}

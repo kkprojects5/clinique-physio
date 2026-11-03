@@ -43,8 +43,9 @@ about a minute. Demo account credentials are given to the supervisor privately, 
   saving changes.
 - **Bilingual:** French by default, English available, in every client.
 
-More detail: [docs/erd.md](docs/erd.md) (data model) and [docs/openapi.json](docs/openapi.json)
-(API contract).
+More detail: [docs/requirements.md](docs/requirements.md) (vision and product backlog),
+[docs/architecture.md](docs/architecture.md), [docs/erd.md](docs/erd.md) (data model) and
+[docs/openapi.json](docs/openapi.json) (API contract).
 
 ## Repository structure
 
