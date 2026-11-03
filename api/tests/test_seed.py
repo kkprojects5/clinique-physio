@@ -4,7 +4,7 @@ from sqlalchemy import func, select
 
 from app.core.security import verify_password
 from app.models import Appointment, AvailabilityRule, Patient, Service, Therapist, User
-from app.seed import seed
+from app.seed import refresh_appointments, seed
 
 STAFF = "Staff-Demo-Password-1"
 PATIENTS = "Patient-Demo-Password-1"
@@ -51,3 +51,33 @@ def test_seed_is_safe_to_run_twice(db):
 
     assert seed(db, STAFF, PATIENTS) is False
     assert count(db, Therapist) == 6
+
+
+def test_refresh_adds_appointments_on_empty_days_only(db):
+    seed(db, STAFF, PATIENTS)
+    db.query(Appointment).delete()  # simulate the demo appointments being in the past
+    db.commit()
+
+    first = refresh_appointments(db, rng_seed=1)
+    second = refresh_appointments(db, rng_seed=2)
+
+    assert first > 0
+    assert second == 0  # every day already has appointments: nothing added, nothing doubled
+    assert count(db, Appointment) == first
+
+
+def test_refresh_never_creates_overlaps(db):
+    seed(db, STAFF, PATIENTS)
+    refresh_appointments(db, rng_seed=3)
+
+    # The database exclusion constraint would have refused any overlap; check the rule anyway.
+    rows = db.scalars(select(Appointment).order_by(Appointment.therapist_id, Appointment.during))
+    previous = None
+    for appointment in rows:
+        if previous is not None and previous.therapist_id == appointment.therapist_id:
+            assert previous.during.upper <= appointment.during.lower
+        previous = appointment
+
+
+def test_refresh_does_nothing_without_demo_data(db):
+    assert refresh_appointments(db) == 0

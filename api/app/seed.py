@@ -7,7 +7,8 @@ All people are fictional. Emails use example.com and phone numbers use 555,
 both reserved for examples, so no real person can be reached.
 
 Run from the api folder:
-    python -m app.seed
+    python -m app.seed                          # create the demo data (once)
+    python -m app.seed --refresh-appointments   # add appointments for the next 2 weeks
 
 Passwords are read from SEED_STAFF_PASSWORD and SEED_PATIENT_PASSWORD (.env).
 They are never written in the code or the README (spec 7.3).
@@ -16,6 +17,7 @@ They are never written in the code or the README (spec 7.3).
 import os
 import random
 import sys
+import uuid
 from datetime import UTC, date, datetime, time, timedelta
 
 from sqlalchemy import select
@@ -26,6 +28,7 @@ from app.core.config import settings
 from app.core.crypto import encrypt
 from app.core.security import hash_password
 from app.models import (
+    ACTIVE_STATUSES,
     Appointment,
     AvailabilityRule,
     Consent,
@@ -36,7 +39,7 @@ from app.models import (
     User,
 )
 from app.services import availability_service
-from app.services.slots import BUFFER_MINUTES
+from app.services.slots import BUFFER_MINUTES, CLINIC_TZ, local_to_utc
 
 MIN_PASSWORD_LENGTH = 12
 
@@ -268,40 +271,97 @@ def seed(db: Session, staff_password: str, patient_password: str, rng_seed: int 
         patients.append((patient, user))
     db.flush()
 
-    _seed_appointments(db, services["f30"], patients, rng)
+    _seed_appointments(db, services["f30"], [(p.id, u.id) for p, u in patients], rng)
     db.commit()
     return True
 
 
-def _seed_appointments(db: Session, service: Service, patients: list, rng: random.Random) -> None:
-    """Book about a third of the free 30-min slots of the next 2 weeks, never overlapping."""
+APPOINTMENT_DAYS = 14  # demo appointments cover the next two weeks
+
+
+def _seed_appointments(
+    db: Session,
+    service: Service,
+    patients: list[tuple[uuid.UUID, uuid.UUID]],
+    rng: random.Random,
+    busy_days: set[tuple[uuid.UUID, date]] | None = None,
+) -> int:
+    """Book about a third of the free 30-min slots of the next 2 weeks, never overlapping.
+
+    patients: (patient_id, user_id) pairs. busy_days: (therapist, day) pairs to leave alone.
+    Returns the number of appointments created.
+    """
+    busy_days = busy_days or set()
     start = availability_service.today_local() + timedelta(days=1)
-    slots = availability_service.find_slots(db, service.id, None, start, start + timedelta(days=13))
+    last_day = start + timedelta(days=APPOINTMENT_DAYS - 1)
+    slots = availability_service.find_slots(db, service.id, None, start, last_day)
     last_end: dict = {}
     buffer = timedelta(minutes=BUFFER_MINUTES)
+    created = 0
     for slot in slots:
+        day = slot.period.start.astimezone(CLINIC_TZ).date()
+        if (slot.therapist_id, day) in busy_days:
+            continue
         previous_end = last_end.get(slot.therapist_id)
         if previous_end is not None and slot.period.start < previous_end + buffer:
             continue
         if rng.random() > 0.35:
             continue
-        patient, user = rng.choice(patients)
+        patient_id, user_id = rng.choice(patients)
         db.add(
             Appointment(
-                patient_id=patient.id,
+                patient_id=patient_id,
                 therapist_id=slot.therapist_id,
                 service_id=service.id,
                 during=Range(slot.period.start, slot.period.end),
                 status="confirmed",
-                created_by=user.id,
+                created_by=user_id,
             )
         )
         last_end[slot.therapist_id] = slot.period.end
+        created += 1
     db.flush()
+    return created
+
+
+def refresh_appointments(db: Session, rng_seed: int | None = None) -> int:
+    """Add demo appointments for the next two weeks, on days that have none yet.
+
+    Days that already have appointments are left untouched, and only free slots are
+    used, so running it again never creates overlaps or duplicates.
+    """
+    service = db.scalar(select(Service).where(Service.duration_min == 30).limit(1))
+    patients = [(p.id, p.user_id) for p in db.scalars(select(Patient))]
+    if service is None or not patients:
+        return 0
+
+    start = availability_service.today_local() + timedelta(days=1)
+    window = Range(
+        local_to_utc(start, time(0)),
+        local_to_utc(start + timedelta(days=APPOINTMENT_DAYS), time(0)),
+    )
+    existing = db.scalars(
+        select(Appointment).where(
+            Appointment.during.overlaps(window), Appointment.status.in_(ACTIVE_STATUSES)
+        )
+    )
+    busy = {(a.therapist_id, a.during.lower.astimezone(CLINIC_TZ).date()) for a in existing}
+
+    # Not for security: only picks fictional demo patients and times.
+    rng = random.Random(rng_seed)  # noqa: S311  # nosec B311
+    created = _seed_appointments(db, service, patients, rng, busy_days=busy)
+    db.commit()
+    return created
 
 
 def main() -> None:
     from app.db.session import SessionLocal
+
+    if "--refresh-appointments" in sys.argv:
+        with SessionLocal() as db:
+            created = refresh_appointments(db)
+        print(f"Demo appointments added for the next {APPOINTMENT_DAYS} days: {created}.")
+        return
 
     staff_password = _require_password("SEED_STAFF_PASSWORD")
     patient_password = _require_password("SEED_PATIENT_PASSWORD")
