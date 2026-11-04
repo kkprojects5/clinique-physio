@@ -45,7 +45,8 @@ about a minute. Demo account credentials are given to the supervisor privately, 
 
 More detail: [docs/requirements.md](docs/requirements.md) (vision and product backlog),
 [docs/architecture.md](docs/architecture.md), [docs/erd.md](docs/erd.md) (data model),
-[docs/data-dictionary.md](docs/data-dictionary.md) and
+[docs/data-dictionary.md](docs/data-dictionary.md), [docs/management](docs/management/README.md)
+(method, sprints, risks) and
 [docs/openapi.json](docs/openapi.json) (API contract).
 
 ## Repository structure
