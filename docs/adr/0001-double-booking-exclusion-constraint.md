@@ -44,3 +44,11 @@ database refusal into a clear "slot no longer available" answer (HTTP 409).
 - Requires PostgreSQL (not portable to every database) and the `btree_gist` extension, created by
   the first migration.
 - The same pattern will apply to rooms (B-AVL-04).
+- **Deadlocks under heavy concurrency.** When many transactions insert overlapping rows at the
+  same moment, PostgreSQL sometimes cancels one of them with "deadlock detected" instead of
+  reporting the overlap (a known behaviour of exclusion constraints). No double booking can
+  result: the cancelled transaction saved nothing. The application therefore retries a write
+  that fails with a deadlock (up to 3 times, in a fresh transaction, `app/db/retry.py`); on the
+  retry it either succeeds or gets the normal overlap refusal, which becomes HTTP 409. Any other
+  error is never retried. Found by CI, where the 30-booking test occasionally failed with a
+  deadlock; the test now goes through the same retry (`test_retry.py`, `test_double_booking.py`).

@@ -98,3 +98,12 @@ class StaffSessionResponse(BaseModel):
     email: str
     role: str
     mfa: bool
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(min_length=1, max_length=200)
+    new_password: str = Field(min_length=PASSWORD_MIN_LENGTH, max_length=128)

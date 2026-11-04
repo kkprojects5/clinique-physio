@@ -2,7 +2,7 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, HTTPException, Request, Response, status
+from fastapi import APIRouter, BackgroundTasks, Cookie, HTTPException, Request, Response, status
 from fastapi.responses import JSONResponse
 
 from app.core import rate_limit
@@ -10,6 +10,7 @@ from app.core.config import settings
 from app.core.rate_limit import limiter
 from app.dependencies import DbSession
 from app.schemas.auth import (
+    ForgotPasswordRequest,
     LoginRequest,
     MessageResponse,
     MfaChallengeResponse,
@@ -17,14 +18,16 @@ from app.schemas.auth import (
     MfaSetupResponse,
     MfaVerifyRequest,
     RegisterRequest,
+    ResetPasswordRequest,
     TokenResponse,
     VerifyEmailRequest,
 )
-from app.services import auth_service, mfa_service, session_service
+from app.services import auth_service, mfa_service, password_reset_service, session_service
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 REGISTER_MESSAGE = "If this email address can be used, a confirmation link has been sent to it."
+FORGOT_MESSAGE = "If an account exists for this email address, a reset link has been sent to it."
 
 # The refresh token lives in an httpOnly cookie: JavaScript cannot read it,
 # so an XSS attack cannot steal it (challenge B-C4). It is only sent to /api/v1/auth.
@@ -185,3 +188,37 @@ def logout(
     session_service.end_session(db, refresh_token)
     _clear_refresh_cookie(response)
     return MessageResponse(message="Logged out.")
+
+
+@router.post("/password/forgot", status_code=status.HTTP_202_ACCEPTED)
+@limiter.limit(rate_limit.ACCOUNT_RECOVERY_LIMIT)
+def forgot_password(
+    request: Request, data: ForgotPasswordRequest, background: BackgroundTasks, db: DbSession
+) -> MessageResponse:
+    """Send a reset link. Same answer, and same speed, whether or not the account exists."""
+    email = password_reset_service.request_reset(db, data.email)
+    if email is not None:
+        background.add_task(email.send)  # sent after the answer, so timing reveals nothing
+    return MessageResponse(message=FORGOT_MESSAGE)
+
+
+@router.post("/password/reset")
+@limiter.limit(rate_limit.ACCOUNT_RECOVERY_LIMIT)
+def reset_password(
+    request: Request, data: ResetPasswordRequest, background: BackgroundTasks, db: DbSession
+) -> MessageResponse:
+    """Choose a new password with the link's token. Every session is then cancelled."""
+    try:
+        email = password_reset_service.reset_password(db, data.token, data.new_password)
+    except password_reset_service.InvalidResetToken:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This reset link is invalid or has expired. Please ask for a new one.",
+        ) from None
+    except password_reset_service.WeakPassword:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="The password must not contain the email address.",
+        ) from None
+    background.add_task(email.send)
+    return MessageResponse(message="Your password has been changed. You can now log in.")

@@ -19,6 +19,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
+from app.db.retry import commit_with_retry
 from app.db.session import SessionLocal
 from app.models import Appointment, Patient, Service, Therapist, User
 
@@ -96,29 +97,30 @@ def test_30_concurrent_bookings_only_one_succeeds(setup_data):
     make_session = sessionmaker(bind=engine, expire_on_commit=False)
 
     def book(patient_id, user_id):
-        try:
-            with make_session() as session:
-                session.add(
-                    Appointment(
-                        patient_id=patient_id,
-                        therapist_id=setup_data["therapist_id"],
-                        service_id=setup_data["service_id"],
-                        during=slot,
-                        status="pending_payment",
-                        created_by=user_id,
-                    )
+        def insert(session, attempt):
+            session.add(
+                Appointment(
+                    patient_id=patient_id,
+                    therapist_id=setup_data["therapist_id"],
+                    service_id=setup_data["service_id"],
+                    during=slot,
+                    status="pending_payment",
+                    created_by=user_id,
                 )
-                barrier.wait(timeout=30)
-                try:
-                    session.commit()
-                    outcome = "booked"
-                except IntegrityError as error:
-                    session.rollback()
-                    # Only the no-overlap constraint is an acceptable reason to fail.
-                    if isinstance(error.orig, ExclusionViolation):
-                        outcome = "slot_taken"
-                    else:
-                        outcome = f"other integrity error: {error.orig!r}"
+            )
+            if attempt == 1:
+                barrier.wait(timeout=30)  # first try: everybody commits at the same moment
+
+        try:
+            # Same retry the booking endpoint will use: a deadlock is retried, never shown.
+            commit_with_retry(make_session, insert)
+            outcome = "booked"
+        except IntegrityError as error:
+            # Only the no-overlap constraint is an acceptable reason to fail.
+            if isinstance(error.orig, ExclusionViolation):
+                outcome = "slot_taken"
+            else:
+                outcome = f"other integrity error: {error.orig!r}"
         except Exception as error:  # noqa: BLE001  (record it so the failure message shows it)
             outcome = f"unexpected {type(error).__name__}: {error}"[:300]
         with lock:

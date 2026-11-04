@@ -47,6 +47,7 @@ erDiagram
     users ||--o| patients : "is a"
     users ||--o| therapists : "is a"
     users ||--o{ refresh_tokens : "has"
+    users ||--o{ password_reset_tokens : "asks for"
     users ||--o{ consents : "gives"
     users {
         uuid id PK
@@ -87,6 +88,14 @@ erDiagram
         timestamptz revoked_at
         timestamptz created_at
     }
+    password_reset_tokens {
+        uuid id PK
+        uuid user_id FK
+        text token_hash UK "never the raw token"
+        timestamptz expires_at "30 minutes"
+        timestamptz used_at "single use"
+        timestamptz created_at
+    }
     consents {
         uuid id PK
         uuid user_id FK
@@ -100,6 +109,7 @@ erDiagram
 
 - A user has exactly one role. A patient or therapist row adds the role-specific details.
 - `refresh_tokens` stores only a hash of each token, so a stolen database can't be used to log in.
+- `password_reset_tokens` also stores only a hash; a link works once, for 30 minutes (B-AUTH-03).
 - `consents` keeps the version and date of each consent (B-AUTH-01).
 
 ## 2. Services and availability
@@ -407,6 +417,7 @@ These are not in B.6, but the requirements need them:
 | Addition | Why |
 |---|---|
 | `refresh_tokens` table | Store a hash of each refresh token so it can be revoked at logout or if stolen (B-AUTH-02). |
+| `password_reset_tokens` table | Single-use, short-lived password reset links, stored as hashes (B-AUTH-03). |
 | `users.email_verified_at` | Email verification at registration (B-AUTH-01). |
 | `appointments.hold_expires_at` | The 10-minute hold during payment (B-BKG-03). |
 | `appointments.version` and `updated_at` | Detect conflicts when the desktop app syncs offline actions (B-FRD-06). |

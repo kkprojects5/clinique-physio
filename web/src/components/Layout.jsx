@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const NAV = [
@@ -53,6 +53,9 @@ export default function Layout() {
       <footer className="site-footer">
         <p>{t('footer.address')}</p>
         <p>{t('footer.fictional')}</p>
+        <p>
+          <Link to="/mot-de-passe-oublie">{t('account.forgot.link')}</Link>
+        </p>
       </footer>
     </>
   );

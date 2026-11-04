@@ -17,3 +17,14 @@ export async function apiGet(path, params = {}) {
   if (!response.ok) throw new ApiError(response.status, `API error ${response.status}`);
   return response.json();
 }
+
+/** POST JSON. Returns { status, data } so pages can show a message for each answer. */
+export async function apiPost(path, body) {
+  const response = await fetch(`${API_URL}/api/v1${path}`, {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await response.json().catch(() => ({}));
+  return { status: response.status, data };
+}

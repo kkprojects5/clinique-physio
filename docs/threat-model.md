@@ -102,6 +102,8 @@ flowchart LR
 | T-AUTH-11 | E | A forged or modified token claims a higher role | Role read from the database on every request, not trusted from the token | B-AUTH-05 | ✅ `test_staff_endpoint_refuses_patients_even_with_mfa_claim` |
 | T-AUTH-12 | S | MFA set up again by someone who only knows the password | Enrolment is refused once MFA is active | B-AUTH-04 | ✅ `test_enrolment_cannot_be_restarted_with_only_a_password` |
 | T-AUTH-13 | T | Cross-site request (CSRF) on `/auth/refresh` or `/auth/logout` | Cookie limited to the auth path; CORS allows only the clinic's website, so another site cannot read the new token | NFR-03 | ✅ CORS test `test_cors_allows_the_web_app_and_refuses_other_sites` · ⏳ Origin header check on auth endpoints (D2), see residual risk R-4 |
+| T-AUTH-15 | S | Account takeover through the password reset | Reset link is a 256-bit random value stored as a SHA-256 hash; single use; expires after 30 minutes; a new request cancels older links; all sessions cancelled after a reset; owner told by email; staff still need their MFA code; 5 requests per minute per IP | B-AUTH-03 | ✅ `test_password_reset.py` |
+| T-AUTH-16 | I | Finding which emails have an account through "forgot password" | Same answer and status for known and unknown emails; the email is sent after the answer (background task), so response time reveals nothing | B-AUTH-03 | ✅ `test_same_answer_whether_or_not_the_account_exists` |
 | T-AUTH-14 | R | A user denies having logged in | `last_login_at` recorded | B-CLN-04 | ✅ partial · ⏳ full audit log (D2) |
 
 ### 4.2 Booking and availability
@@ -162,6 +164,7 @@ flowchart LR
 | R-6 | The free API host sleeps after inactivity (first request can take about a minute) | Availability, not confidentiality; acceptable for a demo | Paid plan for a real deployment |
 | R-7 | Single signing key (HS256) shared by all tokens | Simple and safe while only the API issues and verifies tokens | Key rotation procedure in the D3 runbook |
 | R-8 | .NET 8 reaches end of support in November 2026; ESLint 9 is deprecated | No known vulnerability; the spec requires .NET 8; ESLint 10 not yet supported by the React plugins | Upgrade when allowed and supported |
+| R-9 | No email provider is connected yet: in production, confirmation and password reset emails are only logged (with a masked address), not delivered | Demo accounts are already confirmed; the flows are proven by automated tests and shown locally, where the email is printed in the API console | Connect a transactional email provider (planned with reminders, B-BKG-08) |
 
 ## 6. Review
 

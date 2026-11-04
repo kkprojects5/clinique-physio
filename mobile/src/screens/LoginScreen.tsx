@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ApiError, login } from '../api';
+import { WEB_URL } from '../config';
 import { translate, type Language, type TextKey } from '../i18n';
 import { colors } from '../theme';
 
@@ -90,6 +91,14 @@ export default function LoginScreen({ language, notice, onLoggedIn }: Props) {
         {busy ? <ActivityIndicator color={colors.paper} /> : <Text style={styles.buttonText}>{t('login')}</Text>}
       </Pressable>
 
+      <Pressable
+        style={styles.link}
+        onPress={() => Linking.openURL(`${WEB_URL}/mot-de-passe-oublie`)}
+        accessibilityRole="link"
+      >
+        <Text style={styles.linkText}>{t('forgotPassword')}</Text>
+      </Pressable>
+
       {error ? (
         <Text style={styles.error} accessibilityRole="alert">
           {error}
@@ -130,6 +139,9 @@ const styles = StyleSheet.create({
   },
   pressed: { backgroundColor: colors.tealDark },
   buttonText: { color: colors.paper, fontWeight: '700', fontSize: 16 },
+  // The reset form is on the website: one secure page shared by every client.
+  link: { minHeight: 48, justifyContent: 'center', alignSelf: 'center' },
+  linkText: { color: colors.tealDark, textDecorationLine: 'underline', fontWeight: '600' },
   error: {
     marginTop: 12,
     backgroundColor: colors.errorBg,

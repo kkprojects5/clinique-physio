@@ -1,3 +1,4 @@
+import { Linking } from 'react-native';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import LoginScreen from '../screens/LoginScreen';
 import AppointmentsScreen from '../screens/AppointmentsScreen';
@@ -32,6 +33,15 @@ describe('login screen', () => {
     await fireEvent.changeText(screen.getByLabelText('Mot de passe'), password);
     await fireEvent.press(screen.getByRole('button', { name: 'Se connecter' }));
   }
+
+  it('opens the password reset page of the website', async () => {
+    const open = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
+    await render(<LoginScreen language="fr" onLoggedIn={jest.fn()} />);
+
+    await fireEvent.press(screen.getByRole('link', { name: 'Mot de passe oublié ?' }));
+
+    expect(open).toHaveBeenCalledWith('https://clinique-physio.vercel.app/mot-de-passe-oublie');
+  });
 
   it('asks for both fields before calling the API', async () => {
     const calls = mockFetch();

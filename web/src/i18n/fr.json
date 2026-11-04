@@ -65,5 +65,34 @@
     "ar": "arabe",
     "vi": "vietnamien",
     "ru": "russe"
+  },
+  "account": {
+    "email": "Adresse courriel",
+    "tooMany": "Trop de tentatives. Attendez une minute, puis réessayez.",
+    "forgot": {
+      "title": "Mot de passe oublié",
+      "intro": "Entrez l’adresse courriel de votre compte. Nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+      "submit": "Envoyer le lien",
+      "sent": "Si un compte existe pour cette adresse, un lien vient d’y être envoyé. Il est valide 30 minutes. Vérifiez aussi vos courriels indésirables.",
+      "link": "Mot de passe oublié ?"
+    },
+    "reset": {
+      "title": "Nouveau mot de passe",
+      "rules": "Au moins 12 caractères, sans votre adresse courriel. Une phrase de plusieurs mots est facile à retenir.",
+      "newPassword": "Nouveau mot de passe",
+      "confirm": "Confirmez le mot de passe",
+      "submit": "Enregistrer le mot de passe",
+      "tooShort": "Le mot de passe doit contenir au moins 12 caractères.",
+      "mismatch": "Les deux mots de passe ne sont pas identiques.",
+      "weak": "Le mot de passe ne doit pas contenir votre adresse courriel.",
+      "invalid": "Ce lien n’est plus valide (il a déjà servi ou il a expiré).",
+      "askAgain": "Demander un nouveau lien",
+      "done": "Votre mot de passe a été modifié. Vous pouvez maintenant vous connecter. Par sécurité, toutes vos sessions ouvertes ont été fermées."
+    },
+    "verify": {
+      "title": "Confirmation de l’adresse courriel",
+      "done": "Votre adresse courriel est confirmée. Vous pouvez maintenant vous connecter.",
+      "invalid": "Ce lien de confirmation n’est pas valide ou a expiré."
+    }
   }
 }

@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     # Address of the web app, used to build links in emails.
     web_base_url: str = "http://localhost:5173"
     email_verification_hours: int = 24
+    password_reset_minutes: int = 30  # a reset link works once, for 30 minutes
 
     # Login sessions (B-AUTH-02)
     access_token_minutes: int = 10  # short-lived: a stolen access token expires quickly

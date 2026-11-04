@@ -28,3 +28,6 @@ services:
       # cookie must be SameSite=None; it is still httpOnly and Secure (HTTPS only).
       - key: COOKIE_SAMESITE
         value: none
+      # Links in emails (confirmation, password reset) open the website.
+      - key: WEB_BASE_URL
+        value: https://clinique-physio.vercel.app

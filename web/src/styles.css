@@ -359,6 +359,31 @@ h2 {
   align-items: center;
   gap: 1rem;
 }
+.status--ok {
+  background: #e3f1ee;
+  color: var(--teal-dark);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+
+.narrow {
+  max-width: 34rem;
+}
+.form {
+  display: grid;
+  gap: 1rem;
+}
+.form .hint {
+  margin: 0;
+}
+.form .button {
+  justify-self: start;
+}
+.button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 .status--error p {
   margin: 0;
 }

@@ -125,6 +125,7 @@ person receives care, so it is treated as **Health**.
 
 | Data | Class | Why | Who can see it | Protection | Status |
 |---|---|---|---|---|---|
+| Password reset tokens | Internal (secret) | Let a user choose a new password from an email link | Nobody | Only a SHA-256 hash is stored; single use; 30 minutes | ✅ |
 | Refresh tokens | Internal (secret) | Keep sessions without storing passwords | Nobody | Only a SHA-256 hash is stored; rotated and revocable | ✅ |
 | Audit log (who accessed which patient file, when, from where) | Personal | Accountability; detect abuse (B-ADM-03) | Admin only | Append-only (no UPDATE or DELETE for the application) | ⏳ (D2) |
 

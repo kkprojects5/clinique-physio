@@ -109,7 +109,7 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#55](https://github.com/stevatak/Khadizhat-Synth/issues/55) | US-AUTH-01 | Patient registration with consent | Must | D1 | Done |
 | [#56](https://github.com/stevatak/Khadizhat-Synth/issues/56) | US-AUTH-02 | Login and secure sessions | Must | D1 | Done |
 | [#57](https://github.com/stevatak/Khadizhat-Synth/issues/57) | US-AUTH-03 | Strong password storage and password policy | Must | D1 | Done |
-| [#58](https://github.com/stevatak/Khadizhat-Synth/issues/58) | US-AUTH-03b | Password reset without user enumeration | Must | D1 | To do |
+| [#58](https://github.com/stevatak/Khadizhat-Synth/issues/58) | US-AUTH-03b | Password reset without user enumeration | Must | D1 | Done |
 | [#59](https://github.com/stevatak/Khadizhat-Synth/issues/59) | US-AUTH-04 | Mandatory two-factor authentication for staff | Must | D1 | Done |
 | [#60](https://github.com/stevatak/Khadizhat-Synth/issues/60) | US-AUTH-05 | Role and care-relationship access control | Must | D2 | In progress |
 | [#61](https://github.com/stevatak/Khadizhat-Synth/issues/61) | US-AUTH-06 | Protection against password guessing | Must | D1 | Done |
@@ -161,6 +161,6 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 
 ### D1 status
 
-All D1 stories are done except **US-AUTH-03b (password reset)**, which is being completed now.
+All 11 D1 stories are done, each proved by automated tests run in CI.
 Three later stories are already partly done thanks to D1 work: US-AUTH-05 (role checks),
 US-AVL-05 (team page) and US-BKG-02 (double-booking constraint).

@@ -67,14 +67,14 @@
       "priority": "Must",
       "module": "auth",
       "deliverable": "D1",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Request answers the same whether or not the email exists",
         "Single-use reset link, valid a short time",
         "All sessions are cancelled after a reset",
         "Rate limited"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_password_reset.py, web/src/pages/account.test.jsx"
     },
     {
       "id": "US-AUTH-04",

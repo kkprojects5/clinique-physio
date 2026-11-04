@@ -5,7 +5,7 @@ from app.models.availability import AvailabilityException, AvailabilityRule
 from app.models.patient import Patient
 from app.models.service import Service, TherapistService
 from app.models.therapist import Therapist
-from app.models.user import ROLES, Consent, RefreshToken, User
+from app.models.user import ROLES, Consent, PasswordResetToken, RefreshToken, User
 
 __all__ = [
     "ACTIVE_STATUSES",
@@ -15,6 +15,7 @@ __all__ = [
     "AvailabilityException",
     "AvailabilityRule",
     "Consent",
+    "PasswordResetToken",
     "Patient",
     "RefreshToken",
     "Service",

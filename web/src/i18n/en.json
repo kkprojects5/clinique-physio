@@ -65,5 +65,34 @@
     "ar": "Arabic",
     "vi": "Vietnamese",
     "ru": "Russian"
+  },
+  "account": {
+    "email": "Email address",
+    "tooMany": "Too many attempts. Wait a minute, then try again.",
+    "forgot": {
+      "title": "Forgot password",
+      "intro": "Enter the email address of your account. We will send you a link to choose a new password.",
+      "submit": "Send the link",
+      "sent": "If an account exists for this address, a link has just been sent to it. It is valid for 30 minutes. Also check your spam folder.",
+      "link": "Forgot your password?"
+    },
+    "reset": {
+      "title": "New password",
+      "rules": "At least 12 characters, without your email address. A phrase of several words is easy to remember.",
+      "newPassword": "New password",
+      "confirm": "Confirm the password",
+      "submit": "Save the password",
+      "tooShort": "The password must have at least 12 characters.",
+      "mismatch": "The two passwords are not the same.",
+      "weak": "The password must not contain your email address.",
+      "invalid": "This link is no longer valid (it was already used or it has expired).",
+      "askAgain": "Ask for a new link",
+      "done": "Your password has been changed. You can now log in. For your security, all your open sessions were closed."
+    },
+    "verify": {
+      "title": "Email address confirmation",
+      "done": "Your email address is confirmed. You can now log in.",
+      "invalid": "This confirmation link is invalid or has expired."
+    }
   }
 }

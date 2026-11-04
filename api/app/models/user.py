@@ -1,4 +1,4 @@
-"""Identity tables: users, refresh tokens and consents (B-AUTH-01, B-AUTH-02)."""
+"""Identity tables: users, refresh tokens, password reset tokens and consents (B-AUTH-01 to 03)."""
 
 import uuid
 from datetime import datetime
@@ -52,6 +52,21 @@ class RefreshToken(Base):
     token_hash: Mapped[str] = mapped_column(Text, unique=True)
     expires_at: Mapped[datetime]
     revoked_at: Mapped[datetime | None]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class PasswordResetToken(Base):
+    """A single-use password reset link (B-AUTH-03). Only a hash of the token is stored."""
+
+    __tablename__ = "password_reset_tokens"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True)
+    token_hash: Mapped[str] = mapped_column(Text, unique=True)
+    expires_at: Mapped[datetime]
+    used_at: Mapped[datetime | None]  # set when used, or when a newer link replaces it
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
 
