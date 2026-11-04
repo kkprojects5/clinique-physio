@@ -3,7 +3,8 @@
 Status: **D1 (v0.1.0)**. Diagrams follow the [C4 model](https://c4model.com) (levels 1 and 2,
 plus a short level 3 for the API). Design decisions are recorded as ADRs in [adr/](adr/).
 
-Related documents: [erd.md](erd.md) (data model), [openapi.json](openapi.json) (API contract),
+Related documents: [requirements.md](requirements.md), [erd.md](erd.md) (data model),
+[data-dictionary.md](data-dictionary.md), [openapi.json](openapi.json) (API contract),
 [threat-model.md](threat-model.md), [data-classification.md](data-classification.md).
 
 ## 1. System context (C4 level 1)
