@@ -1,6 +1,12 @@
 """All models are imported here so Alembic can find every table."""
 
-from app.models.appointment import ACTIVE_STATUSES, APPOINTMENT_STATUSES, Appointment
+from app.models.appointment import (
+    ACTIVE_STATUSES,
+    APPOINTMENT_STATUSES,
+    UNPAID_STATUSES,
+    Appointment,
+    AppointmentStatusHistory,
+)
 from app.models.availability import AvailabilityException, AvailabilityRule
 from app.models.patient import Patient
 from app.models.service import Service, TherapistService
@@ -11,7 +17,9 @@ __all__ = [
     "ACTIVE_STATUSES",
     "APPOINTMENT_STATUSES",
     "ROLES",
+    "UNPAID_STATUSES",
     "Appointment",
+    "AppointmentStatusHistory",
     "AvailabilityException",
     "AvailabilityRule",
     "Consent",

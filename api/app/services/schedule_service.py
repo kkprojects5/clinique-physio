@@ -2,22 +2,25 @@
 
 from datetime import UTC, date, datetime, time, timedelta
 
-from sqlalchemy import or_, select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.dialects.postgresql import Range
 from sqlalchemy.orm import Session
 
-from app.models import Appointment, Patient, Service, Therapist
+from app.models import UNPAID_STATUSES, Appointment, Patient, Service, Therapist
 from app.services.slots import local_to_utc
 
 MY_APPOINTMENTS_LIMIT = 50  # lists are never unbounded (NFR-07)
 
 
 def _not_expired_hold(now: datetime):
-    """A 'held' appointment whose 10-minute hold has passed is no longer real."""
-    return or_(
-        Appointment.status != "held",
-        Appointment.hold_expires_at.is_(None),
-        Appointment.hold_expires_at > now,
+    """An unpaid hold whose 10 minutes have passed is no longer real, nor is an expired one."""
+    return and_(
+        Appointment.status != "expired",
+        or_(
+            Appointment.status.notin_(UNPAID_STATUSES),
+            Appointment.hold_expires_at.is_(None),
+            Appointment.hold_expires_at > now,
+        ),
     )
 
 

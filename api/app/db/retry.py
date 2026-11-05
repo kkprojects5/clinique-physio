@@ -40,3 +40,17 @@ def commit_with_retry[T](
                 if not is_deadlock(error) or attempt == attempts:
                     raise
     raise AssertionError("unreachable")  # pragma: no cover
+
+
+def retry_on_deadlock[T](db: Session, work: Callable[[], T], attempts: int = MAX_ATTEMPTS) -> T:
+    """Same as commit_with_retry, for the session of an API request: run work() and commit."""
+    for attempt in range(1, attempts + 1):
+        try:
+            result = work()
+            db.commit()
+            return result
+        except OperationalError as error:
+            db.rollback()
+            if not is_deadlock(error) or attempt == attempts:
+                raise
+    raise AssertionError("unreachable")  # pragma: no cover

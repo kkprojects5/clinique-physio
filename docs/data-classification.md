@@ -89,7 +89,7 @@ person receives care, so it is treated as **Health**.
 | `patient_id` + `during` + `service_id` + `therapist_id` | Health | The booking itself | The patient (own only); front desk; the therapist | Patient endpoints filtered by the logged-in patient (tested: `test_patient_never_sees_another_patients_appointments`); public slot search shows only free times, never who booked | ✅ |
 | `status`, `hold_expires_at` | Internal | Appointment lifecycle | Same as above | — | ✅ |
 | `created_by`, `version`, `created_at`, `updated_at` | Internal | Traceability; offline sync conflicts | Staff | — | ✅ |
-| Status history (who changed what) | Internal | Accountability (B-BKG-05) | Admin | Append-only | ⏳ (D2) |
+| Status history (who changed what) | Internal | Accountability (B-BKG-05) | Admin | Rows only added; reasons never clinical | ✅ |
 
 ### clinical_notes — the most sensitive data
 

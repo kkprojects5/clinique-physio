@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.models import (
     ACTIVE_STATUSES,
+    UNPAID_STATUSES,
     Appointment,
     AvailabilityException,
     AvailabilityRule,
@@ -118,7 +119,7 @@ def find_slots(
                     Appointment.status.in_(ACTIVE_STATUSES),
                     # an expired 10-minute hold no longer blocks the slot (B-BKG-03)
                     or_(
-                        Appointment.status != "held",
+                        Appointment.status.notin_(UNPAID_STATUSES),
                         Appointment.hold_expires_at.is_(None),
                         Appointment.hold_expires_at > now,
                     ),

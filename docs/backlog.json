@@ -262,12 +262,12 @@
       "priority": "Must",
       "module": "booking",
       "deliverable": "D2",
-      "status": "partial",
+      "status": "done",
       "acceptance": [
-        "Database exclusion constraint (done in D1)",
-        "30 simultaneous requests: 1 success, 29 clear 'slot no longer available' errors (constraint test done in D1; API 409 answer in D2)"
+        "Database exclusion constraint (done)",
+        "30 simultaneous requests: 1 success; others get a clear 'slot no longer available' (HTTP 409) (done)"
       ],
-      "evidence": "api/tests/test_double_booking.py (constraint)"
+      "evidence": "api/tests/test_double_booking.py, api/tests/test_booking.py (test_race_lost_at_the_database_gives_409)"
     },
     {
       "id": "US-BKG-03",
@@ -279,11 +279,11 @@
       "priority": "Must",
       "module": "booking",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Released automatically if payment is not completed"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_booking.py"
     },
     {
       "id": "US-BKG-04",
@@ -312,12 +312,12 @@
       "priority": "Must",
       "module": "booking",
       "deliverable": "D2",
-      "status": "open",
+      "status": "partial",
       "acceptance": [
-        "held, pending_payment, confirmed, checked_in, completed, cancelled_by_patient, cancelled_by_clinic, no_show",
-        "Transitions logged with the actor"
+        "held, pending_payment, confirmed, checked_in, completed, cancelled_by_patient, cancelled_by_clinic, no_show, expired (done)",
+        "Transitions logged with the actor (done for booking, cancel, reschedule, expiry; payment and check-in to come)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_booking.py"
     },
     {
       "id": "US-BKG-06",
@@ -329,12 +329,13 @@
       "priority": "Must",
       "module": "booking",
       "deliverable": "D2",
-      "status": "open",
+      "status": "partial",
       "acceptance": [
-        "More than 24 h before: deposit refunded; less: kept as a fee",
-        "Rule tested at the 24 h boundary, including across a DST change"
+        "Cancel and reschedule more than 24 h before (done)",
+        "More than 24 h: deposit refunded; less: kept as a fee (rule done; Stripe refund with the payment step)",
+        "Rule tested at the 24 h boundary, including across a DST change (done)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_booking.py"
     },
     {
       "id": "US-BKG-07",

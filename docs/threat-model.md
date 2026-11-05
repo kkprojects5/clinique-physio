@@ -110,13 +110,14 @@ flowchart LR
 
 | ID | STRIDE | Threat | Mitigation | Req. | Status |
 |---|---|---|---|---|---|
-| T-BKG-1 | T | Two patients book the same slot at the same moment (race condition) | PostgreSQL exclusion constraint on (therapist, time range) for active statuses: the database refuses the second booking | B-BKG-02, B-C1 | ✅ `test_30_concurrent_bookings_only_one_succeeds` |
-| T-BKG-2 | T | Wrong times around daylight saving changes (booking at the wrong hour, wrong 24 h cancellation rule) | Times stored in UTC (`timestamptz`); schedules defined in clinic local time and converted per date | B-BKG-07, B-C2 | ✅ `test_slots.py` (November and March changes) · ⏳ 24 h rule tests (D2) |
+| T-BKG-1 | T | Two patients book the same slot at the same moment (race condition) | PostgreSQL exclusion constraint on (therapist, time range) for active statuses: the database refuses the second booking | B-BKG-02, B-C1 | ✅ `test_30_concurrent_bookings_only_one_succeeds`, `test_race_lost_at_the_database_gives_409` |
+| T-BKG-2 | T | Wrong times around daylight saving changes (booking at the wrong hour, wrong 24 h cancellation rule) | Times stored in UTC (`timestamptz`); schedules defined in clinic local time and converted per date | B-BKG-07, B-C2 | ✅ `test_slots.py` (November and March changes) · ✅ `test_24_hours_are_real_hours_across_the_november_change` |
 | T-BKG-3 | D | Requests for huge date ranges overload the API | Searches limited to 31 days, at most 60 days ahead; lists limited (e.g. 50 appointments) | NFR-07 | ✅ `test_invalid_ranges_are_refused`, `test_no_slots_more_than_60_days_ahead` |
 | T-BKG-4 | E | A therapist deletes another therapist's time off (IDOR) | Ownership checked in the database query; unknown or foreign id answers 404, revealing nothing | B-C3 | ✅ `test_therapist_cannot_delete_another_therapists_time_off` |
-| T-BKG-5 | S/T | Slots held forever to block the schedule | 10-minute hold; expired holds no longer block slots | B-BKG-03 | ✅ `test_expired_hold_does_not_block_but_active_hold_does` · ⏳ booking flow (D2) |
+| T-BKG-5 | S/T | Slots held forever to block the schedule | 10-minute hold, then status `expired`; a new hold replaces the patient's unpaid one (one slot at a time); 20 booking requests per minute per IP | B-BKG-03 | ✅ `test_expired_hold_does_not_block_but_active_hold_does`, `test_an_expired_hold_frees_the_slot`, `test_a_new_hold_replaces_the_patients_previous_hold` |
 | T-BKG-6 | T/R | Fake payment confirmation; webhook replayed | Stripe signature verified; each Stripe event processed once (unique `stripe_event_id`) | B-BKG-04 | ⏳ D2 |
-| T-BKG-7 | R | Who changed an appointment's status is unknown | Status history table with the actor | B-BKG-05 | ⏳ D2 |
+| T-BKG-8 | E | A patient cancels or moves another patient's appointment (IDOR) | Every change looks the appointment up by id **and** the logged-in patient; otherwise 404, revealing nothing | B-C3 | ✅ `test_patients_cannot_cancel_someone_elses_appointment`, `test_patients_cannot_reschedule_someone_elses_appointment` |
+| T-BKG-7 | R | Who changed an appointment's status is unknown | Status history table with the actor and a reason; rows only added | B-BKG-05 | ✅ `test_booking.py` (history checked on hold, cancel, reschedule, expiry) |
 
 ### 4.3 Patient data and clinical file
 

@@ -629,6 +629,161 @@
         }
       }
     },
+    "/api/v1/appointments/hold": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "Hold Slot",
+        "description": "Keep a free slot 10 minutes while the deposit is paid. 409 if it was just taken.",
+        "operationId": "hold_slot_api_v1_appointments_hold_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HoldRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/appointments/{appointment_id}/cancel": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "Cancel Appointment",
+        "description": "Cancel my appointment. Deposit refunded only more than 24 hours before.",
+        "operationId": "cancel_appointment_api_v1_appointments__appointment_id__cancel_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/appointments/{appointment_id}/reschedule": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "Reschedule Appointment",
+        "description": "Move my confirmed appointment to another free time, more than 24 hours ahead.",
+        "operationId": "reschedule_appointment_api_v1_appointments__appointment_id__reschedule_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RescheduleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/therapist/availability": {
       "get": {
         "tags": [
@@ -888,6 +1043,85 @@
         ],
         "title": "AvailabilityOut"
       },
+      "BookingOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "title": "End"
+          },
+          "start_local": {
+            "type": "string",
+            "title": "Start Local"
+          },
+          "hold_expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hold Expires At"
+          },
+          "deposit_cents": {
+            "type": "integer",
+            "title": "Deposit Cents"
+          },
+          "service": {
+            "$ref": "#/components/schemas/ServiceRef"
+          },
+          "therapist": {
+            "$ref": "#/components/schemas/TherapistRef"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "start",
+          "end",
+          "start_local",
+          "hold_expires_at",
+          "deposit_cents",
+          "service",
+          "therapist"
+        ],
+        "title": "BookingOut"
+      },
+      "CancelOut": {
+        "properties": {
+          "appointment": {
+            "$ref": "#/components/schemas/BookingOut"
+          },
+          "deposit_refunded": {
+            "type": "boolean",
+            "title": "Deposit Refunded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "appointment",
+          "deposit_refunded"
+        ],
+        "title": "CancelOut"
+      },
       "DaySchedule": {
         "properties": {
           "date": {
@@ -1064,6 +1298,38 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "HoldRequest": {
+        "properties": {
+          "service_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Service Id"
+          },
+          "therapist_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Therapist Id"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start"
+          }
+        },
+        "type": "object",
+        "required": [
+          "service_id",
+          "start"
+        ],
+        "title": "HoldRequest"
       },
       "LoginRequest": {
         "properties": {
@@ -1367,6 +1633,32 @@
         ],
         "title": "RegisterRequest",
         "description": "Patient registration (B-AUTH-01). Each field is justified in the data dictionary."
+      },
+      "RescheduleRequest": {
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start"
+          },
+          "therapist_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Therapist Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start"
+        ],
+        "title": "RescheduleRequest"
       },
       "ResetPasswordRequest": {
         "properties": {

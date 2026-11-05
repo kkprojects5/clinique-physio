@@ -120,11 +120,11 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#66](https://github.com/stevatak/Khadizhat-Synth/issues/66) | US-AVL-04 | Rooms as a resource | Should | D3 | To do |
 | [#67](https://github.com/stevatak/Khadizhat-Synth/issues/67) | US-AVL-05 | Therapist profile page | Should | D2 | In progress |
 | [#68](https://github.com/stevatak/Khadizhat-Synth/issues/68) | US-BKG-01 | Online booking with deposit | Must | D2 | To do |
-| [#69](https://github.com/stevatak/Khadizhat-Synth/issues/69) | US-BKG-02 | No double booking under concurrency | Must | D2 | In progress |
-| [#70](https://github.com/stevatak/Khadizhat-Synth/issues/70) | US-BKG-03 | Temporary hold during payment | Must | D2 | To do |
+| [#69](https://github.com/stevatak/Khadizhat-Synth/issues/69) | US-BKG-02 | No double booking under concurrency | Must | D2 | Done |
+| [#70](https://github.com/stevatak/Khadizhat-Synth/issues/70) | US-BKG-03 | Temporary hold during payment | Must | D2 | Done |
 | [#71](https://github.com/stevatak/Khadizhat-Synth/issues/71) | US-BKG-04 | Deposit payment confirmed by Stripe | Must | D2 | To do |
-| [#72](https://github.com/stevatak/Khadizhat-Synth/issues/72) | US-BKG-05 | Appointment lifecycle | Must | D2 | To do |
-| [#73](https://github.com/stevatak/Khadizhat-Synth/issues/73) | US-BKG-06 | Reschedule and cancel with the 24-hour rule | Must | D2 | To do |
+| [#72](https://github.com/stevatak/Khadizhat-Synth/issues/72) | US-BKG-05 | Appointment lifecycle | Must | D2 | In progress |
+| [#73](https://github.com/stevatak/Khadizhat-Synth/issues/73) | US-BKG-06 | Reschedule and cancel with the 24-hour rule | Must | D2 | In progress |
 | [#74](https://github.com/stevatak/Khadizhat-Synth/issues/74) | US-BKG-07 | Times shown in Montréal time | Must | D1 | Done |
 | [#75](https://github.com/stevatak/Khadizhat-Synth/issues/75) | US-BKG-08 | Appointment reminders | Should | D3 | To do |
 | [#76](https://github.com/stevatak/Khadizhat-Synth/issues/76) | US-BKG-09 | Waiting list | Could | D3 | To do |
@@ -161,6 +161,12 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 
 ### D1 status
 
-All 11 D1 stories are done, each proved by automated tests run in CI.
-Three later stories are already partly done thanks to D1 work: US-AUTH-05 (role checks),
-US-AVL-05 (team page) and US-BKG-02 (double-booking constraint).
+All 11 D1 stories are done, each proved by automated tests run in CI (completed 2026-11-04).
+
+### D2 progress
+
+- Done: US-BKG-02 (no double booking, with a clear 409 answer), US-BKG-03 (10-minute hold).
+- In progress: US-BKG-05 (status history: booking, cancel, reschedule, expiry), US-BKG-06
+  (24-hour rule; the Stripe refund comes with the payment step), US-AUTH-05 (role checks),
+  US-AVL-05 (team page).
+- Next: US-BKG-04 (Stripe deposit), then US-BKG-01 (booking pages on the website and mobile).

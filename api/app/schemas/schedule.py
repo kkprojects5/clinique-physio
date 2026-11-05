@@ -53,3 +53,31 @@ class MyAppointment(BaseModel):
     status: str
     service: ServiceRef
     therapist: TherapistRef
+
+
+class HoldRequest(BaseModel):
+    service_id: uuid.UUID
+    therapist_id: uuid.UUID | None = None  # empty: first available therapist
+    start: datetime  # with time zone, exactly as returned by GET /availability
+
+
+class RescheduleRequest(BaseModel):
+    start: datetime
+    therapist_id: uuid.UUID | None = None  # empty: same therapist
+
+
+class BookingOut(BaseModel):
+    id: uuid.UUID
+    status: str
+    start: datetime
+    end: datetime
+    start_local: str
+    hold_expires_at: datetime | None
+    deposit_cents: int
+    service: ServiceRef
+    therapist: TherapistRef
+
+
+class CancelOut(BaseModel):
+    appointment: BookingOut
+    deposit_refunded: bool  # True: cancelled more than 24 hours before a paid appointment

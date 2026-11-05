@@ -1,7 +1,6 @@
 """Appointments, with database-level protection against double booking (B-BKG-02, B-C1).
 
-room_id and deposit_payment_id are added in a later migration, with the
-rooms (Should) and payments (D2) tables.
+room_id is added with the rooms table (Should, D3).
 """
 
 import uuid
@@ -23,9 +22,12 @@ APPOINTMENT_STATUSES = (
     "cancelled_by_patient",
     "cancelled_by_clinic",
     "no_show",
+    "expired",  # a hold that was not paid within 10 minutes: the slot is free again
 )
 # Statuses that occupy the therapist's time. Cancelled or finished ones free the slot.
 ACTIVE_STATUSES = ("held", "pending_payment", "confirmed", "checked_in")
+# Statuses waiting for the deposit; they stop counting when hold_expires_at has passed.
+UNPAID_STATUSES = ("held", "pending_payment")
 
 
 class Appointment(Base):
@@ -42,7 +44,7 @@ class Appointment(Base):
         ),
         CheckConstraint(
             "status IN ('held', 'pending_payment', 'confirmed', 'checked_in', 'completed',"
-            " 'cancelled_by_patient', 'cancelled_by_clinic', 'no_show')",
+            " 'cancelled_by_patient', 'cancelled_by_clinic', 'no_show', 'expired')",
             name="ck_appointments_status",
         ),
         CheckConstraint("NOT isempty(during)", name="ck_appointments_during"),
@@ -61,3 +63,19 @@ class Appointment(Base):
     version: Mapped[int] = mapped_column(server_default=text("1"))  # offline sync conflicts
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class AppointmentStatusHistory(Base):
+    """Every status change, with who made it (B-BKG-05). Rows are only ever added."""
+
+    __tablename__ = "appointment_status_history"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    appointment_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("appointments.id"), index=True)
+    from_status: Mapped[str | None] = mapped_column(Text)  # empty when the appointment is created
+    to_status: Mapped[str] = mapped_column(Text)
+    changed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))  # empty: system
+    reason: Mapped[str | None] = mapped_column(Text)
+    changed_at: Mapped[datetime] = mapped_column(server_default=func.now())

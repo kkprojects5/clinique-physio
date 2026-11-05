@@ -186,7 +186,7 @@ erDiagram
         uuid room_id FK "nullable, Should"
         uuid service_id FK
         tstzrange during "no overlap per therapist"
-        text status "state machine B-BKG-05"
+        text status "state machine B-BKG-05, incl. expired"
         timestamptz hold_expires_at "10 min hold"
         uuid deposit_payment_id FK
         uuid created_by FK
@@ -197,10 +197,11 @@ erDiagram
     appointment_status_history {
         uuid id PK
         uuid appointment_id FK
-        text from_status
+        text from_status "empty at creation"
         text to_status
-        uuid actor_id FK
-        timestamptz created_at
+        uuid changed_by FK "empty: system"
+        text reason
+        timestamptz changed_at
     }
     payments {
         uuid id PK
