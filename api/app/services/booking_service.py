@@ -16,6 +16,7 @@ Rules
 """
 
 import uuid
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 
 from psycopg.errors import ExclusionViolation
@@ -237,8 +238,13 @@ def cancel(
     user: User,
     appointment_id: uuid.UUID,
     now: datetime | None = None,
+    refund: Callable[[Appointment], None] | None = None,
 ) -> tuple[Appointment, bool]:
-    """Cancel the patient's own appointment. Returns (appointment, deposit refunded)."""
+    """Cancel the patient's own appointment. Returns (appointment, deposit refunded).
+
+    refund(appointment) gives the deposit back (Stripe); it runs before the cancellation is
+    saved, so a failed refund cancels nothing and the patient can try again.
+    """
     moment = now or datetime.now(UTC)
     appointment = _own(db, patient, appointment_id)
     if appointment.status not in CHANGEABLE or appointment.during.lower <= moment:
@@ -253,6 +259,12 @@ def cancel(
         )
     else:
         reason = "cancelled before payment"
+    if refunded and refund is not None:
+        try:
+            refund(appointment)
+        except BookingError:
+            db.rollback()
+            raise
     record(db, appointment, "cancelled_by_patient", user.id, reason)
     db.commit()
     return appointment, refunded

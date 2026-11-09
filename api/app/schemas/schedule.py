@@ -81,3 +81,14 @@ class BookingOut(BaseModel):
 class CancelOut(BaseModel):
     appointment: BookingOut
     deposit_refunded: bool  # True: cancelled more than 24 hours before a paid appointment
+
+
+class PaymentStart(BaseModel):
+    """What the website needs to show Stripe's card form."""
+
+    appointment: BookingOut
+    payment_id: uuid.UUID
+    client_secret: str  # given to Stripe.js only; never logged
+    publishable_key: str
+    amount_cents: int
+    currency: str

@@ -122,9 +122,9 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#68](https://github.com/stevatak/Khadizhat-Synth/issues/68) | US-BKG-01 | Online booking with deposit | Must | D2 | To do |
 | [#69](https://github.com/stevatak/Khadizhat-Synth/issues/69) | US-BKG-02 | No double booking under concurrency | Must | D2 | Done |
 | [#70](https://github.com/stevatak/Khadizhat-Synth/issues/70) | US-BKG-03 | Temporary hold during payment | Must | D2 | Done |
-| [#71](https://github.com/stevatak/Khadizhat-Synth/issues/71) | US-BKG-04 | Deposit payment confirmed by Stripe | Must | D2 | To do |
+| [#71](https://github.com/stevatak/Khadizhat-Synth/issues/71) | US-BKG-04 | Deposit payment confirmed by Stripe | Must | D2 | Done |
 | [#72](https://github.com/stevatak/Khadizhat-Synth/issues/72) | US-BKG-05 | Appointment lifecycle | Must | D2 | In progress |
-| [#73](https://github.com/stevatak/Khadizhat-Synth/issues/73) | US-BKG-06 | Reschedule and cancel with the 24-hour rule | Must | D2 | In progress |
+| [#73](https://github.com/stevatak/Khadizhat-Synth/issues/73) | US-BKG-06 | Reschedule and cancel with the 24-hour rule | Must | D2 | Done |
 | [#74](https://github.com/stevatak/Khadizhat-Synth/issues/74) | US-BKG-07 | Times shown in Montréal time | Must | D1 | Done |
 | [#75](https://github.com/stevatak/Khadizhat-Synth/issues/75) | US-BKG-08 | Appointment reminders | Should | D3 | To do |
 | [#76](https://github.com/stevatak/Khadizhat-Synth/issues/76) | US-BKG-09 | Waiting list | Could | D3 | To do |
@@ -166,10 +166,11 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
 ### D2 progress
 
 - Done: US-BKG-02 (no double booking, with a clear 409 answer), US-BKG-03 (10-minute hold),
+  US-BKG-04 (Stripe deposit, signed webhook), US-BKG-06 (24-hour rule with Stripe refunds),
   US-AUTH-05 (care relationship), US-CLN-01 to 05 (patient files, encrypted SOAP notes, signature
   and amendments, audit log, no notes for front desk and admin), US-EXE-01, 02 and 04 (exercise
   library, programs, adherence).
-- In progress: US-EXE-03 (check-off: API done, screens to do), US-BKG-05 (status history: booking, cancel, reschedule, expiry), US-BKG-06
-  (24-hour rule; the Stripe refund comes with the payment step), US-AVL-05 (team page).
-- Next: US-BKG-04 (Stripe deposit), then the screens:
-  booking pages, therapist workspace, front-desk check-in.
+- In progress: US-EXE-03 (check-off: API done, screens to do), US-BKG-05 (status history; check-in
+  and no-show to come), US-AVL-05 (team page; photos to come).
+- Next: the screens: website login, booking and payment page, therapist workspace, patient
+  exercises on mobile, front-desk check-in.

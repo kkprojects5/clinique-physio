@@ -12,3 +12,4 @@ replaces it if it changes.
 | [0004](0004-time-zones.md) | Store times in UTC, define schedules in clinic local time | Accepted |
 | [0005](0005-desktop-core-library.md) | Desktop: WPF screens + a separate, testable Core library (MVVM) | Accepted |
 | [0006](0006-deployment-copy.md) | Deploy from a copy of the repository in the developer's account | Accepted (temporary) |
+| [0007](0007-stripe-payment-intent-webhook.md) | Deposit with a Stripe PaymentIntent, confirmed only by a signed webhook | Accepted |

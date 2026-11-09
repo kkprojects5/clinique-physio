@@ -31,3 +31,10 @@ services:
       # Links in emails (confirmation, password reset) open the website.
       - key: WEB_BASE_URL
         value: https://clinique-physio.vercel.app
+      # Stripe test-mode keys: set in the Render dashboard, never in this file.
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false

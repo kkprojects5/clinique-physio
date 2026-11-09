@@ -1,13 +1,12 @@
-"""Online booking by patients: hold, cancel, reschedule (B-BKG-01 to 06).
-
-Payment of the deposit (Stripe) confirms a held appointment; it is added in the next step.
-"""
+"""Online booking by patients: hold, pay the deposit, cancel, reschedule (B-BKG-01 to 06)."""
 
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from app.core import rate_limit
+from app.core.config import settings
 from app.core.rate_limit import limiter
 from app.dependencies import CurrentPatient, CurrentUser, DbSession
 from app.models import Appointment, Service, Therapist
@@ -15,14 +14,17 @@ from app.schemas.schedule import (
     BookingOut,
     CancelOut,
     HoldRequest,
+    PaymentStart,
     RescheduleRequest,
     ServiceRef,
     TherapistRef,
 )
-from app.services import booking_service
+from app.services import booking_service, payment_service
 from app.services.slots import CLINIC_TZ
+from app.services.stripe_gateway import StripeGateway, get_gateway
 
 router = APIRouter(prefix="/appointments", tags=["booking"])
+Gateway = Annotated[StripeGateway, Depends(get_gateway)]
 
 
 def _out(db: DbSession, appointment: Appointment) -> BookingOut:
@@ -75,10 +77,17 @@ def cancel_appointment(
     db: DbSession,
     user: CurrentUser,
     patient: CurrentPatient,
+    gateway: Gateway,
 ) -> CancelOut:
     """Cancel my appointment. Deposit refunded only more than 24 hours before."""
     try:
-        appointment, refunded = booking_service.cancel(db, patient, user, appointment_id)
+        appointment, refunded = booking_service.cancel(
+            db,
+            patient,
+            user,
+            appointment_id,
+            refund=lambda a: payment_service.refund_deposit(db, a, gateway),
+        )
     except booking_service.BookingError as error:
         raise _refused(error) from None
     return CancelOut(appointment=_out(db, appointment), deposit_refunded=refunded)
@@ -102,3 +111,34 @@ def reschedule_appointment(
     except booking_service.BookingError as error:
         raise _refused(error) from None
     return _out(db, appointment)
+
+
+@router.post("/{appointment_id}/pay")
+@limiter.limit(rate_limit.BOOKING_LIMIT)
+def pay_deposit(
+    request: Request,
+    appointment_id: uuid.UUID,
+    db: DbSession,
+    user: CurrentUser,
+    patient: CurrentPatient,
+    gateway: Gateway,
+) -> PaymentStart:
+    """Start paying the deposit of my held appointment with Stripe (test mode).
+
+    The website shows Stripe's card form with the client secret; card details go straight to
+    Stripe. The appointment is confirmed when Stripe's signed webhook arrives.
+    """
+    try:
+        appointment, payment, client_secret = payment_service.start_deposit(
+            db, patient, user, appointment_id, gateway
+        )
+    except booking_service.BookingError as error:
+        raise _refused(error) from None
+    return PaymentStart(
+        appointment=_out(db, appointment),
+        payment_id=payment.id,
+        client_secret=client_secret,
+        publishable_key=settings.stripe_publishable_key,
+        amount_cents=payment.amount_cents,
+        currency=settings.currency,
+    )

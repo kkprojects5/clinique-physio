@@ -295,12 +295,12 @@
       "priority": "Must",
       "module": "booking",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Stripe test mode",
         "Signed, idempotent webhook; status pending_payment to confirmed"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_payments.py"
     },
     {
       "id": "US-BKG-05",
@@ -315,7 +315,7 @@
       "status": "partial",
       "acceptance": [
         "held, pending_payment, confirmed, checked_in, completed, cancelled_by_patient, cancelled_by_clinic, no_show, expired (done)",
-        "Transitions logged with the actor (done for booking, cancel, reschedule, expiry; payment and check-in to come)"
+        "Transitions logged with the actor (done for booking, payment, cancel, reschedule, expiry; check-in and no-show with the front desk)"
       ],
       "evidence": "api/tests/test_booking.py"
     },
@@ -329,13 +329,13 @@
       "priority": "Must",
       "module": "booking",
       "deliverable": "D2",
-      "status": "partial",
+      "status": "done",
       "acceptance": [
         "Cancel and reschedule more than 24 h before (done)",
-        "More than 24 h: deposit refunded; less: kept as a fee (rule done; Stripe refund with the payment step)",
+        "More than 24 h: deposit refunded through Stripe; less: kept as a fee (done)",
         "Rule tested at the 24 h boundary, including across a DST change (done)"
       ],
-      "evidence": "api/tests/test_booking.py"
+      "evidence": "api/tests/test_booking.py, api/tests/test_payments.py"
     },
     {
       "id": "US-BKG-07",

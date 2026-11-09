@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     email_verification_hours: int = 24
     password_reset_minutes: int = 30  # a reset link works once, for 30 minutes
 
+    # Stripe, test mode only (B-BKG-04). Empty secret key: online payment is switched off.
+    stripe_secret_key: str = ""
+    stripe_publishable_key: str = ""
+    stripe_webhook_secret: str = ""  # signing secret of the webhook endpoint (whsec_...)
+    currency: str = "cad"
+
     # Login sessions (B-AUTH-02)
     access_token_minutes: int = 10  # short-lived: a stolen access token expires quickly
     refresh_token_days_patient: int = 7

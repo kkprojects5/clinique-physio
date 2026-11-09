@@ -207,18 +207,18 @@ erDiagram
         uuid id PK
         uuid appointment_id FK
         int amount_cents
-        text type "deposit, balance, refund, fee"
+        text type "deposit, refund"
         text method "stripe, cash, debit"
-        text status
+        text status "pending, succeeded, failed"
         text stripe_id UK "nullable"
         timestamptz created_at
+        timestamptz updated_at
     }
     payment_events {
         uuid id PK
         uuid payment_id FK "nullable"
         text stripe_event_id UK "idempotency"
         text event_type
-        jsonb payload
         timestamptz received_at
         timestamptz processed_at
     }
@@ -426,4 +426,4 @@ These are not in B.6, but the requirements need them:
 | `users.email_verified_at` | Email verification at registration (B-AUTH-01). |
 | `appointments.hold_expires_at` | The 10-minute hold during payment (B-BKG-03). |
 | `appointments.version` and `updated_at` | Detect conflicts when the desktop app syncs offline actions (B-FRD-06). |
-| `payments.status` | Track pending, succeeded, failed and refunded payments. |
+| `payments.status` | Track pending, succeeded and failed payments; a refund is its own row (`type = refund`). |

@@ -23,7 +23,7 @@ def library(db):
     return db.scalars(select(Exercise).order_by(Exercise.name_en)).all()
 
 
-def give(client, db, clinic, therapist=None, patient=None, start=None, weeks=4, **extra):  # noqa: F811
+def give(client, db, clinic, therapist=None, patient=None, start=None, weeks=4, **extra):
     exercises = library(db)[:2]
     body = {
         "start_date": str(start or today_local()),
@@ -43,7 +43,7 @@ def give(client, db, clinic, therapist=None, patient=None, start=None, weeks=4, 
 
 
 @pytest.fixture
-def treated(db, clinic):  # noqa: F811
+def treated(db, clinic):
     """Anne treats Marie."""
     visit(db, clinic, clinic["anne"], clinic["marie"])
     return clinic

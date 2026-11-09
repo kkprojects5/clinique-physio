@@ -784,6 +784,55 @@
         }
       }
     },
+    "/api/v1/appointments/{appointment_id}/pay": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "Pay Deposit",
+        "description": "Start paying the deposit of my held appointment with Stripe (test mode).\n\nThe website shows Stripe's card form with the client secret; card details go straight to\nStripe. The appointment is confirmed when Stripe's signed webhook arrives.",
+        "operationId": "pay_deposit_api_v1_appointments__appointment_id__pay_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentStart"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/therapist/availability": {
       "get": {
         "tags": [
@@ -1657,6 +1706,59 @@
         "responses": {
           "204": {
             "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/webhooks/stripe": {
+      "post": {
+        "tags": [
+          "webhooks"
+        ],
+        "summary": "Stripe Webhook",
+        "operationId": "stripe_webhook_api_v1_webhooks_stripe_post",
+        "parameters": [
+          {
+            "name": "stripe-signature",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Stripe-Signature"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Stripe Webhook Api V1 Webhooks Stripe Post"
+                }
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -2577,6 +2679,45 @@
         ],
         "title": "PatientRef",
         "description": "What the front desk needs to recognise and call a patient. No clinical data (B-CLN-05)."
+      },
+      "PaymentStart": {
+        "properties": {
+          "appointment": {
+            "$ref": "#/components/schemas/BookingOut"
+          },
+          "payment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Payment Id"
+          },
+          "client_secret": {
+            "type": "string",
+            "title": "Client Secret"
+          },
+          "publishable_key": {
+            "type": "string",
+            "title": "Publishable Key"
+          },
+          "amount_cents": {
+            "type": "integer",
+            "title": "Amount Cents"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          }
+        },
+        "type": "object",
+        "required": [
+          "appointment",
+          "payment_id",
+          "client_secret",
+          "publishable_key",
+          "amount_cents",
+          "currency"
+        ],
+        "title": "PaymentStart",
+        "description": "What the website needs to show Stripe's card form."
       },
       "ProgramIn": {
         "properties": {

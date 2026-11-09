@@ -100,6 +100,21 @@ python -m uvicorn app.main:app --reload
 - `python -m app.seed --refresh-appointments` adds demo appointments for the next two weeks
   (safe to run again).
 
+### Payments (Stripe test mode, optional)
+
+Online deposit payment uses Stripe in test mode (no real money). Put your Sandbox keys in `.env`
+(`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`). To receive Stripe's payment results locally,
+install the [Stripe CLI](https://docs.stripe.com/stripe-cli) and run:
+
+```
+stripe login
+stripe listen --forward-to localhost:8000/api/v1/webhooks/stripe
+```
+
+Copy the `whsec_...` secret it prints into `STRIPE_WEBHOOK_SECRET` in `.env`, then restart the
+API. Test card: `4242 4242 4242 4242`, any future date, any CVC. Without Stripe keys, everything
+else works and online payment answers 503. Design: [ADR-007](docs/adr/0007-stripe-payment-intent-webhook.md).
+
 ### 3. Website
 
 ```

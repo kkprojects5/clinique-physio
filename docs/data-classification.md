@@ -110,8 +110,8 @@ person receives care, so it is treated as **Health**.
 
 | Data | Class | Why | Who can see it | Protection | Status |
 |---|---|---|---|---|---|
-| Amounts, type, method, status | Personal | Deposits, refunds, receipts | The patient (own); front desk; admin | Card data is never sent to or stored by our systems (Stripe handles it) | ⏳ (D2) |
-| Stripe ids and webhook events | Internal | Confirm payments exactly once | Admin | Signed webhooks; unique event id | ⏳ (D2) |
+| Amounts, type, method, status | Personal | Deposits, refunds, receipts | The patient (own); front desk; admin | Card data is never sent to or stored by our systems (Stripe handles it, ADR-007) | ✅ |
+| Stripe ids and webhook events | Internal | Confirm payments exactly once | Admin | Signed webhooks; unique event id; full Stripe payload not stored | ✅ |
 
 ### consents, privacy_requests, incident_register (Law 25)
 

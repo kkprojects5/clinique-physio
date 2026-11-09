@@ -107,6 +107,16 @@ TABLES = {
         "Sessions checked off by the patient, at most once per exercise per day, with an optional pain level.",
         "B-EXE-03, B-EXE-04",
     ),
+    "payments": (
+        "Booking",
+        "Deposits paid online and their refunds. Card details are never stored: Stripe handles them.",
+        "B-BKG-04, B-BKG-06",
+    ),
+    "payment_events": (
+        "Booking",
+        "Stripe webhook events, each applied once (idempotency). Only the event id and type are kept.",
+        "B-BKG-04",
+    ),
     "appointment_status_history": (
         "Booking",
         "Every status change of an appointment, with who made it. Rows are only added.",
@@ -365,6 +375,30 @@ COLUMNS = {
     ),
     ("exercise_logs", "done_at"): ("Exact time of the check-off (UTC).", HEA),
     ("exercise_logs", "pain_level"): ("Optional pain felt, 0 (none) to 10 (worst).", HEA),
+    ("payments", "id"): ID,
+    ("payments", "appointment_id"): ("The appointment the money is for.", PER),
+    ("payments", "amount_cents"): ("Amount in cents (3000 = 30,00 $), always positive.", PER),
+    ("payments", "type"): (
+        "deposit (paid online when booking) or refund (deposit given back).",
+        PER,
+    ),
+    ("payments", "method"): ("stripe online; cash or debit at the desk (D3).", PER),
+    ("payments", "status"): ("pending, succeeded or failed, as reported by Stripe.", PER),
+    ("payments", "stripe_id"): ("Stripe's PaymentIntent or Refund id. Never a card number.", INT),
+    ("payments", "created_at"): CREATED,
+    ("payments", "updated_at"): ("Last status change (UTC).", INT),
+    ("payment_events", "id"): ID,
+    ("payment_events", "payment_id"): ("The payment the event was about, when known.", INT),
+    ("payment_events", "stripe_event_id"): (
+        "Stripe's event id, unique: an event sent twice is applied once.",
+        INT,
+    ),
+    ("payment_events", "event_type"): (
+        "For example payment_intent.succeeded or payment_intent.payment_failed.",
+        INT,
+    ),
+    ("payment_events", "received_at"): ("When the webhook arrived (UTC).", INT),
+    ("payment_events", "processed_at"): ("When it was applied (UTC).", INT),
     ("appointment_status_history", "id"): ID,
     ("appointment_status_history", "appointment_id"): ("The appointment that changed.", INT),
     ("appointment_status_history", "from_status"): (
@@ -387,11 +421,6 @@ COLUMNS = {
 }
 
 PLANNED = [
-    (
-        "payments, payment_events",
-        "Stripe deposits and refunds; webhook events processed once",
-        "D2",
-    ),
     (
         "kb_documents, kb_chunks, chat_logs",
         "Chatbot knowledge base (pgvector) and masked conversation logs",
