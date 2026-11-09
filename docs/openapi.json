@@ -944,6 +944,412 @@
         }
       }
     },
+    "/api/v1/therapist/patients": {
+      "get": {
+        "tags": [
+          "therapist"
+        ],
+        "summary": "List My Patients",
+        "description": "Patients I treat (care relationship), most recent visit first.",
+        "operationId": "list_my_patients_api_v1_therapist_patients_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MyPatient"
+                  },
+                  "type": "array",
+                  "title": "Response List My Patients Api V1 Therapist Patients Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/therapist/patients/{patient_id}": {
+      "get": {
+        "tags": [
+          "therapist"
+        ],
+        "summary": "Read Patient File",
+        "description": "Profile and appointment history of a patient I treat. 404 otherwise. Audited.",
+        "operationId": "read_patient_file_api_v1_therapist_patients__patient_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientFile"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/therapist/patients/{patient_id}/notes": {
+      "get": {
+        "tags": [
+          "therapist"
+        ],
+        "summary": "List Patient Notes",
+        "description": "All notes of a patient I treat (with amendments). Each note read is audited.",
+        "operationId": "list_patient_notes_api_v1_therapist_patients__patient_id__notes_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NoteOut"
+                  },
+                  "title": "Response List Patient Notes Api V1 Therapist Patients  Patient Id  Notes Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/therapist/appointments/{appointment_id}/notes": {
+      "post": {
+        "tags": [
+          "therapist"
+        ],
+        "summary": "Create Note",
+        "description": "Write the draft note of one of my appointments, once it has taken place.",
+        "operationId": "create_note_api_v1_therapist_appointments__appointment_id__notes_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoapIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/therapist/notes/{note_id}": {
+      "get": {
+        "tags": [
+          "therapist"
+        ],
+        "summary": "Read Note",
+        "description": "Read a note of a patient I treat. Audited.",
+        "operationId": "read_note_api_v1_therapist_notes__note_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Note Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "therapist"
+        ],
+        "summary": "Update Note",
+        "description": "Edit my draft note. A signed note answers 409.",
+        "operationId": "update_note_api_v1_therapist_notes__note_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Note Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoapIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/therapist/notes/{note_id}/sign": {
+      "post": {
+        "tags": [
+          "therapist"
+        ],
+        "summary": "Sign Note",
+        "description": "Sign my draft: from now on it can never be changed.",
+        "operationId": "sign_note_api_v1_therapist_notes__note_id__sign_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Note Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/therapist/notes/{note_id}/amendments": {
+      "post": {
+        "tags": [
+          "therapist"
+        ],
+        "summary": "Amend Note",
+        "description": "Correct a signed note with a new signed note. The original stays as it was.",
+        "operationId": "amend_note_api_v1_therapist_notes__note_id__amendments_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Note Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoapIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/desk/schedule": {
       "get": {
         "tags": [
@@ -1299,6 +1705,51 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "HistoryItem": {
+        "properties": {
+          "appointment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Appointment Id"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start"
+          },
+          "start_local": {
+            "type": "string",
+            "title": "Start Local"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "service_name_fr": {
+            "type": "string",
+            "title": "Service Name Fr"
+          },
+          "service_name_en": {
+            "type": "string",
+            "title": "Service Name En"
+          },
+          "therapist_name": {
+            "type": "string",
+            "title": "Therapist Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "appointment_id",
+          "start",
+          "start_local",
+          "status",
+          "service_name_fr",
+          "service_name_en",
+          "therapist_name"
+        ],
+        "title": "HistoryItem"
+      },
       "HoldRequest": {
         "properties": {
           "service_id": {
@@ -1524,6 +1975,183 @@
           "therapist"
         ],
         "title": "MyAppointment"
+      },
+      "MyPatient": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "title": "Date Of Birth"
+          },
+          "last_visit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Visit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "first_name",
+          "last_name",
+          "date_of_birth",
+          "last_visit"
+        ],
+        "title": "MyPatient"
+      },
+      "NoteOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "appointment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Appointment Id"
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "author_therapist_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Author Therapist Id"
+          },
+          "content": {
+            "$ref": "#/components/schemas/SoapContent"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "signed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed At"
+          },
+          "amends_note_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amends Note Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "appointment_id",
+          "patient_id",
+          "author_therapist_id",
+          "content",
+          "version",
+          "signed_at",
+          "amends_note_id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "NoteOut"
+      },
+      "PatientFile": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "title": "Date Of Birth"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone"
+          },
+          "emergency_contact": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emergency Contact"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryItem"
+            },
+            "type": "array",
+            "title": "History"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "first_name",
+          "last_name",
+          "date_of_birth",
+          "phone",
+          "emergency_contact",
+          "history"
+        ],
+        "title": "PatientFile"
       },
       "PatientRef": {
         "properties": {
@@ -1887,6 +2515,65 @@
           "start_local"
         ],
         "title": "SlotOut"
+      },
+      "SoapContent": {
+        "properties": {
+          "subjective": {
+            "type": "string",
+            "title": "Subjective"
+          },
+          "objective": {
+            "type": "string",
+            "title": "Objective"
+          },
+          "assessment": {
+            "type": "string",
+            "title": "Assessment"
+          },
+          "plan": {
+            "type": "string",
+            "title": "Plan"
+          }
+        },
+        "type": "object",
+        "required": [
+          "subjective",
+          "objective",
+          "assessment",
+          "plan"
+        ],
+        "title": "SoapContent"
+      },
+      "SoapIn": {
+        "properties": {
+          "subjective": {
+            "type": "string",
+            "maxLength": 5000,
+            "title": "Subjective",
+            "default": ""
+          },
+          "objective": {
+            "type": "string",
+            "maxLength": 5000,
+            "title": "Objective",
+            "default": ""
+          },
+          "assessment": {
+            "type": "string",
+            "maxLength": 5000,
+            "title": "Assessment",
+            "default": ""
+          },
+          "plan": {
+            "type": "string",
+            "maxLength": 5000,
+            "title": "Plan",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "SoapIn",
+        "description": "SOAP note: Subjective, Objective, Assessment, Plan. At least one part must be filled."
       },
       "StaffSessionResponse": {
         "properties": {

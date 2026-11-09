@@ -8,6 +8,7 @@ from app.models.appointment import (
     AppointmentStatusHistory,
 )
 from app.models.availability import AvailabilityException, AvailabilityRule
+from app.models.clinical import AuditLog, ClinicalNote
 from app.models.patient import Patient
 from app.models.service import Service, TherapistService
 from app.models.therapist import Therapist
@@ -19,6 +20,8 @@ __all__ = [
     "ROLES",
     "UNPAID_STATUSES",
     "Appointment",
+    "AuditLog",
+    "ClinicalNote",
     "AppointmentStatusHistory",
     "AvailabilityException",
     "AvailabilityRule",

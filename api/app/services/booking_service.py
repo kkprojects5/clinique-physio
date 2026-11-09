@@ -24,6 +24,7 @@ from sqlalchemy.dialects.postgresql import Range
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, aliased
 
+from app.db.locks import lock_therapist_schedule
 from app.db.retry import retry_on_deadlock
 from app.models import (
     UNPAID_STATUSES,
@@ -191,6 +192,7 @@ def hold(
         if service is None or not service.is_active:
             raise NotFound("Service not found.")
         chosen = _offered_slot(db, service_id, therapist_id, start)
+        lock_therapist_schedule(db, chosen)  # competing bookings take turns (ADR-001)
         if _needs_evaluation(db, patient, service, start):
             raise BookingError(
                 "A first treatment needs an initial evaluation before it. "
@@ -281,6 +283,7 @@ def reschedule(
         chosen = _offered_slot(
             db, appointment.service_id, therapist_id or appointment.therapist_id, new_start
         )
+        lock_therapist_schedule(db, chosen)  # competing bookings take turns (ADR-001)
         old = appointment.during.lower.astimezone(CLINIC_TZ).strftime("%Y-%m-%d %H:%M")
         length = appointment.during.upper - appointment.during.lower
         appointment.during = Range(new_start, new_start + length)

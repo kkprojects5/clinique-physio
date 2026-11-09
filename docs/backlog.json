@@ -105,14 +105,14 @@
       "priority": "Must",
       "module": "auth",
       "deliverable": "D2",
-      "status": "partial",
+      "status": "done",
       "acceptance": [
         "Roles checked on every endpoint, role read from the database (done)",
         "Ownership checks: patients see only their own data (done)",
-        "A therapist reads a patient file only with a care relationship (D2)",
-        "Tests prove therapist A cannot read notes of therapist B's patients (D2)"
+        "A therapist reads a patient file only with a care relationship (done)",
+        "Tests prove a therapist without care relationship cannot read another therapist's patient notes (done)"
       ],
-      "evidence": "api/tests/test_schedules.py, api/tests/test_availability.py (partial)"
+      "evidence": "api/tests/test_clinical.py, api/tests/test_schedules.py"
     },
     {
       "id": "US-AUTH-06",
@@ -414,11 +414,11 @@
       "priority": "Must",
       "module": "clinical",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Only patients with a care relationship"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_clinical.py"
     },
     {
       "id": "US-CLN-02",
@@ -430,11 +430,11 @@
       "priority": "Must",
       "module": "clinical",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Note encrypted by the application, key outside the database"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_clinical.py (test_note_content_is_encrypted_in_the_database)"
     },
     {
       "id": "US-CLN-03",
@@ -446,11 +446,11 @@
       "priority": "Should",
       "module": "clinical",
       "deliverable": "D3",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Original kept; amendment linked to it"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_clinical.py (signature, amendments, database trigger)"
     },
     {
       "id": "US-CLN-04",
@@ -462,11 +462,12 @@
       "priority": "Must",
       "module": "clinical",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
-        "Who, what, when, from which IP and app"
+        "Who, what, when, from which IP and app (done)",
+        "Refused attempts audited too (done)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_clinical.py (audit of every read, write and refusal; append-only trigger)"
     },
     {
       "id": "US-CLN-05",
@@ -478,11 +479,11 @@
       "priority": "Must",
       "module": "clinical",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Tested for both roles"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_clinical.py (test_front_desk_and_admin_never_reach_clinical_notes)"
     },
     {
       "id": "US-CLN-06",

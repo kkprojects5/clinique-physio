@@ -12,13 +12,14 @@ from collections import Counter
 from datetime import UTC, date, datetime, timedelta
 
 import pytest
-from psycopg.errors import ExclusionViolation
+from psycopg.errors import DeadlockDetected, ExclusionViolation
 from sqlalchemy import create_engine, delete
 from sqlalchemy.dialects.postgresql import Range
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
+from app.db.locks import lock_therapist_schedule
 from app.db.retry import commit_with_retry
 from app.db.session import SessionLocal
 from app.models import Appointment, Patient, Service, Therapist, User
@@ -85,8 +86,8 @@ def setup_data():
         session.commit()
 
 
-def test_30_concurrent_bookings_only_one_succeeds(setup_data):
-    start = datetime(2030, 3, 4, 15, 0, tzinfo=UTC)
+def run_concurrent_bookings(setup_data, start, booking_lock: bool) -> Counter:
+    """30 threads book the same slot at the same moment; returns how each one ended."""
     slot = Range(start, start + timedelta(minutes=30))  # same slot for everybody
     barrier = threading.Barrier(REQUESTS)  # makes all threads insert at the same moment
     results: list[str] = []
@@ -98,6 +99,10 @@ def test_30_concurrent_bookings_only_one_succeeds(setup_data):
 
     def book(patient_id, user_id):
         def insert(session, attempt):
+            if attempt == 1:
+                barrier.wait(timeout=30)  # first try: everybody starts at the same moment
+            if booking_lock:  # same as the booking endpoint: bookings for one therapist take turns
+                lock_therapist_schedule(session, setup_data["therapist_id"])
             session.add(
                 Appointment(
                     patient_id=patient_id,
@@ -108,12 +113,10 @@ def test_30_concurrent_bookings_only_one_succeeds(setup_data):
                     created_by=user_id,
                 )
             )
-            if attempt == 1:
-                barrier.wait(timeout=30)  # first try: everybody commits at the same moment
 
         try:
-            # Same retry the booking endpoint will use: a deadlock is retried, never shown.
-            commit_with_retry(make_session, insert)
+            # Same retry as the booking endpoint (with the lock); a single try without it.
+            commit_with_retry(make_session, insert, attempts=6 if booking_lock else 1)
             outcome = "booked"
         except IntegrityError as error:
             # Only the no-overlap constraint is an acceptable reason to fail.
@@ -121,6 +124,11 @@ def test_30_concurrent_bookings_only_one_succeeds(setup_data):
                 outcome = "slot_taken"
             else:
                 outcome = f"other integrity error: {error.orig!r}"
+        except OperationalError as error:
+            if isinstance(error.orig, DeadlockDetected):
+                outcome = "deadlock"
+            else:
+                outcome = f"unexpected OperationalError: {error}"[:300]
         except Exception as error:  # noqa: BLE001  (record it so the failure message shows it)
             outcome = f"unexpected {type(error).__name__}: {error}"[:300]
         with lock:
@@ -133,9 +141,27 @@ def test_30_concurrent_bookings_only_one_succeeds(setup_data):
         t.join()
     engine.dispose()
 
-    summary = Counter(results)
+    return Counter(results)
+
+
+def test_30_concurrent_bookings_only_one_succeeds(setup_data):
+    """What patients get: one booking, 29 clear 'slot taken' answers (lock + retry)."""
+    summary = run_concurrent_bookings(
+        setup_data, datetime(2030, 3, 4, 15, 0, tzinfo=UTC), booking_lock=True
+    )
+
+    assert summary == Counter({"booked": 1, "slot_taken": REQUESTS - 1}), summary
+
+
+def test_the_database_alone_never_accepts_two_bookings(setup_data):
+    """Without the lock and without retries, losers may end in a deadlock instead of a clear
+    refusal, but the exclusion constraint still never lets two bookings through."""
+    summary = run_concurrent_bookings(
+        setup_data, datetime(2030, 3, 6, 15, 0, tzinfo=UTC), booking_lock=False
+    )
+
     assert summary["booked"] == 1, summary
-    assert summary["slot_taken"] == REQUESTS - 1, summary
+    assert summary["slot_taken"] + summary["deadlock"] == REQUESTS - 1, summary
 
 
 def test_cancelled_appointment_frees_the_slot(setup_data):

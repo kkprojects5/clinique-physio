@@ -111,7 +111,7 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#57](https://github.com/stevatak/Khadizhat-Synth/issues/57) | US-AUTH-03 | Strong password storage and password policy | Must | D1 | Done |
 | [#58](https://github.com/stevatak/Khadizhat-Synth/issues/58) | US-AUTH-03b | Password reset without user enumeration | Must | D1 | Done |
 | [#59](https://github.com/stevatak/Khadizhat-Synth/issues/59) | US-AUTH-04 | Mandatory two-factor authentication for staff | Must | D1 | Done |
-| [#60](https://github.com/stevatak/Khadizhat-Synth/issues/60) | US-AUTH-05 | Role and care-relationship access control | Must | D2 | In progress |
+| [#60](https://github.com/stevatak/Khadizhat-Synth/issues/60) | US-AUTH-05 | Role and care-relationship access control | Must | D2 | Done |
 | [#61](https://github.com/stevatak/Khadizhat-Synth/issues/61) | US-AUTH-06 | Protection against password guessing | Must | D1 | Done |
 | [#62](https://github.com/stevatak/Khadizhat-Synth/issues/62) | US-AUTH-07 | Break-the-glass emergency access | Could | D3 | To do |
 | [#63](https://github.com/stevatak/Khadizhat-Synth/issues/63) | US-AVL-01 | Service catalog | Must | D1 | Done |
@@ -129,11 +129,11 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#75](https://github.com/stevatak/Khadizhat-Synth/issues/75) | US-BKG-08 | Appointment reminders | Should | D3 | To do |
 | [#76](https://github.com/stevatak/Khadizhat-Synth/issues/76) | US-BKG-09 | Waiting list | Could | D3 | To do |
 | [#77](https://github.com/stevatak/Khadizhat-Synth/issues/77) | US-BKG-10 | Insurance receipt | Should | D3 | To do |
-| [#78](https://github.com/stevatak/Khadizhat-Synth/issues/78) | US-CLN-01 | My patients and their history | Must | D2 | To do |
-| [#79](https://github.com/stevatak/Khadizhat-Synth/issues/79) | US-CLN-02 | Encrypted SOAP session notes | Must | D2 | To do |
-| [#80](https://github.com/stevatak/Khadizhat-Synth/issues/80) | US-CLN-03 | Signed notes and amendments | Should | D3 | To do |
-| [#81](https://github.com/stevatak/Khadizhat-Synth/issues/81) | US-CLN-04 | Audit of clinical access | Must | D2 | To do |
-| [#82](https://github.com/stevatak/Khadizhat-Synth/issues/82) | US-CLN-05 | No clinical notes for front desk and admin | Must | D2 | To do |
+| [#78](https://github.com/stevatak/Khadizhat-Synth/issues/78) | US-CLN-01 | My patients and their history | Must | D2 | Done |
+| [#79](https://github.com/stevatak/Khadizhat-Synth/issues/79) | US-CLN-02 | Encrypted SOAP session notes | Must | D2 | Done |
+| [#80](https://github.com/stevatak/Khadizhat-Synth/issues/80) | US-CLN-03 | Signed notes and amendments | Should | D3 | Done |
+| [#81](https://github.com/stevatak/Khadizhat-Synth/issues/81) | US-CLN-04 | Audit of clinical access | Must | D2 | Done |
+| [#82](https://github.com/stevatak/Khadizhat-Synth/issues/82) | US-CLN-05 | No clinical notes for front desk and admin | Must | D2 | Done |
 | [#83](https://github.com/stevatak/Khadizhat-Synth/issues/83) | US-CLN-06 | Document upload | Could | D3 | To do |
 | [#84](https://github.com/stevatak/Khadizhat-Synth/issues/84) | US-EXE-01 | Exercise library | Must | D2 | To do |
 | [#85](https://github.com/stevatak/Khadizhat-Synth/issues/85) | US-EXE-02 | Assign a program | Must | D2 | To do |
@@ -165,8 +165,10 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
 
 ### D2 progress
 
-- Done: US-BKG-02 (no double booking, with a clear 409 answer), US-BKG-03 (10-minute hold).
+- Done: US-BKG-02 (no double booking, with a clear 409 answer), US-BKG-03 (10-minute hold),
+  US-AUTH-05 (care relationship), US-CLN-01 to 05 (patient files, encrypted SOAP notes, signature
+  and amendments, audit log, no notes for front desk and admin).
 - In progress: US-BKG-05 (status history: booking, cancel, reschedule, expiry), US-BKG-06
-  (24-hour rule; the Stripe refund comes with the payment step), US-AUTH-05 (role checks),
-  US-AVL-05 (team page).
-- Next: US-BKG-04 (Stripe deposit), then US-BKG-01 (booking pages on the website and mobile).
+  (24-hour rule; the Stripe refund comes with the payment step), US-AVL-05 (team page).
+- Next: US-BKG-04 (Stripe deposit), US-EXE-01 to 03 (exercise programs), then the screens:
+  booking pages, therapist workspace, front-desk check-in.

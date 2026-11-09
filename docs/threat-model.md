@@ -110,7 +110,7 @@ flowchart LR
 
 | ID | STRIDE | Threat | Mitigation | Req. | Status |
 |---|---|---|---|---|---|
-| T-BKG-1 | T | Two patients book the same slot at the same moment (race condition) | PostgreSQL exclusion constraint on (therapist, time range) for active statuses: the database refuses the second booking | B-BKG-02, B-C1 | ✅ `test_30_concurrent_bookings_only_one_succeeds`, `test_race_lost_at_the_database_gives_409` |
+| T-BKG-1 | T | Two patients book the same slot at the same moment (race condition) | PostgreSQL exclusion constraint on (therapist, time range) for active statuses: the database refuses the second booking; competing bookings for one therapist take turns (transaction lock) so losers get a clear refusal, not a deadlock (ADR-001) | B-BKG-02, B-C1 | ✅ `test_30_concurrent_bookings_only_one_succeeds`, `test_the_database_alone_never_accepts_two_bookings`, `test_race_lost_at_the_database_gives_409` |
 | T-BKG-2 | T | Wrong times around daylight saving changes (booking at the wrong hour, wrong 24 h cancellation rule) | Times stored in UTC (`timestamptz`); schedules defined in clinic local time and converted per date | B-BKG-07, B-C2 | ✅ `test_slots.py` (November and March changes) · ✅ `test_24_hours_are_real_hours_across_the_november_change` |
 | T-BKG-3 | D | Requests for huge date ranges overload the API | Searches limited to 31 days, at most 60 days ahead; lists limited (e.g. 50 appointments) | NFR-07 | ✅ `test_invalid_ranges_are_refused`, `test_no_slots_more_than_60_days_ahead` |
 | T-BKG-4 | E | A therapist deletes another therapist's time off (IDOR) | Ownership checked in the database query; unknown or foreign id answers 404, revealing nothing | B-C3 | ✅ `test_therapist_cannot_delete_another_therapists_time_off` |
@@ -124,11 +124,11 @@ flowchart LR
 | ID | STRIDE | Threat | Mitigation | Req. | Status |
 |---|---|---|---|---|---|
 | T-CLN-1 | I/E | A patient reads another patient's appointments by changing an id (IDOR) | Patient endpoints never take a patient id: the query is always filtered by the logged-in patient | B-C3 | ✅ `test_patient_never_sees_another_patients_appointments` |
-| T-CLN-2 | I | Front desk sees clinical information | Front-desk schedule returns only name, phone, service and status | B-CLN-05 | ✅ `test_schedule_contains_no_clinical_or_account_data` · ⏳ notes endpoints refuse front desk and admin (D2) |
-| T-CLN-3 | I | A therapist reads notes of patients they do not treat | Care relationship check (appointment with that therapist, or explicit assignment) | B-AUTH-05, B-C3 | ⏳ D2 |
-| T-CLN-4 | I | Database leak exposes clinical notes or emergency contacts | Field-level encryption with a key outside the database | B-CLN-02 | ✅ emergency contact (`test_emergency_contact_is_encrypted`) · ⏳ notes (D2) |
-| T-CLN-5 | T/R | A note is changed or deleted after the fact | Notes immutable after signature, corrections as amendments; application role without DELETE | B-CLN-03, BR-B-07 | ⏳ D2 |
-| T-CLN-6 | R | Access to a file cannot be traced | Append-only audit log of every read and write of clinical data | B-CLN-04 | ⏳ D2 |
+| T-CLN-2 | I | Front desk sees clinical information | Front-desk schedule returns only name, phone, service and status | B-CLN-05 | ✅ `test_schedule_contains_no_clinical_or_account_data` · ✅ `test_front_desk_and_admin_never_reach_clinical_notes` |
+| T-CLN-3 | I | A therapist reads notes of patients they do not treat | Care relationship check: at least one confirmed, checked-in or completed appointment with that therapist; otherwise 404 (same as unknown) and the attempt is audited | B-AUTH-05, B-C3 | ✅ `test_therapist_without_care_relationship_cannot_read_a_note`, `test_cancelled_or_expired_appointments_give_no_access` |
+| T-CLN-4 | I | Database leak exposes clinical notes or emergency contacts | Field-level encryption with a key outside the database | B-CLN-02 | ✅ emergency contact (`test_emergency_contact_is_encrypted`) · ✅ notes (`test_note_content_is_encrypted_in_the_database`) |
+| T-CLN-5 | T/R | A note is changed or deleted after the fact | Notes locked after signature and never deleted, enforced by a database trigger (not only the API); corrections are signed amendments that keep the original | B-CLN-03, BR-B-07 | ✅ `test_database_refuses_changing_a_signed_note_or_deleting_any_note`, `test_amendment_keeps_the_original` |
+| T-CLN-6 | R | Access to a file cannot be traced | Audit log of every read, write, signature and refused attempt, written in the same transaction as the action; a database trigger refuses any change or deletion of audit rows | B-CLN-04 | ✅ `test_database_refuses_changing_or_deleting_audit_entries`, `test_listing_a_patients_notes_audits_each_note` |
 | T-CLN-7 | I | Personal data in logs, emails or notifications | Email addresses masked in logs (`c***@example.com`); reminders contain no clinical data | B-C7, BR-B-08 | ✅ masking in `app/services/email.py` · ⏳ log tests and reminders (D3) |
 
 ### 4.4 Client applications

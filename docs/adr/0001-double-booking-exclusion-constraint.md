@@ -45,10 +45,17 @@ database refusal into a clear "slot no longer available" answer (HTTP 409).
   the first migration.
 - The same pattern will apply to rooms (B-AVL-04).
 - **Deadlocks under heavy concurrency.** When many transactions insert overlapping rows at the
-  same moment, PostgreSQL sometimes cancels one of them with "deadlock detected" instead of
-  reporting the overlap (a known behaviour of exclusion constraints). No double booking can
-  result: the cancelled transaction saved nothing. The application therefore retries a write
-  that fails with a deadlock (up to 3 times, in a fresh transaction, `app/db/retry.py`); on the
-  retry it either succeeds or gets the normal overlap refusal, which becomes HTTP 409. Any other
-  error is never retried. Found by CI, where the 30-booking test occasionally failed with a
-  deadlock; the test now goes through the same retry (`test_retry.py`, `test_double_booking.py`).
+  same moment, PostgreSQL sometimes cancels some of them with "deadlock detected" instead of
+  reporting the overlap (a known behaviour of exclusion constraints: each waiting insert is
+  already visible to the newcomers, so they keep forming wait cycles). No double booking can
+  result: a cancelled transaction saved nothing. CI found it first (the 30-booking test failed
+  about once in 100 runs). A retry, even spaced out with random waits, only made it rarer: in
+  rare runs every booking deadlocked several rounds in a row. **Decision:** just before
+  inserting, a booking takes a transaction lock for that therapist
+  (`pg_advisory_xact_lock`, `app/db/locks.py`). Competing bookings for the same therapist then
+  queue instead of forming cycles; the next one sees the slot taken and gets the normal refusal
+  (HTTP 409). Bookings for different therapists never wait for each other, and the lock is
+  released automatically at the end of the transaction. The deadlock retry with exponential
+  backoff (`app/db/retry.py`) stays as a safety net. Tests: `test_30_concurrent_bookings_only_one_succeeds`
+  (lock: exactly 1 booked, 29 "slot taken") and `test_the_database_alone_never_accepts_two_bookings`
+  (no lock, no retry: still exactly 1 booked).

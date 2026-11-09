@@ -95,8 +95,8 @@ person receives care, so it is treated as **Health**.
 
 | Field | Class | Why | Who can see it | Protection | Status |
 |---|---|---|---|---|---|
-| `content_encrypted` (SOAP note) | Health | Professional record of each treatment, required by the profession | **Only the patient's therapist** (care relationship); not front desk, not admin by default | **Encrypted** by the application; immutable after signature; amendments instead of edits; no DELETE permission; every read and write audited | ⏳ (D2) |
-| `signed_at`, `version`, `amends_note_id` | Health | Integrity of the record | Same as above | — | ⏳ (D2) |
+| `content_encrypted` (SOAP note) | Health | Professional record of each treatment, required by the profession | **Only therapists with a care relationship**; never front desk or admin | **Encrypted** by the application; locked after signature and never deleted (database trigger); amendments instead of edits; every read and write audited | ✅ |
+| `signed_at`, `version`, `amends_note_id` | Health | Integrity of the record | Same as above | — | ✅ |
 
 ### exercise programs and logs
 
@@ -127,7 +127,7 @@ person receives care, so it is treated as **Health**.
 |---|---|---|---|---|---|
 | Password reset tokens | Internal (secret) | Let a user choose a new password from an email link | Nobody | Only a SHA-256 hash is stored; single use; 30 minutes | ✅ |
 | Refresh tokens | Internal (secret) | Keep sessions without storing passwords | Nobody | Only a SHA-256 hash is stored; rotated and revocable | ✅ |
-| Audit log (who accessed which patient file, when, from where) | Personal | Accountability; detect abuse (B-ADM-03) | Admin only | Append-only (no UPDATE or DELETE for the application) | ⏳ (D2) |
+| Audit log (who accessed which patient file, when, from where) | Personal | Accountability; detect abuse (B-ADM-03) | Admin only (viewer in D3) | Append-only: a database trigger refuses UPDATE and DELETE | ✅ |
 
 ### Chatbot knowledge base and conversations (D2)
 
