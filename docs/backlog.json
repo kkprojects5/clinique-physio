@@ -511,11 +511,11 @@
       "priority": "Must",
       "module": "exercises",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Name, description, instructions, illustration, default sets and reps"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_exercises.py"
     },
     {
       "id": "US-EXE-02",
@@ -527,11 +527,11 @@
       "priority": "Must",
       "module": "exercises",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Exercises, frequency, duration in weeks, notes"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_exercises.py"
     },
     {
       "id": "US-EXE-03",
@@ -543,12 +543,12 @@
       "priority": "Must",
       "module": "exercises",
       "deliverable": "D2",
-      "status": "open",
+      "status": "partial",
       "acceptance": [
-        "Mobile and website",
-        "Pain level 0 to 10"
+        "API: see my program, check off once a day with pain 0 to 10 (done)",
+        "Mobile and website screens (to do)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_exercises.py (API)"
     },
     {
       "id": "US-EXE-04",
@@ -560,11 +560,11 @@
       "priority": "Should",
       "module": "exercises",
       "deliverable": "D3",
-      "status": "open",
+      "status": "done",
       "acceptance": [
         "Completed versus planned"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_exercises.py"
     },
     {
       "id": "US-EXE-05",

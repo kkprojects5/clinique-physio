@@ -284,11 +284,14 @@ erDiagram
         int sets
         int reps
         int times_per_week
+        int position
     }
     exercises {
         uuid id PK
         text name_fr
         text name_en
+        text description_fr
+        text description_en
         text instructions_fr
         text instructions_en
         text image_url
@@ -298,6 +301,7 @@ erDiagram
     exercise_logs {
         uuid id PK
         uuid program_item_id FK
+        date done_on "once per day"
         timestamptz done_at
         smallint pain_level "0 to 10"
     }

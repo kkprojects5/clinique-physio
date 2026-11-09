@@ -135,10 +135,10 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#81](https://github.com/stevatak/Khadizhat-Synth/issues/81) | US-CLN-04 | Audit of clinical access | Must | D2 | Done |
 | [#82](https://github.com/stevatak/Khadizhat-Synth/issues/82) | US-CLN-05 | No clinical notes for front desk and admin | Must | D2 | Done |
 | [#83](https://github.com/stevatak/Khadizhat-Synth/issues/83) | US-CLN-06 | Document upload | Could | D3 | To do |
-| [#84](https://github.com/stevatak/Khadizhat-Synth/issues/84) | US-EXE-01 | Exercise library | Must | D2 | To do |
-| [#85](https://github.com/stevatak/Khadizhat-Synth/issues/85) | US-EXE-02 | Assign a program | Must | D2 | To do |
-| [#86](https://github.com/stevatak/Khadizhat-Synth/issues/86) | US-EXE-03 | Follow my program | Must | D2 | To do |
-| [#87](https://github.com/stevatak/Khadizhat-Synth/issues/87) | US-EXE-04 | Adherence chart | Should | D3 | To do |
+| [#84](https://github.com/stevatak/Khadizhat-Synth/issues/84) | US-EXE-01 | Exercise library | Must | D2 | Done |
+| [#85](https://github.com/stevatak/Khadizhat-Synth/issues/85) | US-EXE-02 | Assign a program | Must | D2 | Done |
+| [#86](https://github.com/stevatak/Khadizhat-Synth/issues/86) | US-EXE-03 | Follow my program | Must | D2 | In progress |
+| [#87](https://github.com/stevatak/Khadizhat-Synth/issues/87) | US-EXE-04 | Adherence chart | Should | D3 | Done |
 | [#88](https://github.com/stevatak/Khadizhat-Synth/issues/88) | US-EXE-05 | Daily exercise reminder | Could | D3 | To do |
 | [#89](https://github.com/stevatak/Khadizhat-Synth/issues/89) | US-FRD-01 | Day schedule of all therapists | Must | D1 | Done |
 | [#90](https://github.com/stevatak/Khadizhat-Synth/issues/90) | US-FRD-02 | Book for a patient on the phone | Must | D2 | To do |
@@ -167,8 +167,9 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
 
 - Done: US-BKG-02 (no double booking, with a clear 409 answer), US-BKG-03 (10-minute hold),
   US-AUTH-05 (care relationship), US-CLN-01 to 05 (patient files, encrypted SOAP notes, signature
-  and amendments, audit log, no notes for front desk and admin).
-- In progress: US-BKG-05 (status history: booking, cancel, reschedule, expiry), US-BKG-06
+  and amendments, audit log, no notes for front desk and admin), US-EXE-01, 02 and 04 (exercise
+  library, programs, adherence).
+- In progress: US-EXE-03 (check-off: API done, screens to do), US-BKG-05 (status history: booking, cancel, reschedule, expiry), US-BKG-06
   (24-hour rule; the Stripe refund comes with the payment step), US-AVL-05 (team page).
-- Next: US-BKG-04 (Stripe deposit), US-EXE-01 to 03 (exercise programs), then the screens:
+- Next: US-BKG-04 (Stripe deposit), then the screens:
   booking pages, therapist workspace, front-desk check-in.

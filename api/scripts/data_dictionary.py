@@ -87,6 +87,26 @@ TABLES = {
         "Who accessed which patient file, when and from where. Rows can only be added (database trigger).",
         "B-CLN-04, B-ADM-03",
     ),
+    "exercises": (
+        "Exercises",
+        "The clinic's exercise library in French and English. General content, no patient data.",
+        "B-EXE-01",
+    ),
+    "programs": (
+        "Exercises",
+        "Home exercise programs given by a therapist to a patient they treat, for a number of weeks.",
+        "B-EXE-02",
+    ),
+    "program_items": (
+        "Exercises",
+        "The exercises of a program, with sets, repetitions and times per week.",
+        "B-EXE-02, B-EXE-04",
+    ),
+    "exercise_logs": (
+        "Exercises",
+        "Sessions checked off by the patient, at most once per exercise per day, with an optional pain level.",
+        "B-EXE-03, B-EXE-04",
+    ),
     "appointment_status_history": (
         "Booking",
         "Every status change of an appointment, with who made it. Rows are only added.",
@@ -294,6 +314,57 @@ COLUMNS = {
         INT,
     ),
     ("audit_logs", "created_at"): ("When it happened (UTC).", PER),
+    ("exercises", "id"): ID,
+    ("exercises", "name_fr"): ("Name in French.", PUB),
+    ("exercises", "name_en"): ("Name in English.", PUB),
+    ("exercises", "description_fr"): ("What the exercise is for, in French.", PUB),
+    ("exercises", "description_en"): ("What the exercise is for, in English.", PUB),
+    ("exercises", "instructions_fr"): ("How to do it, in French.", PUB),
+    ("exercises", "instructions_en"): ("How to do it, in English.", PUB),
+    ("exercises", "image_url"): ("Optional illustration (the clinic's own image).", PUB),
+    ("exercises", "default_sets"): (
+        "Suggested sets (1 to 10), used when the therapist sets none.",
+        PUB,
+    ),
+    ("exercises", "default_reps"): ("Suggested repetitions or holds (1 to 100).", PUB),
+    ("exercises", "is_active"): (
+        "False hides the exercise from new programs without changing old ones.",
+        INT,
+    ),
+    ("programs", "id"): ID,
+    ("programs", "patient_id"): ("The patient who follows the program.", HEA),
+    ("programs", "therapist_id"): ("The therapist who gave it (must treat the patient).", HEA),
+    ("programs", "start_date"): (
+        "First day of the program (Montréal date); never in the past when created.",
+        HEA,
+    ),
+    ("programs", "weeks"): (
+        "Length in weeks (1 to 26). The program is in progress from start_date for that many weeks.",
+        HEA,
+    ),
+    ("programs", "notes"): (
+        "Advice from the therapist shown to the patient (no diagnosis needed here).",
+        HEA,
+    ),
+    ("programs", "created_at"): CREATED,
+    ("program_items", "id"): ID,
+    ("program_items", "program_id"): ("The program.", HEA),
+    ("program_items", "exercise_id"): ("The exercise from the library.", HEA),
+    ("program_items", "sets"): ("Sets (1 to 10).", HEA),
+    ("program_items", "reps"): ("Repetitions or holds per set (1 to 100).", HEA),
+    ("program_items", "times_per_week"): (
+        "How often per week (1 to 14); planned sessions = times per week x weeks.",
+        HEA,
+    ),
+    ("program_items", "position"): ("Order in the program.", INT),
+    ("exercise_logs", "id"): ID,
+    ("exercise_logs", "program_item_id"): ("The exercise of the program that was done.", HEA),
+    ("exercise_logs", "done_on"): (
+        "Day it was done, in Montréal time. Unique per exercise, so a day counts once.",
+        HEA,
+    ),
+    ("exercise_logs", "done_at"): ("Exact time of the check-off (UTC).", HEA),
+    ("exercise_logs", "pain_level"): ("Optional pain felt, 0 (none) to 10 (worst).", HEA),
     ("appointment_status_history", "id"): ID,
     ("appointment_status_history", "appointment_id"): ("The appointment that changed.", INT),
     ("appointment_status_history", "from_status"): (
@@ -319,11 +390,6 @@ PLANNED = [
     (
         "payments, payment_events",
         "Stripe deposits and refunds; webhook events processed once",
-        "D2",
-    ),
-    (
-        "exercises, programs, program_items, exercise_logs",
-        "Exercise library, programs and check-offs with pain level",
         "D2",
     ),
     (

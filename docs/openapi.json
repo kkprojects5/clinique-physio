@@ -1399,6 +1399,278 @@
         }
       }
     },
+    "/api/v1/exercises": {
+      "get": {
+        "tags": [
+          "exercises"
+        ],
+        "summary": "List Exercises",
+        "description": "The clinic's exercise library, in French and English.",
+        "operationId": "list_exercises_api_v1_exercises_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ExerciseOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Exercises Api V1 Exercises Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/therapist/patients/{patient_id}/programs": {
+      "post": {
+        "tags": [
+          "exercises"
+        ],
+        "summary": "Create Program",
+        "description": "Give a home program to a patient I treat. Audited.",
+        "operationId": "create_program_api_v1_therapist_patients__patient_id__programs_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "exercises"
+        ],
+        "summary": "List Patient Programs",
+        "description": "Programs of a patient I treat, newest first, with adherence. Audited.",
+        "operationId": "list_patient_programs_api_v1_therapist_patients__patient_id__programs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramOut"
+                  },
+                  "title": "Response List Patient Programs Api V1 Therapist Patients  Patient Id  Programs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/program": {
+      "get": {
+        "tags": [
+          "exercises"
+        ],
+        "summary": "Read My Program",
+        "description": "My program in progress today, or null if there is none.",
+        "operationId": "read_my_program_api_v1_me_program_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ProgramOut"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Read My Program Api V1 Me Program Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/me/program/items/{item_id}/check-off": {
+      "post": {
+        "tags": [
+          "exercises"
+        ],
+        "summary": "Check Off",
+        "description": "I did this exercise today (once a day), with an optional pain level from 0 to 10.",
+        "operationId": "check_off_api_v1_me_program_items__item_id__check_off_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckOffIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckOffOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/program/check-offs/{log_id}": {
+      "delete": {
+        "tags": [
+          "exercises"
+        ],
+        "summary": "Undo Check Off",
+        "description": "Undo my check-off of today (a mistake). Older ones cannot be removed.",
+        "operationId": "undo_check_off_api_v1_me_program_check_offs__log_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "log_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Log Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -1527,6 +1799,63 @@
           "deposit_refunded"
         ],
         "title": "CancelOut"
+      },
+      "CheckOffIn": {
+        "properties": {
+          "pain_level": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pain Level"
+          }
+        },
+        "type": "object",
+        "title": "CheckOffIn"
+      },
+      "CheckOffOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "program_item_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Program Item Id"
+          },
+          "done_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Done On"
+          },
+          "pain_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pain Level"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "program_item_id",
+          "done_on",
+          "pain_level"
+        ],
+        "title": "CheckOffOut"
       },
       "DaySchedule": {
         "properties": {
@@ -1677,6 +2006,72 @@
           "reason"
         ],
         "title": "ExceptionOut"
+      },
+      "ExerciseOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name_fr": {
+            "type": "string",
+            "title": "Name Fr"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "description_fr": {
+            "type": "string",
+            "title": "Description Fr"
+          },
+          "description_en": {
+            "type": "string",
+            "title": "Description En"
+          },
+          "instructions_fr": {
+            "type": "string",
+            "title": "Instructions Fr"
+          },
+          "instructions_en": {
+            "type": "string",
+            "title": "Instructions En"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "default_sets": {
+            "type": "integer",
+            "title": "Default Sets"
+          },
+          "default_reps": {
+            "type": "integer",
+            "title": "Default Reps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name_fr",
+          "name_en",
+          "description_fr",
+          "description_en",
+          "instructions_fr",
+          "instructions_en",
+          "image_url",
+          "default_sets",
+          "default_reps"
+        ],
+        "title": "ExerciseOut"
       },
       "ForgotPasswordRequest": {
         "properties": {
@@ -2182,6 +2577,215 @@
         ],
         "title": "PatientRef",
         "description": "What the front desk needs to recognise and call a patient. No clinical data (B-CLN-05)."
+      },
+      "ProgramIn": {
+        "properties": {
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Start Date"
+          },
+          "weeks": {
+            "type": "integer",
+            "maximum": 26.0,
+            "minimum": 1.0,
+            "title": "Weeks"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProgramItemIn"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start_date",
+          "weeks",
+          "items"
+        ],
+        "title": "ProgramIn"
+      },
+      "ProgramItemIn": {
+        "properties": {
+          "exercise_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Exercise Id"
+          },
+          "sets": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sets"
+          },
+          "reps": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reps"
+          },
+          "times_per_week": {
+            "type": "integer",
+            "maximum": 14.0,
+            "minimum": 1.0,
+            "title": "Times Per Week"
+          }
+        },
+        "type": "object",
+        "required": [
+          "exercise_id",
+          "times_per_week"
+        ],
+        "title": "ProgramItemIn"
+      },
+      "ProgramItemOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "exercise": {
+            "$ref": "#/components/schemas/ExerciseOut"
+          },
+          "sets": {
+            "type": "integer",
+            "title": "Sets"
+          },
+          "reps": {
+            "type": "integer",
+            "title": "Reps"
+          },
+          "times_per_week": {
+            "type": "integer",
+            "title": "Times Per Week"
+          },
+          "done_total": {
+            "type": "integer",
+            "title": "Done Total"
+          },
+          "planned_total": {
+            "type": "integer",
+            "title": "Planned Total"
+          },
+          "done_this_week": {
+            "type": "integer",
+            "title": "Done This Week"
+          },
+          "done_today": {
+            "type": "boolean",
+            "title": "Done Today"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "exercise",
+          "sets",
+          "reps",
+          "times_per_week",
+          "done_total",
+          "planned_total",
+          "done_this_week",
+          "done_today"
+        ],
+        "title": "ProgramItemOut"
+      },
+      "ProgramOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "therapist": {
+            "$ref": "#/components/schemas/TherapistRef"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Start Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "title": "End Date"
+          },
+          "weeks": {
+            "type": "integer",
+            "title": "Weeks"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "adherence_percent": {
+            "type": "integer",
+            "title": "Adherence Percent"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProgramItemOut"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "patient_id",
+          "therapist",
+          "start_date",
+          "end_date",
+          "weeks",
+          "notes",
+          "adherence_percent",
+          "items"
+        ],
+        "title": "ProgramOut"
       },
       "RegisterRequest": {
         "properties": {

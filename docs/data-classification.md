@@ -102,9 +102,9 @@ person receives care, so it is treated as **Health**.
 
 | Data | Class | Why | Who can see it | Status |
 |---|---|---|---|---|
-| Exercise library (`exercises`) | Public | General exercise descriptions | Everyone | ⏳ (D2) |
-| A patient's program (`programs`, `program_items`) | Health | Treatment plan | The patient; their therapist | ⏳ (D2) |
-| Completed sessions and **pain level** (`exercise_logs`) | Health | Track adherence and progress | The patient; their therapist | ⏳ (D2) |
+| Exercise library (`exercises`) | Public | General exercise descriptions | Everyone | ✅ |
+| A patient's program (`programs`, `program_items`) | Health | Treatment plan | The patient; therapists with a care relationship (audited) | ✅ |
+| Completed sessions and **pain level** (`exercise_logs`) | Health | Track adherence and progress | The patient; therapists with a care relationship (audited) | ✅ |
 
 ### payments and payment_events
 

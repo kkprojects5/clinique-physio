@@ -9,6 +9,7 @@ from app.models.appointment import (
 )
 from app.models.availability import AvailabilityException, AvailabilityRule
 from app.models.clinical import AuditLog, ClinicalNote
+from app.models.exercise import Exercise, ExerciseLog, Program, ProgramItem
 from app.models.patient import Patient
 from app.models.service import Service, TherapistService
 from app.models.therapist import Therapist
@@ -22,12 +23,16 @@ __all__ = [
     "Appointment",
     "AuditLog",
     "ClinicalNote",
+    "Exercise",
+    "ExerciseLog",
     "AppointmentStatusHistory",
     "AvailabilityException",
     "AvailabilityRule",
     "Consent",
     "PasswordResetToken",
     "Patient",
+    "Program",
+    "ProgramItem",
     "RefreshToken",
     "Service",
     "Therapist",
