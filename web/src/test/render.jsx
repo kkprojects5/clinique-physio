@@ -53,6 +53,9 @@ export function mockApi({
   const calls = [];
   const fetchMock = vi.fn(async (url) => {
     const u = new URL(url);
+    // Nobody is logged in: the session check at startup is refused.
+    if (u.pathname.endsWith('/auth/refresh'))
+      return { ok: false, status: 401, json: async () => ({}) };
     calls.push(u);
     if (fail) return { ok: false, status: 503, json: async () => ({}) };
     const body = u.pathname.endsWith('/services')

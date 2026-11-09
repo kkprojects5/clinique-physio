@@ -10,6 +10,7 @@ function mockPost(answer) {
     'fetch',
     vi.fn(async (url, options = {}) => {
       const path = new URL(url).pathname;
+      if (path.endsWith('/auth/refresh')) return { ok: false, status: 401, json: async () => ({}) };
       calls.push({ path, body: options.body ? JSON.parse(options.body) : null });
       const status = answer(path, calls.length);
       return { ok: status < 300, status, json: async () => ({}) };

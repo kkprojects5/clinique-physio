@@ -5,7 +5,10 @@
     "services": "Services and prices",
     "team": "Our team",
     "availability": "Availability",
-    "label": "Main navigation"
+    "label": "Main navigation",
+    "myAppointments": "My appointments",
+    "login": "Log in",
+    "logout": "Log out"
   },
   "language": {
     "label": "Language",
@@ -43,7 +46,11 @@
     "with": "with {{name}}",
     "timezone": "Times shown in Montréal time.",
     "count_one": "{{count}} available time",
-    "count_other": "{{count}} available times"
+    "count_other": "{{count}} available times",
+    "book": "Book",
+    "choose_this": "Choose",
+    "bookAria": "Book {{day}} at {{time}} with {{name}}",
+    "rescheduling": "Choose the new time for your appointment."
   },
   "status": {
     "loading": "Loading…",
@@ -94,5 +101,93 @@
       "done": "Your email address is confirmed. You can now log in.",
       "invalid": "This confirmation link is invalid or has expired."
     }
+  },
+  "login": {
+    "title": "Log in",
+    "password": "Password",
+    "submit": "Log in",
+    "register": "Create an account",
+    "invalid": "Incorrect email or password.",
+    "unverified": "First confirm your email address with the link you received.",
+    "codeIntro": "Enter the 6-digit code from your authenticator app.",
+    "code": "6-digit code",
+    "verify": "Verify",
+    "invalidCode": "Incorrect code. Try again with the code shown now.",
+    "mfaSetup": "First staff login: set up two-step verification in the desktop app first."
+  },
+  "register": {
+    "title": "Create an account",
+    "intro": "We only ask for what is needed for your appointments.",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "date_of_birth": "Date of birth",
+    "phone": "Phone",
+    "email": "Email address",
+    "password": "Password",
+    "emergency_contact": "Emergency contact (optional)",
+    "privacy": "I accept the privacy policy (required).",
+    "comms": "I agree to receive electronic communications (optional).",
+    "submit": "Create my account",
+    "sent": "Account created. Open the link we emailed you to confirm your address, then log in.",
+    "invalid": "Check the fields: some information is not valid.",
+    "haveAccount": "I already have an account"
+  },
+  "book": {
+    "title": "Book an appointment",
+    "rescheduleTitle": "Change my appointment",
+    "service": "Service",
+    "when": "Date and time",
+    "with": "Physiotherapist",
+    "first": "First available",
+    "deposit": "Deposit to pay now",
+    "total": "total price: {{price}}",
+    "rule": "Free cancellation more than 24 hours before: the deposit is refunded. Less than 24 hours before, it is kept.",
+    "reserve": "Book and pay the deposit",
+    "confirmChange": "Confirm the change",
+    "heldUntil": "This time is reserved for you until {{time}}.",
+    "pay": "Pay {{amount}}",
+    "testCard": "Test mode: use the card 4242 4242 4242 4242, any future date and any code.",
+    "taken": "This time was just taken. Please choose another one.",
+    "evaluation": "A first treatment needs an initial evaluation. Please book an evaluation first.",
+    "late": "Less than 24 hours before the appointment, it can no longer be changed online. Please call the clinic.",
+    "paymentsOff": "Online payment is not available right now. Please call the clinic.",
+    "chooseAgain": "Choose another time",
+    "missing": "No time selected. Go back to the availability page."
+  },
+  "done": {
+    "confirmedTitle": "Appointment confirmed",
+    "waitingTitle": "Confirming your payment",
+    "confirmed": "Your appointment on {{day}} at {{time}} with {{name}} is confirmed. See you soon!",
+    "waiting": "Thank you! We are waiting for Stripe's confirmation, it takes a few seconds…",
+    "slow": "The confirmation is taking longer than expected. Your appointment will show as confirmed in “My appointments” as soon as it arrives."
+  },
+  "mine": {
+    "title": "My appointments",
+    "none": "No upcoming appointments.",
+    "book": "Book an appointment",
+    "cancel": "Cancel",
+    "reschedule": "Change the time",
+    "keep": "Keep my appointment",
+    "yesCancel": "Yes, cancel",
+    "confirmRefund": "Cancel this appointment? It is more than 24 hours before: your deposit will be refunded.",
+    "confirmFee": "Cancel this appointment? It is less than 24 hours before: the deposit will be kept as a fee.",
+    "confirmUnpaid": "Cancel this unpaid booking?",
+    "cancelled": "Appointment cancelled.",
+    "cancelledRefund": "Appointment cancelled. Your deposit will be refunded to your card.",
+    "cannotCancel": "This appointment can no longer be cancelled online. Please call the clinic.",
+    "refundFailed": "The refund could not be made right now, so nothing was cancelled. Please try again in a few minutes.",
+    "changed": "Your appointment was changed.",
+    "lateHint": "Less than 24 hours before: to change it, please call the clinic."
+  },
+  "statuses": {
+    "held": "Reserved (payment to do)",
+    "pending_payment": "Payment in progress",
+    "confirmed": "Confirmed",
+    "checked_in": "Checked in",
+    "completed": "Completed",
+    "cancelled_by_patient": "Cancelled",
+    "cancelled_by_clinic": "Cancelled by the clinic",
+    "no_show": "No-show",
+    "expired": "Expired"
   }
 }

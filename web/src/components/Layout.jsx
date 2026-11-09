@@ -1,5 +1,6 @@
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../auth/AuthContext';
 
 const NAV = [
   { to: '/', key: 'home', end: true },
@@ -11,6 +12,13 @@ const NAV = [
 export default function Layout() {
   const { t, i18n } = useTranslation();
   const other = i18n.language === 'fr' ? 'en' : 'fr';
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  async function signOut() {
+    await logout();
+    navigate('/');
+  }
 
   return (
     <>
@@ -34,6 +42,24 @@ export default function Layout() {
                   </NavLink>
                 </li>
               ))}
+              {user?.role === 'patient' && (
+                <li>
+                  <NavLink to="/mes-rendez-vous" className="nav__link">
+                    {t('nav.myAppointments')}
+                  </NavLink>
+                </li>
+              )}
+              <li>
+                {user ? (
+                  <button type="button" className="nav__link nav__button" onClick={signOut}>
+                    {t('nav.logout')}
+                  </button>
+                ) : (
+                  <NavLink to="/connexion" className="nav__link">
+                    {t('nav.login')}
+                  </NavLink>
+                )}
+              </li>
             </ul>
           </nav>
           <button

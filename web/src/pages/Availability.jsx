@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useServices, useSlots, useTherapists } from '../api/queries';
 import {
@@ -23,6 +23,7 @@ export default function Availability() {
   const serviceId = params.get('service') || '';
   const therapistId = params.get('therapist') || '';
   const week = params.get('week') || today;
+  const reschedule = params.get('reschedule'); // coming from "Change" in My appointments
 
   const services = useServices();
   const therapists = useTherapists();
@@ -38,6 +39,15 @@ export default function Availability() {
 
   const service = services.data?.find((s) => s.id === serviceId);
   const offering = (therapists.data || []).filter((p) => service?.therapist_ids.includes(p.id));
+  const bookingLink = (slot) => {
+    const query = new URLSearchParams({
+      service: serviceId,
+      therapist: slot.therapist_id,
+      start: slot.start,
+    });
+    if (reschedule) query.set('reschedule', reschedule);
+    return `/reserver?${query}`;
+  };
   const nameOf = (id) => {
     const person = therapists.data?.find((p) => p.id === id);
     return person ? `${person.first_name} ${person.last_name}` : '';
@@ -46,6 +56,7 @@ export default function Availability() {
   return (
     <>
       <h1>{t('availability.title')}</h1>
+      {reschedule && <p className="status">{t('availability.rescheduling')}</p>}
       <form className="filters" onSubmit={(event) => event.preventDefault()}>
         <div className="field">
           <label htmlFor={ids.service}>{t('availability.service')}</label>
@@ -113,6 +124,17 @@ export default function Availability() {
                         {t('availability.with', { name: nameOf(slot.therapist_id) })}
                       </span>
                     )}
+                    <Link
+                      className="button button--small"
+                      to={bookingLink(slot)}
+                      aria-label={t('availability.bookAria', {
+                        time: formatTime(slot.start, lang),
+                        day: formatDay(slot.start, lang),
+                        name: nameOf(slot.therapist_id),
+                      })}
+                    >
+                      {reschedule ? t('availability.choose_this') : t('availability.book')}
+                    </Link>
                   </li>
                 ))}
               </ul>

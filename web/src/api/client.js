@@ -28,3 +28,22 @@ export async function apiPost(path, body) {
   const data = await response.json().catch(() => ({}));
   return { status: response.status, data };
 }
+
+/**
+ * Request with the logged-in user's access token. Sends the refresh cookie too
+ * (credentials: 'include') and tells the API which app is calling, for the audit log.
+ * Returns { status, data }.
+ */
+export async function authRequest(path, { method = 'GET', body, token } = {}) {
+  const headers = { Accept: 'application/json', 'X-Client-App': 'web' };
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const response = await fetch(`${API_URL}/api/v1${path}`, {
+    method,
+    headers,
+    credentials: 'include',
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const data = await response.json().catch(() => null);
+  return { status: response.status, data };
+}

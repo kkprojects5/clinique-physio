@@ -245,12 +245,13 @@
       "priority": "Must",
       "module": "booking",
       "deliverable": "D2",
-      "status": "open",
+      "status": "partial",
       "acceptance": [
-        "Works on the website and the mobile app",
-        "Confirmation shown and sent by email"
+        "Choose a service, a therapist (or first available), a date and a time, then pay the deposit: website (done)",
+        "Same on the mobile app (to do)",
+        "Confirmation shown (done) and sent by email (to do)"
       ],
-      "evidence": null
+      "evidence": "web/src/pages/booking.test.jsx, api/tests/test_booking.py, api/tests/test_payments.py"
     },
     {
       "id": "US-BKG-02",

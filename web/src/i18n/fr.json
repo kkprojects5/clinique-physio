@@ -5,7 +5,10 @@
     "services": "Services et tarifs",
     "team": "Notre équipe",
     "availability": "Disponibilités",
-    "label": "Navigation principale"
+    "label": "Navigation principale",
+    "myAppointments": "Mes rendez-vous",
+    "login": "Connexion",
+    "logout": "Déconnexion"
   },
   "language": {
     "label": "Langue",
@@ -43,7 +46,11 @@
     "with": "avec {{name}}",
     "timezone": "Heures affichées à l’heure de Montréal.",
     "count_one": "{{count}} plage disponible",
-    "count_other": "{{count}} plages disponibles"
+    "count_other": "{{count}} plages disponibles",
+    "book": "Réserver",
+    "choose_this": "Choisir",
+    "bookAria": "Réserver {{day}} à {{time}} avec {{name}}",
+    "rescheduling": "Choisissez la nouvelle heure de votre rendez-vous."
   },
   "status": {
     "loading": "Chargement…",
@@ -94,5 +101,93 @@
       "done": "Votre adresse courriel est confirmée. Vous pouvez maintenant vous connecter.",
       "invalid": "Ce lien de confirmation n’est pas valide ou a expiré."
     }
+  },
+  "login": {
+    "title": "Connexion",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "register": "Créer un compte",
+    "invalid": "Courriel ou mot de passe incorrect.",
+    "unverified": "Confirmez d’abord votre adresse courriel avec le lien reçu.",
+    "codeIntro": "Entrez le code à 6 chiffres de votre application d’authentification.",
+    "code": "Code à 6 chiffres",
+    "verify": "Vérifier",
+    "invalidCode": "Code incorrect. Réessayez avec le code affiché maintenant.",
+    "mfaSetup": "Première connexion du personnel : configurez d’abord la vérification en deux étapes dans l’application de bureau."
+  },
+  "register": {
+    "title": "Créer un compte",
+    "intro": "Nous demandons seulement ce qui est nécessaire pour vos rendez-vous.",
+    "first_name": "Prénom",
+    "last_name": "Nom",
+    "date_of_birth": "Date de naissance",
+    "phone": "Téléphone",
+    "email": "Adresse courriel",
+    "password": "Mot de passe",
+    "emergency_contact": "Personne à joindre en cas d’urgence (facultatif)",
+    "privacy": "J’accepte la politique de confidentialité (obligatoire).",
+    "comms": "J’accepte de recevoir des communications électroniques (facultatif).",
+    "submit": "Créer mon compte",
+    "sent": "Compte créé. Ouvrez le lien reçu par courriel pour confirmer votre adresse, puis connectez-vous.",
+    "invalid": "Vérifiez les champs : un renseignement n’est pas valide.",
+    "haveAccount": "J’ai déjà un compte"
+  },
+  "book": {
+    "title": "Réserver un rendez-vous",
+    "rescheduleTitle": "Changer mon rendez-vous",
+    "service": "Service",
+    "when": "Date et heure",
+    "with": "Physiothérapeute",
+    "first": "Premier disponible",
+    "deposit": "Dépôt à payer maintenant",
+    "total": "prix total : {{price}}",
+    "rule": "Annulation gratuite plus de 24 heures avant : le dépôt est remboursé. Moins de 24 heures avant, il est conservé.",
+    "reserve": "Réserver et payer le dépôt",
+    "confirmChange": "Confirmer le changement",
+    "heldUntil": "Cette plage vous est réservée jusqu’à {{time}}.",
+    "pay": "Payer {{amount}}",
+    "testCard": "Mode test : utilisez la carte 4242 4242 4242 4242, une date future et n’importe quel code.",
+    "taken": "Cette plage vient d’être prise. Choisissez une autre heure.",
+    "evaluation": "Un premier traitement nécessite une évaluation initiale. Réservez d’abord une évaluation.",
+    "late": "Moins de 24 heures avant le rendez-vous, il ne peut plus être changé en ligne. Appelez la clinique.",
+    "paymentsOff": "Le paiement en ligne n’est pas disponible pour le moment. Appelez la clinique.",
+    "chooseAgain": "Choisir une autre heure",
+    "missing": "Aucune plage choisie. Retournez aux disponibilités."
+  },
+  "done": {
+    "confirmedTitle": "Rendez-vous confirmé",
+    "waitingTitle": "Paiement en cours de confirmation",
+    "confirmed": "Votre rendez-vous du {{day}} à {{time}} avec {{name}} est confirmé. À bientôt !",
+    "waiting": "Merci ! Nous attendons la confirmation de Stripe, cela prend quelques secondes…",
+    "slow": "La confirmation prend plus de temps que prévu. Votre rendez-vous apparaîtra comme confirmé dans « Mes rendez-vous » dès qu’elle arrivera."
+  },
+  "mine": {
+    "title": "Mes rendez-vous",
+    "none": "Aucun rendez-vous à venir.",
+    "book": "Réserver un rendez-vous",
+    "cancel": "Annuler",
+    "reschedule": "Changer l’heure",
+    "keep": "Garder mon rendez-vous",
+    "yesCancel": "Oui, annuler",
+    "confirmRefund": "Annuler ce rendez-vous ? C’est plus de 24 heures avant : votre dépôt sera remboursé.",
+    "confirmFee": "Annuler ce rendez-vous ? C’est moins de 24 heures avant : le dépôt sera conservé comme frais.",
+    "confirmUnpaid": "Annuler cette réservation non payée ?",
+    "cancelled": "Rendez-vous annulé.",
+    "cancelledRefund": "Rendez-vous annulé. Votre dépôt sera remboursé sur votre carte.",
+    "cannotCancel": "Ce rendez-vous ne peut plus être annulé en ligne. Appelez la clinique.",
+    "refundFailed": "Le remboursement n’a pas pu être fait pour le moment, donc rien n’a été annulé. Réessayez dans quelques minutes.",
+    "changed": "Votre rendez-vous a été changé.",
+    "lateHint": "Moins de 24 heures avant : pour un changement, appelez la clinique."
+  },
+  "statuses": {
+    "held": "Réservé (paiement à faire)",
+    "pending_payment": "Paiement en cours",
+    "confirmed": "Confirmé",
+    "checked_in": "Arrivé",
+    "completed": "Terminé",
+    "cancelled_by_patient": "Annulé",
+    "cancelled_by_clinic": "Annulé par la clinique",
+    "no_show": "Absent",
+    "expired": "Expiré"
   }
 }
