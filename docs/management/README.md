@@ -10,7 +10,7 @@ Status: **D1 (v0.1.0)**. Solo project: one developer (Claire Mancini) and one su
 | [activity-log.md](activity-log.md) | Days worked and changes merged, per sprint | Generated: `python scripts/activity_log.py` |
 | [timesheet.md](timesheet.md) | Hours per day and per activity | Filled in by hand each day |
 | [meeting-minutes.md](meeting-minutes.md) | Meetings with the supervisor: decisions and actions | Written after each meeting |
-| [../demo/d2-payments](../demo/d2-payments/README.md), [../demo/d2-therapist-workspace](../demo/d2-therapist-workspace/README.md) | Screenshots of the live system (payment flow, therapist workspace), for presentations | Added after each demo |
+| [../demo/d2-payments](../demo/d2-payments/README.md), [../demo/d2-therapist-workspace](../demo/d2-therapist-workspace/README.md), [../demo/d2-mobile-exercises](../demo/d2-mobile-exercises/README.md) | Screenshots of the live system (payment flow, therapist workspace, mobile exercises), for presentations | Added after each demo |
 | [risk-register.md](risk-register.md) | Project risks, scores, mitigations | Reviewed at each sprint review |
 
 ## Method
