@@ -14,6 +14,20 @@ updates:
     directory: /web
     schedule:
       interval: weekly
+    # Major versions are upgraded on purpose, together and with testing, never one by one:
+    # React 18 and ESLint 9 are the chosen versions for this project (react and react-dom
+    # must always have the same version).
+    ignore:
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@vitejs/plugin-react"
+        update-types: ["version-update:semver-major"]
     groups:
       web-minor-patch:
         update-types: [minor, patch]
