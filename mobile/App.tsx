@@ -7,12 +7,14 @@ import { tokenStore } from './src/tokenStore';
 import { colors } from './src/theme';
 import LoginScreen from './src/screens/LoginScreen';
 import AppointmentsScreen from './src/screens/AppointmentsScreen';
+import ExercisesScreen from './src/screens/ExercisesScreen';
 
 export default function App() {
   const [language, setLanguage] = useState<Language>('fr');
   const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [tab, setTab] = useState<'appointments' | 'exercises'>('appointments');
 
   // Reopen the app logged in if a token is still stored (it is refused once expired).
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function App() {
       await tokenStore.clear();
       setNotice(message);
       setToken(null);
+      setTab('appointments');
     },
     [],
   );
@@ -57,12 +60,37 @@ export default function App() {
         </View>
         <View style={styles.content}>
           {!ready ? null : token ? (
-            <AppointmentsScreen
-              language={language}
-              accessToken={token}
-              onExpired={() => loggedOut(translate(language, 'error.expired'))}
-              onLogout={() => loggedOut(null)}
-            />
+            <>
+              <View style={styles.tabs} accessibilityRole="tablist">
+                {(['appointments', 'exercises'] as const).map((name) => (
+                  <Pressable
+                    key={name}
+                    onPress={() => setTab(name)}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: tab === name }}
+                    style={[styles.tab, tab === name && styles.tabActive]}
+                  >
+                    <Text style={[styles.tabText, tab === name && styles.tabTextActive]}>
+                      {translate(language, name === 'appointments' ? 'tabAppointments' : 'tabExercises')}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+              {tab === 'appointments' ? (
+                <AppointmentsScreen
+                  language={language}
+                  accessToken={token}
+                  onExpired={() => loggedOut(translate(language, 'error.expired'))}
+                  onLogout={() => loggedOut(null)}
+                />
+              ) : (
+                <ExercisesScreen
+                  language={language}
+                  accessToken={token}
+                  onExpired={() => loggedOut(translate(language, 'error.expired'))}
+                />
+              )}
+            </>
           ) : (
             <LoginScreen key={notice ?? 'login'} language={language} notice={notice} onLoggedIn={loggedIn} />
           )}
@@ -95,4 +123,18 @@ const styles = StyleSheet.create({
   },
   langText: { color: colors.tealDark, fontWeight: '600' },
   content: { flex: 1, padding: 16 },
+  tabs: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
+    backgroundColor: colors.paper,
+    borderRadius: 999,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: colors.line,
+  },
+  tab: { flex: 1, minHeight: 44, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  tabActive: { backgroundColor: colors.teal },
+  tabText: { color: colors.tealDark, fontWeight: '600' },
+  tabTextActive: { color: colors.paper },
 });

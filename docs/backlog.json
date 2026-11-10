@@ -547,9 +547,10 @@
       "status": "partial",
       "acceptance": [
         "API: see my program, check off once a day with pain 0 to 10 (done)",
-        "Mobile and website screens (to do)"
+        "Mobile app: Exercises tab, check off with pain level, undo today's (done)",
+        "Website: patient view of the program (to do)"
       ],
-      "evidence": "api/tests/test_exercises.py (API)"
+      "evidence": "api/tests/test_exercises.py, mobile/src/__tests__/exercises.test.tsx"
     },
     {
       "id": "US-EXE-04",

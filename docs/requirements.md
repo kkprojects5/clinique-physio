@@ -171,8 +171,9 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
   and amendments, audit log, no notes for front desk and admin), US-EXE-01, 02 and 04 (exercise
   library, programs, adherence).
 - In progress: US-BKG-01 (website booking and Stripe payment done; mobile and email to do),
-  US-EXE-03 (check-off: API done, screens to do), US-BKG-05 (status history; check-in
+  US-EXE-03 (check-off: API and mobile done; patient website view to do), US-BKG-05 (status history; check-in
   and no-show to come), US-AVL-05 (team page; photos to come).
 - Website therapist workspace done: staff login with first-time QR code, my patients, patient
   file, SOAP notes (draft, sign, amend), exercise programs with adherence.
-- Next: patient exercises on mobile, front-desk phone booking and check-in on the desktop app.
+- Mobile app: Exercises tab (program, check-off with pain level 0 to 10, undo today's).
+- Next: front-desk phone booking and check-in on the desktop app.
