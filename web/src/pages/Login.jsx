@@ -1,34 +1,40 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import QRCode from 'qrcode';
 import { useAuth } from '../auth/AuthContext';
 import { Problem } from './ForgotPassword';
 
+const HOME_BY_ROLE = { patient: '/mes-rendez-vous', therapist: '/espace-therapeute' };
+
 /** Only go back to a page of this site (never to another website: open redirect). */
-export function safeNext(value) {
-  return value && value.startsWith('/') && !value.startsWith('//') ? value : '/mes-rendez-vous';
+export function safeNext(value, role = 'patient') {
+  if (value && value.startsWith('/') && !value.startsWith('//')) return value;
+  return HOME_BY_ROLE[role] || '/';
 }
 
 export default function Login() {
   const { t } = useTranslation();
-  const { login, verifyCode } = useAuth();
+  const { login, verifyCode, setupCode } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const next = safeNext(params.get('next'));
+  const requested = params.get('next');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
-  const [mfaToken, setMfaToken] = useState(null);
+  const [mfa, setMfa] = useState(null); // { token, setup }
   const [state, setState] = useState('idle');
+
+  const goOn = (role) => navigate(safeNext(requested, role), { replace: true });
 
   async function submitPassword(event) {
     event.preventDefault();
     setState('sending');
-    const { result, mfaToken: ticket } = await login(email, password);
-    if (result === 'ok') return navigate(next, { replace: true });
-    if (result === 'mfa') {
-      setMfaToken(ticket);
+    const { result, role, mfaToken } = await login(email, password);
+    if (result === 'ok') return goOn(role);
+    if (result === 'mfa' || result === 'mfa_setup') {
+      setMfa({ token: mfaToken, setup: result === 'mfa_setup' });
       return setState('idle');
     }
     setState(result);
@@ -37,8 +43,8 @@ export default function Login() {
   async function submitCode(event) {
     event.preventDefault();
     setState('sending');
-    const result = await verifyCode(mfaToken, code);
-    if (result === 'ok') return navigate(next, { replace: true });
+    const { result, role } = await verifyCode(mfa.token, code);
+    if (result === 'ok') return goOn(role);
     setState(result);
   }
 
@@ -47,16 +53,19 @@ export default function Login() {
     unverified: t('login.unverified'),
     tooMany: t('account.tooMany'),
     invalidCode: t('login.invalidCode'),
-    mfa_setup: t('login.mfaSetup'),
     error: t('status.error'),
   };
 
   return (
     <section className="narrow">
       <h1>{t('login.title')}</h1>
-      {mfaToken ? (
+      {mfa ? (
         <form className="panel form" onSubmit={submitCode}>
-          <p className="hint">{t('login.codeIntro')}</p>
+          {mfa.setup ? (
+            <SetupCode mfaToken={mfa.token} setupCode={setupCode} />
+          ) : (
+            <p className="hint">{t('login.codeIntro')}</p>
+          )}
           <div className="field">
             <label htmlFor="code">{t('login.code')}</label>
             <input
@@ -106,10 +115,50 @@ export default function Login() {
           <p className="hint">
             <Link to="/mot-de-passe-oublie">{t('account.forgot.link')}</Link>
             {' · '}
-            <Link to={`/inscription?next=${encodeURIComponent(next)}`}>{t('login.register')}</Link>
+            <Link
+              to={requested ? `/inscription?next=${encodeURIComponent(requested)}` : '/inscription'}
+            >
+              {t('login.register')}
+            </Link>
           </p>
         </form>
       )}
     </section>
+  );
+}
+
+/** First staff login: show the QR code to scan with an authenticator app (B-AUTH-04). */
+function SetupCode({ mfaToken, setupCode }) {
+  const { t } = useTranslation();
+  const [setup, setSetup] = useState(null);
+  const [image, setImage] = useState('');
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setupCode(mfaToken)
+      .then(async (data) => {
+        if (!active) return;
+        if (!data) return setFailed(true);
+        setSetup(data);
+        setImage(await QRCode.toDataURL(data.otpauth_uri, { margin: 1, width: 220 }));
+      })
+      .catch(() => active && setFailed(true));
+    return () => {
+      active = false;
+    };
+  }, [mfaToken, setupCode]);
+
+  if (failed) return <Problem text={t('status.error')} />;
+  return (
+    <div className="setup">
+      <p className="hint">{t('login.setupIntro')}</p>
+      {image && <img src={image} alt={t('login.qrAlt')} width="220" height="220" />}
+      {setup && (
+        <p className="hint">
+          {t('login.manualKey')} <code className="secret">{setup.secret}</code>
+        </p>
+      )}
+    </div>
   );
 }

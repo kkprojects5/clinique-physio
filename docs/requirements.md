@@ -106,57 +106,57 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 <!-- BACKLOG-TABLE:START -->
 | Issue | ID | User story | Priority | Deliverable | Status |
 |---|---|---|---|---|---|
-| — | US-AUTH-01 | Patient registration with consent | Must | D1 | Done |
-| — | US-AUTH-02 | Login and secure sessions | Must | D1 | Done |
-| — | US-AUTH-03 | Strong password storage and password policy | Must | D1 | Done |
-| — | US-AUTH-03b | Password reset without user enumeration | Must | D1 | Done |
-| — | US-AUTH-04 | Mandatory two-factor authentication for staff | Must | D1 | Done |
-| — | US-AUTH-05 | Role and care-relationship access control | Must | D2 | Done |
-| — | US-AUTH-06 | Protection against password guessing | Must | D1 | Done |
-| — | US-AUTH-07 | Break-the-glass emergency access | Could | D3 | To do |
-| — | US-AVL-01 | Service catalog | Must | D1 | Done |
-| — | US-AVL-02 | Therapist working hours and time off | Must | D1 | Done |
-| — | US-AVL-03 | Bookable slot computation | Must | D1 | Done |
-| — | US-AVL-04 | Rooms as a resource | Should | D3 | To do |
-| — | US-AVL-05 | Therapist profile page | Should | D2 | In progress |
-| — | US-BKG-01 | Online booking with deposit | Must | D2 | In progress |
-| — | US-BKG-02 | No double booking under concurrency | Must | D2 | Done |
-| — | US-BKG-03 | Temporary hold during payment | Must | D2 | Done |
-| — | US-BKG-04 | Deposit payment confirmed by Stripe | Must | D2 | Done |
-| — | US-BKG-05 | Appointment lifecycle | Must | D2 | In progress |
-| — | US-BKG-06 | Reschedule and cancel with the 24-hour rule | Must | D2 | Done |
-| — | US-BKG-07 | Times shown in Montréal time | Must | D1 | Done |
-| — | US-BKG-08 | Appointment reminders | Should | D3 | To do |
-| — | US-BKG-09 | Waiting list | Could | D3 | To do |
-| — | US-BKG-10 | Insurance receipt | Should | D3 | To do |
-| — | US-CLN-01 | My patients and their history | Must | D2 | Done |
-| — | US-CLN-02 | Encrypted SOAP session notes | Must | D2 | Done |
-| — | US-CLN-03 | Signed notes and amendments | Should | D3 | Done |
-| — | US-CLN-04 | Audit of clinical access | Must | D2 | Done |
-| — | US-CLN-05 | No clinical notes for front desk and admin | Must | D2 | Done |
-| — | US-CLN-06 | Document upload | Could | D3 | To do |
-| — | US-EXE-01 | Exercise library | Must | D2 | Done |
-| — | US-EXE-02 | Assign a program | Must | D2 | Done |
-| — | US-EXE-03 | Follow my program | Must | D2 | In progress |
-| — | US-EXE-04 | Adherence chart | Should | D3 | Done |
-| — | US-EXE-05 | Daily exercise reminder | Could | D3 | To do |
-| — | US-FRD-01 | Day schedule of all therapists | Must | D1 | Done |
-| — | US-FRD-02 | Book for a patient on the phone | Must | D2 | To do |
-| — | US-FRD-03 | Check-in and no-show | Must | D2 | To do |
-| — | US-FRD-04 | Walk-in patients | Should | D3 | To do |
-| — | US-FRD-05 | Record payments at the desk | Should | D3 | To do |
-| — | US-FRD-06 | Offline mode with conflict detection | Should | D3 | To do |
-| — | US-ADM-01 | Manage services, staff and rooms | Must | D2 | To do |
-| — | US-ADM-02 | Reports | Should | D3 | To do |
-| — | US-ADM-03 | Audit log viewer | Must | D3 | To do |
-| — | US-ADM-04 | Privacy requests | Should | D3 | To do |
-| — | US-ADM-05 | Confidentiality incident register | Should | D3 | To do |
-| — | US-ADM-06 | Knowledge base management | Should | D3 | To do |
-| — | US-BOT-01 | Ask practical questions | Must | D2 | To do |
-| — | US-BOT-02 | Refuse diagnosis and handle emergencies | Must | D2 | To do |
-| — | US-BOT-03 | Resist prompt injection and protect privacy | Must | D2 | To do |
-| — | US-BOT-04 | Measured answer quality | Must | D2 | To do |
-| — | US-BOT-05 | Answer feedback | Should | D2 | To do |
+| [#55](https://github.com/stevatak/Khadizhat-Synth/issues/55) | US-AUTH-01 | Patient registration with consent | Must | D1 | Done |
+| [#56](https://github.com/stevatak/Khadizhat-Synth/issues/56) | US-AUTH-02 | Login and secure sessions | Must | D1 | Done |
+| [#57](https://github.com/stevatak/Khadizhat-Synth/issues/57) | US-AUTH-03 | Strong password storage and password policy | Must | D1 | Done |
+| [#58](https://github.com/stevatak/Khadizhat-Synth/issues/58) | US-AUTH-03b | Password reset without user enumeration | Must | D1 | Done |
+| [#59](https://github.com/stevatak/Khadizhat-Synth/issues/59) | US-AUTH-04 | Mandatory two-factor authentication for staff | Must | D1 | Done |
+| [#60](https://github.com/stevatak/Khadizhat-Synth/issues/60) | US-AUTH-05 | Role and care-relationship access control | Must | D2 | Done |
+| [#61](https://github.com/stevatak/Khadizhat-Synth/issues/61) | US-AUTH-06 | Protection against password guessing | Must | D1 | Done |
+| [#62](https://github.com/stevatak/Khadizhat-Synth/issues/62) | US-AUTH-07 | Break-the-glass emergency access | Could | D3 | To do |
+| [#63](https://github.com/stevatak/Khadizhat-Synth/issues/63) | US-AVL-01 | Service catalog | Must | D1 | Done |
+| [#64](https://github.com/stevatak/Khadizhat-Synth/issues/64) | US-AVL-02 | Therapist working hours and time off | Must | D1 | Done |
+| [#65](https://github.com/stevatak/Khadizhat-Synth/issues/65) | US-AVL-03 | Bookable slot computation | Must | D1 | Done |
+| [#66](https://github.com/stevatak/Khadizhat-Synth/issues/66) | US-AVL-04 | Rooms as a resource | Should | D3 | To do |
+| [#67](https://github.com/stevatak/Khadizhat-Synth/issues/67) | US-AVL-05 | Therapist profile page | Should | D2 | In progress |
+| [#68](https://github.com/stevatak/Khadizhat-Synth/issues/68) | US-BKG-01 | Online booking with deposit | Must | D2 | In progress |
+| [#69](https://github.com/stevatak/Khadizhat-Synth/issues/69) | US-BKG-02 | No double booking under concurrency | Must | D2 | Done |
+| [#70](https://github.com/stevatak/Khadizhat-Synth/issues/70) | US-BKG-03 | Temporary hold during payment | Must | D2 | Done |
+| [#71](https://github.com/stevatak/Khadizhat-Synth/issues/71) | US-BKG-04 | Deposit payment confirmed by Stripe | Must | D2 | Done |
+| [#72](https://github.com/stevatak/Khadizhat-Synth/issues/72) | US-BKG-05 | Appointment lifecycle | Must | D2 | In progress |
+| [#73](https://github.com/stevatak/Khadizhat-Synth/issues/73) | US-BKG-06 | Reschedule and cancel with the 24-hour rule | Must | D2 | Done |
+| [#74](https://github.com/stevatak/Khadizhat-Synth/issues/74) | US-BKG-07 | Times shown in Montréal time | Must | D1 | Done |
+| [#75](https://github.com/stevatak/Khadizhat-Synth/issues/75) | US-BKG-08 | Appointment reminders | Should | D3 | To do |
+| [#76](https://github.com/stevatak/Khadizhat-Synth/issues/76) | US-BKG-09 | Waiting list | Could | D3 | To do |
+| [#77](https://github.com/stevatak/Khadizhat-Synth/issues/77) | US-BKG-10 | Insurance receipt | Should | D3 | To do |
+| [#78](https://github.com/stevatak/Khadizhat-Synth/issues/78) | US-CLN-01 | My patients and their history | Must | D2 | Done |
+| [#79](https://github.com/stevatak/Khadizhat-Synth/issues/79) | US-CLN-02 | Encrypted SOAP session notes | Must | D2 | Done |
+| [#80](https://github.com/stevatak/Khadizhat-Synth/issues/80) | US-CLN-03 | Signed notes and amendments | Should | D3 | Done |
+| [#81](https://github.com/stevatak/Khadizhat-Synth/issues/81) | US-CLN-04 | Audit of clinical access | Must | D2 | Done |
+| [#82](https://github.com/stevatak/Khadizhat-Synth/issues/82) | US-CLN-05 | No clinical notes for front desk and admin | Must | D2 | Done |
+| [#83](https://github.com/stevatak/Khadizhat-Synth/issues/83) | US-CLN-06 | Document upload | Could | D3 | To do |
+| [#84](https://github.com/stevatak/Khadizhat-Synth/issues/84) | US-EXE-01 | Exercise library | Must | D2 | Done |
+| [#85](https://github.com/stevatak/Khadizhat-Synth/issues/85) | US-EXE-02 | Assign a program | Must | D2 | Done |
+| [#86](https://github.com/stevatak/Khadizhat-Synth/issues/86) | US-EXE-03 | Follow my program | Must | D2 | In progress |
+| [#87](https://github.com/stevatak/Khadizhat-Synth/issues/87) | US-EXE-04 | Adherence chart | Should | D3 | Done |
+| [#88](https://github.com/stevatak/Khadizhat-Synth/issues/88) | US-EXE-05 | Daily exercise reminder | Could | D3 | To do |
+| [#89](https://github.com/stevatak/Khadizhat-Synth/issues/89) | US-FRD-01 | Day schedule of all therapists | Must | D1 | Done |
+| [#90](https://github.com/stevatak/Khadizhat-Synth/issues/90) | US-FRD-02 | Book for a patient on the phone | Must | D2 | To do |
+| [#91](https://github.com/stevatak/Khadizhat-Synth/issues/91) | US-FRD-03 | Check-in and no-show | Must | D2 | To do |
+| [#92](https://github.com/stevatak/Khadizhat-Synth/issues/92) | US-FRD-04 | Walk-in patients | Should | D3 | To do |
+| [#93](https://github.com/stevatak/Khadizhat-Synth/issues/93) | US-FRD-05 | Record payments at the desk | Should | D3 | To do |
+| [#94](https://github.com/stevatak/Khadizhat-Synth/issues/94) | US-FRD-06 | Offline mode with conflict detection | Should | D3 | To do |
+| [#95](https://github.com/stevatak/Khadizhat-Synth/issues/95) | US-ADM-01 | Manage services, staff and rooms | Must | D2 | To do |
+| [#96](https://github.com/stevatak/Khadizhat-Synth/issues/96) | US-ADM-02 | Reports | Should | D3 | To do |
+| [#97](https://github.com/stevatak/Khadizhat-Synth/issues/97) | US-ADM-03 | Audit log viewer | Must | D3 | To do |
+| [#98](https://github.com/stevatak/Khadizhat-Synth/issues/98) | US-ADM-04 | Privacy requests | Should | D3 | To do |
+| [#99](https://github.com/stevatak/Khadizhat-Synth/issues/99) | US-ADM-05 | Confidentiality incident register | Should | D3 | To do |
+| [#100](https://github.com/stevatak/Khadizhat-Synth/issues/100) | US-ADM-06 | Knowledge base management | Should | D3 | To do |
+| [#101](https://github.com/stevatak/Khadizhat-Synth/issues/101) | US-BOT-01 | Ask practical questions | Must | D2 | To do |
+| [#102](https://github.com/stevatak/Khadizhat-Synth/issues/102) | US-BOT-02 | Refuse diagnosis and handle emergencies | Must | D2 | To do |
+| [#103](https://github.com/stevatak/Khadizhat-Synth/issues/103) | US-BOT-03 | Resist prompt injection and protect privacy | Must | D2 | To do |
+| [#104](https://github.com/stevatak/Khadizhat-Synth/issues/104) | US-BOT-04 | Measured answer quality | Must | D2 | To do |
+| [#105](https://github.com/stevatak/Khadizhat-Synth/issues/105) | US-BOT-05 | Answer feedback | Should | D2 | To do |
 <!-- BACKLOG-TABLE:END -->
 
 ### D1 status
@@ -173,5 +173,6 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
 - In progress: US-BKG-01 (website booking and Stripe payment done; mobile and email to do),
   US-EXE-03 (check-off: API done, screens to do), US-BKG-05 (status history; check-in
   and no-show to come), US-AVL-05 (team page; photos to come).
-- Next: the screens: therapist workspace (notes, programs), patient exercises on mobile,
-  front-desk check-in.
+- Website therapist workspace done: staff login with first-time QR code, my patients, patient
+  file, SOAP notes (draft, sign, amend), exercise programs with adherence.
+- Next: patient exercises on mobile, front-desk phone booking and check-in on the desktop app.

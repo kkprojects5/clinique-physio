@@ -42,6 +42,13 @@ export default function Layout() {
                   </NavLink>
                 </li>
               ))}
+              {user?.role === 'therapist' && (
+                <li>
+                  <NavLink to="/espace-therapeute" className="nav__link">
+                    {t('nav.workspace')}
+                  </NavLink>
+                </li>
+              )}
               {user?.role === 'patient' && (
                 <li>
                   <NavLink to="/mes-rendez-vous" className="nav__link">

@@ -8,7 +8,8 @@
     "label": "Navigation principale",
     "myAppointments": "Mes rendez-vous",
     "login": "Connexion",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "workspace": "Espace thérapeute"
   },
   "language": {
     "label": "Langue",
@@ -113,7 +114,10 @@
     "code": "Code à 6 chiffres",
     "verify": "Vérifier",
     "invalidCode": "Code incorrect. Réessayez avec le code affiché maintenant.",
-    "mfaSetup": "Première connexion du personnel : configurez d’abord la vérification en deux étapes dans l’application de bureau."
+    "mfaSetup": "Première connexion du personnel : configurez d’abord la vérification en deux étapes dans l’application de bureau.",
+    "setupIntro": "Première connexion : ouvrez votre application d’authentification (Microsoft ou Google Authenticator), ajoutez un compte et scannez ce code. Entrez ensuite le code à 6 chiffres affiché.",
+    "qrAlt": "Code QR à scanner avec l’application d’authentification",
+    "manualKey": "Ou entrez cette clé à la main :"
   },
   "register": {
     "title": "Créer un compte",
@@ -189,5 +193,54 @@
     "cancelled_by_clinic": "Annulé par la clinique",
     "no_show": "Absent",
     "expired": "Expiré"
+  },
+  "soap": {
+    "subjective": "Subjectif (ce que dit le patient)",
+    "objective": "Objectif (examen, mesures)",
+    "assessment": "Analyse",
+    "plan": "Plan de traitement"
+  },
+  "workspace": {
+    "title": "Espace thérapeute",
+    "hello": "Bonjour {{name}}.",
+    "patients": "Mes patients",
+    "noPatients": "Aucun patient pour le moment.",
+    "name": "Nom",
+    "lastVisit": "Dernier rendez-vous",
+    "notFound": "Dossier introuvable : vous ne pouvez ouvrir que le dossier des patients que vous traitez.",
+    "emergency": "Personne à joindre en urgence",
+    "audited": "Chaque consultation de ce dossier est enregistrée dans le journal d’audit.",
+    "history": "Rendez-vous",
+    "notes": "Notes cliniques",
+    "noNotes": "Aucune note pour le moment.",
+    "writeNote": "Rédiger la note",
+    "saveDraft": "Enregistrer le brouillon",
+    "cancel": "Annuler",
+    "emptyNote": "Remplissez au moins une partie de la note.",
+    "draft": "Brouillon",
+    "signedOn": "Signée le {{day}}",
+    "amendment": "Amendement du {{day}}",
+    "edit": "Modifier",
+    "sign": "Signer",
+    "signNow": "Signer définitivement",
+    "signWarning": "Une fois signée, la note ne pourra plus jamais être modifiée. Une correction se fera par un amendement.",
+    "amend": "Ajouter un amendement",
+    "addAmendment": "Enregistrer l’amendement signé",
+    "programs": "Programmes d’exercices",
+    "noPrograms": "Aucun programme pour le moment.",
+    "programDates": "Du {{start}} au {{end}} ({{weeks}} semaines)",
+    "adherence": "Assiduité : {{percent}} %",
+    "exercise": "Exercice",
+    "dose": "Séries × répétitions",
+    "perWeek": "Fois par semaine",
+    "perWeekFor": "Fois par semaine pour {{name}}",
+    "done": "Fait / prévu",
+    "newProgram": "Nouveau programme",
+    "startDate": "Début",
+    "weeks": "Durée (semaines)",
+    "exercises": "Exercices",
+    "chooseExercise": "Choisissez au moins un exercice.",
+    "adviceForPatient": "Conseils pour le patient (facultatif)",
+    "giveProgram": "Donner le programme"
   }
 }

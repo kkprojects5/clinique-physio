@@ -354,13 +354,65 @@ def refresh_appointments(db: Session, rng_seed: int | None = None) -> int:
     return created
 
 
+PAST_DAYS = 10  # completed demo visits over the last ten days, so notes can be written
+
+
+def add_past_visits(db: Session, rng_seed: int | None = None) -> int:
+    """Add completed demo visits on the last working days that have none yet.
+
+    Notes can only be written after a visit (B-CLN-02), and patients only appear in a
+    therapist's list with a care relationship (B-AUTH-05), so the demo needs past visits.
+    Safe to run again: a (therapist, day) that already has a past visit is left alone.
+    """
+    service = db.scalar(select(Service).where(Service.duration_min == 30).limit(1))
+    patients = [(p.id, p.user_id) for p in db.scalars(select(Patient))]
+    if service is None or not patients:
+        return 0
+    today = availability_service.today_local()
+    first = today - timedelta(days=PAST_DAYS)
+    window = Range(local_to_utc(first, time(0)), local_to_utc(today, time(0)))
+    done = {
+        (a.therapist_id, a.during.lower.astimezone(CLINIC_TZ).date())
+        for a in db.scalars(select(Appointment).where(Appointment.during.overlaps(window)))
+    }
+    rules = db.scalars(select(AvailabilityRule)).all()
+    # Not for security: only picks fictional demo patients.
+    rng = random.Random(rng_seed)  # noqa: S311  # nosec B311
+    created = 0
+    for offset in range(PAST_DAYS, 0, -1):
+        day = today - timedelta(days=offset)
+        for rule in rules:
+            if rule.weekday != day.isoweekday() or (rule.therapist_id, day) in done:
+                continue
+            done.add((rule.therapist_id, day))
+            begin = local_to_utc(day, rule.start_time)
+            for visit in range(2):  # two visits that day, one hour apart
+                start = begin + timedelta(hours=visit)
+                patient_id, user_id = rng.choice(patients)
+                db.add(
+                    Appointment(
+                        patient_id=patient_id,
+                        therapist_id=rule.therapist_id,
+                        service_id=service.id,
+                        during=Range(start, start + timedelta(minutes=service.duration_min)),
+                        status="completed",
+                        created_by=user_id,
+                    )
+                )
+                created += 1
+    db.commit()
+    return created
+
+
 def main() -> None:
     from app.db.session import SessionLocal
 
     if "--refresh-appointments" in sys.argv:
         with SessionLocal() as db:
             created = refresh_appointments(db)
+            past = add_past_visits(db)
         print(f"Demo appointments added for the next {APPOINTMENT_DAYS} days: {created}.")
+        print(f"Completed demo visits added for the last {PAST_DAYS} days: {past}.")
         return
 
     staff_password = _require_password("SEED_STAFF_PASSWORD")

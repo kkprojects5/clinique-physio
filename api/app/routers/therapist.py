@@ -12,6 +12,7 @@ from app.core.crypto import decrypt
 from app.dependencies import CurrentTherapist, DbSession
 from app.schemas.catalog import AvailabilityOut, ExceptionIn, ExceptionOut, RuleOut, RulesIn
 from app.schemas.clinical import HistoryItem, MyPatient, NoteOut, PatientFile, SoapContent, SoapIn
+from app.schemas.schedule import TherapistRef
 from app.services import availability_service, clinical_service
 from app.services.slots import CLINIC_TZ
 
@@ -62,6 +63,14 @@ def delete_exception(exception_id: uuid.UUID, db: DbSession, therapist: CurrentT
 
 
 # --- Patient files and clinical notes ---------------------------------------------------
+
+
+@router.get("/me")
+def who_am_i(therapist: CurrentTherapist) -> TherapistRef:
+    """The therapist profile of the logged-in staff member."""
+    return TherapistRef(
+        id=therapist.id, first_name=therapist.first_name, last_name=therapist.last_name
+    )
 
 
 def _note_out(view: clinical_service.NoteView) -> NoteOut:
@@ -131,6 +140,7 @@ def read_patient_file(
                 status=a.status,
                 service_name_fr=s.name_fr,
                 service_name_en=s.name_en,
+                therapist_id=t.id,
                 therapist_name=f"{t.first_name} {t.last_name}",
             )
             for a, s, t in history

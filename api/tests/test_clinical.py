@@ -375,3 +375,23 @@ def test_unknown_client_app_is_recorded_as_other(client, db, clinic):
 
     assert audits(db)[0].client_app == "other"
     assert db.get(User, clinic["anne"].user_id) is not None
+
+
+def test_therapist_me_and_history_say_whose_appointment_it_is(client, db, clinic):
+    visit(db, clinic, clinic["anne"], clinic["marie"])
+    visit(db, clinic, clinic["sophie"], clinic["marie"], hours_from_now=-30)
+
+    me = client.get(f"{BASE}/me", headers=as_staff(clinic["anne"])).json()
+    history = client.get(
+        f"{BASE}/patients/{clinic['marie'].id}", headers=as_staff(clinic["anne"])
+    ).json()["history"]
+
+    assert me == {
+        "id": str(clinic["anne"].id),
+        "first_name": clinic["anne"].first_name,
+        "last_name": "Lefebvre",
+    }
+    assert {h["therapist_id"] for h in history} == {
+        str(clinic["anne"].id),
+        str(clinic["sophie"].id),
+    }

@@ -993,6 +993,33 @@
         }
       }
     },
+    "/api/v1/therapist/me": {
+      "get": {
+        "tags": [
+          "therapist"
+        ],
+        "summary": "Who Am I",
+        "description": "The therapist profile of the logged-in staff member.",
+        "operationId": "who_am_i_api_v1_therapist_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TherapistRef"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/therapist/patients": {
       "get": {
         "tags": [
@@ -2230,6 +2257,11 @@
             "type": "string",
             "title": "Service Name En"
           },
+          "therapist_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Therapist Id"
+          },
           "therapist_name": {
             "type": "string",
             "title": "Therapist Name"
@@ -2243,6 +2275,7 @@
           "status",
           "service_name_fr",
           "service_name_en",
+          "therapist_id",
           "therapist_name"
         ],
         "title": "HistoryItem"

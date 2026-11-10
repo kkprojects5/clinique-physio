@@ -15,6 +15,8 @@ import BookingDone from './pages/BookingDone';
 import MyAppointments from './pages/MyAppointments';
 import { AuthProvider } from './auth/AuthContext';
 import RequireAuth from './auth/RequireAuth';
+import TherapistPatients from './pages/therapist/Patients';
+import PatientFile from './pages/therapist/PatientFile';
 
 export default function App() {
   return (
@@ -43,6 +45,22 @@ export default function App() {
             element={
               <RequireAuth needRole="patient">
                 <BookingDone />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="espace-therapeute"
+            element={
+              <RequireAuth needRole="therapist">
+                <TherapistPatients />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="espace-therapeute/patients/:id"
+            element={
+              <RequireAuth needRole="therapist">
+                <PatientFile />
               </RequireAuth>
             }
           />

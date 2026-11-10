@@ -482,3 +482,62 @@ h2 {
   background: #fdf1d8;
   color: #6b4a00;
 }
+
+/* --- Therapist workspace -------------------------------------------------- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0 1rem;
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e3e7ee;
+}
+.table th {
+  font-weight: 600;
+}
+.soap-view dt {
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+.soap-view dd {
+  margin: 0 0 0.25rem;
+  white-space: pre-wrap;
+}
+.soap textarea,
+.form textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  border: 1px solid #c9cfd8;
+}
+.amendment {
+  border-left: 3px solid var(--teal-dark);
+  padding-left: 0.75rem;
+  margin: 0.75rem 0;
+}
+.exercise-picker {
+  border: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.exercise-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  align-items: center;
+}
+.exercise-choice input[type='number'] {
+  width: 4rem;
+}
+.setup img {
+  display: block;
+  margin: 0.5rem 0;
+}
+.secret {
+  word-break: break-all;
+}

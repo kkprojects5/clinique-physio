@@ -24,11 +24,11 @@ export function AuthProvider({ children }) {
     const me = await authRequest('/me', { token: accessToken });
     if (me.status === 200) {
       setUser(me.data);
-      return true;
+      return me.data;
     }
     token.current = null;
     setUser(null);
-    return false;
+    return null;
   }, []);
 
   const refresh = useCallback(async () => {
@@ -68,7 +68,8 @@ export function AuthProvider({ children }) {
           body: { email, password },
         });
         if (status === 200 && data?.access_token) {
-          return (await startSession(data.access_token)) ? { result: 'ok' } : { result: 'error' };
+          const me = await startSession(data.access_token);
+          return me ? { result: 'ok', role: me.role } : { result: 'error' };
         }
         if (status === 200 && data?.mfa_required) {
           return {
@@ -93,15 +94,29 @@ export function AuthProvider({ children }) {
           body: { mfa_token: mfaToken, code },
         });
         if (status === 200 && data?.access_token) {
-          return (await startSession(data.access_token)) ? 'ok' : 'error';
+          const me = await startSession(data.access_token);
+          return me ? { result: 'ok', role: me.role } : { result: 'error' };
         }
-        return { 401: 'invalidCode', 429: 'tooMany' }[status] || 'error';
+        return { result: { 401: 'invalidCode', 429: 'tooMany' }[status] || 'error' };
       } catch {
-        return 'error';
+        return { result: 'error' };
       }
     },
     [startSession],
   );
+
+  /** First staff login: get the authenticator secret to show as a QR code. */
+  const setupCode = useCallback(async (mfaToken) => {
+    try {
+      const { status, data } = await authRequest('/auth/mfa/setup', {
+        method: 'POST',
+        body: { mfa_token: mfaToken },
+      });
+      return status === 200 ? data : null;
+    } catch {
+      return null;
+    }
+  }, []);
 
   const logout = useCallback(async () => {
     try {
@@ -125,8 +140,8 @@ export function AuthProvider({ children }) {
   );
 
   const value = useMemo(
-    () => ({ user, ready, login, verifyCode, logout, api }),
-    [user, ready, login, verifyCode, logout, api],
+    () => ({ user, ready, login, verifyCode, setupCode, logout, api }),
+    [user, ready, login, verifyCode, setupCode, logout, api],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

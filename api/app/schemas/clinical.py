@@ -55,6 +55,7 @@ class HistoryItem(BaseModel):
     status: str
     service_name_fr: str
     service_name_en: str
+    therapist_id: uuid.UUID
     therapist_name: str
 
 

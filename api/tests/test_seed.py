@@ -1,10 +1,14 @@
 """Demo data (D1): right amounts, valid appointments, safe to run twice."""
 
+from datetime import timedelta
+
 from sqlalchemy import func, select
 
 from app.core.security import verify_password
 from app.models import Appointment, AvailabilityRule, Patient, Service, Therapist, User
-from app.seed import refresh_appointments, seed
+from app.seed import PAST_DAYS, add_past_visits, refresh_appointments, seed
+from app.services import availability_service
+from app.services.slots import CLINIC_TZ
 
 STAFF = "Staff-Demo-Password-1"
 PATIENTS = "Patient-Demo-Password-1"
@@ -81,3 +85,35 @@ def test_refresh_never_creates_overlaps(db):
 
 def test_refresh_does_nothing_without_demo_data(db):
     assert refresh_appointments(db) == 0
+
+
+def test_past_visits_are_completed_and_in_the_past(db):
+    seed(db, STAFF, PATIENTS)
+    db.query(Appointment).delete()
+    db.commit()
+
+    created = add_past_visits(db, rng_seed=4)
+
+    visits = db.scalars(select(Appointment)).all()
+    assert created == len(visits) > 0
+    today = availability_service.today_local()
+    for visit in visits:
+        day = visit.during.lower.astimezone(CLINIC_TZ).date()
+        assert visit.status == "completed"
+        assert today - timedelta(days=PAST_DAYS) <= day < today
+
+
+def test_past_visits_are_added_once(db):
+    seed(db, STAFF, PATIENTS)
+    db.query(Appointment).delete()
+    db.commit()
+
+    first = add_past_visits(db, rng_seed=5)
+    second = add_past_visits(db, rng_seed=6)
+
+    assert first > 0
+    assert second == 0
+
+
+def test_past_visits_need_demo_data(db):
+    assert add_past_visits(db) == 0

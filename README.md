@@ -97,8 +97,8 @@ python -m uvicorn app.main:app --reload
 - API: http://127.0.0.1:8000, documentation: http://127.0.0.1:8000/docs
 - `python -m app.seed` creates the demo data once (6 therapists, front desk, admin,
   5 services, 50 patients, appointments).
-- `python -m app.seed --refresh-appointments` adds demo appointments for the next two weeks
-  (safe to run again).
+- `python -m app.seed --refresh-appointments` adds demo appointments for the next two weeks and
+  completed visits for the last ten days, so therapists can write notes (safe to run again).
 
 ### Payments (Stripe test mode, optional)
 

@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderAt, SERVICES, THERAPISTS } from '../test/render';
+import { renderAt } from '../test/render';
+import { mockRoutes, PATIENT } from '../test/routes';
 import { safeNext } from './Login';
 
 // Stripe is replaced: no network, no real card form. We check what our pages do with it.
@@ -15,7 +16,6 @@ vi.mock('@stripe/react-stripe-js', () => ({
 }));
 
 const START = '2030-03-04T14:00:00Z'; // 9:00 in Montréal
-const PATIENT = { id: 'u1', email: 'marie@example.com', role: 'patient', language: 'fr' };
 const HELD = {
   id: 'a1',
   status: 'pending_payment',
@@ -27,32 +27,6 @@ const HELD = {
   service: { id: 's-eval', name_fr: 'Évaluation initiale', name_en: 'Initial evaluation' },
   therapist: { id: 't-anne', first_name: 'Anne', last_name: 'Lefebvre' },
 };
-
-/** Fake API by "METHOD /path". Each handler returns [status, body]. */
-function mockRoutes(routes, { loggedIn = true } = {}) {
-  const calls = [];
-  const all = {
-    'GET /services': () => [200, SERVICES],
-    'GET /therapists': () => [200, THERAPISTS],
-    'POST /auth/refresh': () => (loggedIn ? [200, { access_token: 'tok' }] : [401, {}]),
-    'GET /me': () => [200, PATIENT],
-    'POST /auth/logout': () => [200, {}],
-    ...routes,
-  };
-  vi.stubGlobal(
-    'fetch',
-    vi.fn(async (url, options = {}) => {
-      const u = new URL(url);
-      const key = `${options.method || 'GET'} ${u.pathname.replace('/api/v1', '')}`;
-      const body = options.body ? JSON.parse(options.body) : undefined;
-      calls.push({ key, body, headers: options.headers || {}, credentials: options.credentials });
-      const handler = all[key];
-      const [status, data] = handler ? handler(body, u) : [404, {}];
-      return { ok: status < 300, status, json: async () => data };
-    }),
-  );
-  return calls;
-}
 
 const bookPath = `/reserver?service=s-eval&therapist=t-anne&start=${encodeURIComponent(START)}`;
 

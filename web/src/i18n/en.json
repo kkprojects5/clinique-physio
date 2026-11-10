@@ -8,7 +8,8 @@
     "label": "Main navigation",
     "myAppointments": "My appointments",
     "login": "Log in",
-    "logout": "Log out"
+    "logout": "Log out",
+    "workspace": "Therapist workspace"
   },
   "language": {
     "label": "Language",
@@ -113,7 +114,10 @@
     "code": "6-digit code",
     "verify": "Verify",
     "invalidCode": "Incorrect code. Try again with the code shown now.",
-    "mfaSetup": "First staff login: set up two-step verification in the desktop app first."
+    "mfaSetup": "First staff login: set up two-step verification in the desktop app first.",
+    "setupIntro": "First login: open your authenticator app (Microsoft or Google Authenticator), add an account and scan this code. Then enter the 6-digit code it shows.",
+    "qrAlt": "QR code to scan with the authenticator app",
+    "manualKey": "Or type this key by hand:"
   },
   "register": {
     "title": "Create an account",
@@ -189,5 +193,54 @@
     "cancelled_by_clinic": "Cancelled by the clinic",
     "no_show": "No-show",
     "expired": "Expired"
+  },
+  "soap": {
+    "subjective": "Subjective (what the patient says)",
+    "objective": "Objective (examination, measurements)",
+    "assessment": "Assessment",
+    "plan": "Treatment plan"
+  },
+  "workspace": {
+    "title": "Therapist workspace",
+    "hello": "Hello {{name}}.",
+    "patients": "My patients",
+    "noPatients": "No patients yet.",
+    "name": "Name",
+    "lastVisit": "Last appointment",
+    "notFound": "File not found: you can only open the files of patients you treat.",
+    "emergency": "Emergency contact",
+    "audited": "Every opening of this file is recorded in the audit log.",
+    "history": "Appointments",
+    "notes": "Clinical notes",
+    "noNotes": "No notes yet.",
+    "writeNote": "Write the note",
+    "saveDraft": "Save draft",
+    "cancel": "Cancel",
+    "emptyNote": "Fill in at least one part of the note.",
+    "draft": "Draft",
+    "signedOn": "Signed on {{day}}",
+    "amendment": "Amendment of {{day}}",
+    "edit": "Edit",
+    "sign": "Sign",
+    "signNow": "Sign for good",
+    "signWarning": "Once signed, the note can never be changed again. A correction will be an amendment.",
+    "amend": "Add an amendment",
+    "addAmendment": "Save the signed amendment",
+    "programs": "Exercise programs",
+    "noPrograms": "No programs yet.",
+    "programDates": "From {{start}} to {{end}} ({{weeks}} weeks)",
+    "adherence": "Adherence: {{percent}}%",
+    "exercise": "Exercise",
+    "dose": "Sets × reps",
+    "perWeek": "Times per week",
+    "perWeekFor": "Times per week for {{name}}",
+    "done": "Done / planned",
+    "newProgram": "New program",
+    "startDate": "Start",
+    "weeks": "Length (weeks)",
+    "exercises": "Exercises",
+    "chooseExercise": "Choose at least one exercise.",
+    "adviceForPatient": "Advice for the patient (optional)",
+    "giveProgram": "Give the program"
   }
 }
