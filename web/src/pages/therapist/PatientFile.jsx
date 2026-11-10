@@ -319,30 +319,32 @@ function Programs({ patientId }) {
               {t('workspace.adherence', { percent: program.adherence_percent })}
             </p>
             {program.notes && <p>{program.notes}</p>}
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">{t('workspace.exercise')}</th>
-                  <th scope="col">{t('workspace.dose')}</th>
-                  <th scope="col">{t('workspace.perWeek')}</th>
-                  <th scope="col">{t('workspace.done')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {program.items.map((item) => (
-                  <tr key={item.id}>
-                    <td>{lang === 'fr' ? item.exercise.name_fr : item.exercise.name_en}</td>
-                    <td>
-                      {item.sets} × {item.reps}
-                    </td>
-                    <td>{item.times_per_week}</td>
-                    <td>
-                      {item.done_total} / {item.planned_total}
-                    </td>
+            <div className="table-wrap">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">{t('workspace.exercise')}</th>
+                    <th scope="col">{t('workspace.dose')}</th>
+                    <th scope="col">{t('workspace.perWeek')}</th>
+                    <th scope="col">{t('workspace.done')}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {program.items.map((item) => (
+                    <tr key={item.id}>
+                      <td>{lang === 'fr' ? item.exercise.name_fr : item.exercise.name_en}</td>
+                      <td>
+                        {item.sets} × {item.reps}
+                      </td>
+                      <td>{item.times_per_week}</td>
+                      <td>
+                        {item.done_total} / {item.planned_total}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </li>
         ))}
       </ul>

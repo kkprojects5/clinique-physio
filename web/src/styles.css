@@ -484,6 +484,11 @@ h2 {
 }
 
 /* --- Therapist workspace -------------------------------------------------- */
+/* Wide tables scroll sideways inside their card on narrow screens. */
+.table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
 .table {
   width: 100%;
   border-collapse: collapse;

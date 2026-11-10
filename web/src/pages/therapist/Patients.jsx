@@ -24,28 +24,30 @@ export default function Patients() {
       {patients.data.length === 0 ? (
         <p>{t('workspace.noPatients')}</p>
       ) : (
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">{t('workspace.name')}</th>
-              <th scope="col">{t('register.date_of_birth')}</th>
-              <th scope="col">{t('workspace.lastVisit')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {patients.data.map((p) => (
-              <tr key={p.id}>
-                <td>
-                  <Link to={`/espace-therapeute/patients/${p.id}`}>
-                    {p.last_name}, {p.first_name}
-                  </Link>
-                </td>
-                <td>{p.date_of_birth}</td>
-                <td>{p.last_visit ? formatDay(p.last_visit, i18n.language) : '—'}</td>
+        <div className="table-wrap">
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">{t('workspace.name')}</th>
+                <th scope="col">{t('register.date_of_birth')}</th>
+                <th scope="col">{t('workspace.lastVisit')}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {patients.data.map((p) => (
+                <tr key={p.id}>
+                  <td>
+                    <Link to={`/espace-therapeute/patients/${p.id}`}>
+                      {p.last_name}, {p.first_name}
+                    </Link>
+                  </td>
+                  <td>{p.date_of_birth}</td>
+                  <td>{p.last_visit ? formatDay(p.last_visit, i18n.language) : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </section>
   );
