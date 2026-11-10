@@ -7,6 +7,8 @@ public enum ApiErrorKind
     Unauthorized,
     Forbidden,
     Validation,
+    NotFound,
+    Conflict,
     TooManyRequests,
     Server,
     Other,
@@ -29,6 +31,8 @@ public sealed class ApiException : Exception
     {
         401 => ApiErrorKind.Unauthorized,
         403 => ApiErrorKind.Forbidden,
+        404 => ApiErrorKind.NotFound,
+        409 => ApiErrorKind.Conflict,
         422 => ApiErrorKind.Validation,
         429 => ApiErrorKind.TooManyRequests,
         >= 500 => ApiErrorKind.Server,

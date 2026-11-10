@@ -7,5 +7,9 @@ public interface INavigator
 
     void GoToMfa(string mfaToken, bool setupRequired, string email);
 
-    void GoToSchedule();
+    /// <summary>The day schedule. Without a day: today. The info message is shown at the top.</summary>
+    void GoToSchedule(DateTime? day = null, string? info = null);
+
+    /// <summary>Phone booking for that day; with an appointment, moves it instead (B-FRD-02).</summary>
+    void GoToBooking(DateTime day, AppointmentItem? moving = null);
 }

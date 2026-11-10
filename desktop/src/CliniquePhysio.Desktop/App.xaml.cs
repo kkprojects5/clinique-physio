@@ -19,7 +19,7 @@ public partial class App : Application
 
         var session = new Session();
         var api = ApiClient.Create(ReadApiUrl(), session);
-        var main = new MainViewModel(api, session);
+        var main = new MainViewModel(api, session, dialogs: new MessageBoxDialogs());
 
         var window = new MainWindow { DataContext = main };
         window.Show();

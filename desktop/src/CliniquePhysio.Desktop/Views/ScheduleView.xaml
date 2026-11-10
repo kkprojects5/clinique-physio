@@ -14,6 +14,8 @@
                     Content="{Binding [schedule.today], Source={x:Static loc:Localizer.Instance}}" />
             <Button Command="{Binding LoadCommand}"
                     Content="{Binding [schedule.refresh], Source={x:Static loc:Localizer.Instance}}" />
+            <Button Command="{Binding NewBookingCommand}" Margin="16,0,8,0"
+                    Content="{Binding [schedule.newBooking], Source={x:Static loc:Localizer.Instance}}" />
             <Button Background="Transparent" Foreground="{StaticResource TealDark}" Command="{Binding LogoutCommand}"
                     Content="{Binding [schedule.logout], Source={x:Static loc:Localizer.Instance}}" />
         </StackPanel>
@@ -26,6 +28,11 @@
             <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="{StaticResource ErrorText}"
                        Text="{Binding Error}"
                        Visibility="{Binding Error, Converter={StaticResource NullToCollapsed}}" />
+            <!-- Result of the last action, e.g. "Marie Gagnon has arrived." -->
+            <Border Margin="0,8,0,0" Padding="10,6" CornerRadius="6" Background="{StaticResource InfoBack}"
+                    Visibility="{Binding Info, Converter={StaticResource NullToCollapsed}}">
+                <TextBlock TextWrapping="Wrap" Text="{Binding Info}" />
+            </Border>
         </StackPanel>
 
         <!-- One column per therapist (B-FRD-01). -->
@@ -58,6 +65,26 @@
                                                     <TextBlock Text="{Binding Phone}" Foreground="{StaticResource InkSoft}" FontSize="12" />
                                                     <TextBlock Text="{Binding ServiceName}" FontSize="12" TextWrapping="Wrap" />
                                                     <TextBlock Text="{Binding StatusLabel}" FontSize="12" FontStyle="Italic" />
+                                                    <!-- Desk actions (B-FRD-02, 03), only for a confirmed appointment.
+                                                         The commands are on the screen's view model, the card is the parameter. -->
+                                                    <WrapPanel Visibility="{Binding IsConfirmed, Converter={StaticResource BoolToVisibility}}">
+                                                        <Button Style="{StaticResource CardButton}"
+                                                                Command="{Binding DataContext.CheckInCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="{Binding [schedule.checkIn], Source={x:Static loc:Localizer.Instance}}" />
+                                                        <Button Style="{StaticResource CardLinkButton}"
+                                                                Command="{Binding DataContext.NoShowCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="{Binding [schedule.noShow], Source={x:Static loc:Localizer.Instance}}" />
+                                                        <Button Style="{StaticResource CardLinkButton}"
+                                                                Command="{Binding DataContext.MoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="{Binding [schedule.move], Source={x:Static loc:Localizer.Instance}}" />
+                                                        <Button Style="{StaticResource CardLinkButton}"
+                                                                Command="{Binding DataContext.CancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="{Binding [schedule.cancel], Source={x:Static loc:Localizer.Instance}}" />
+                                                    </WrapPanel>
                                                 </StackPanel>
                                             </Border>
                                         </DataTemplate>

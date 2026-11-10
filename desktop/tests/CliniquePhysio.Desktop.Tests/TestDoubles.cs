@@ -48,6 +48,33 @@ public sealed class FakeApi : IApiClient
 
     public Func<DateOnly, Task<DaySchedule>> Schedule { get; set; } = _ => Task.FromResult(new DaySchedule());
 
+    public Func<string, Task<List<PatientFound>>> Search { get; set; } =
+        _ => Task.FromResult(new List<PatientFound>());
+
+    public Func<Task<List<ServiceInfo>>> Services { get; set; } = () => Task.FromResult(new List<ServiceInfo>());
+
+    public Func<Task<List<TherapistInfo>>> Team { get; set; } = () => Task.FromResult(new List<TherapistInfo>());
+
+    public Func<Guid, Guid?, DateOnly, Task<List<FreeSlot>>> Slots { get; set; } =
+        (_, _, _) => Task.FromResult(new List<FreeSlot>());
+
+    public Func<Guid, Guid, Guid?, DateTimeOffset, Task<DeskAppointment>> Book { get; set; } =
+        (_, _, _, _) => Task.FromResult(new DeskAppointment());
+
+    public Func<Guid, DateTimeOffset, Guid?, Task<DeskAppointment>> Reschedule { get; set; } =
+        (_, _, _) => Task.FromResult(new DeskAppointment());
+
+    public Func<Guid, Task<CancelResult>> Cancel { get; set; } = _ => Task.FromResult(new CancelResult());
+
+    public Func<Guid, Task<DeskAppointment>> CheckIn { get; set; } = _ => Task.FromResult(new DeskAppointment());
+
+    public Func<Guid, Task<DeskAppointment>> NoShow { get; set; } = _ => Task.FromResult(new DeskAppointment());
+
+    /// <summary>Every desk action, in order, e.g. "check-in 3f2a…" (to check what was sent).</summary>
+    public List<string> Actions { get; } = new();
+
+    public int ScheduleCalls { get; private set; }
+
     public int LoginCalls { get; private set; }
 
     public int SetupCalls { get; private set; }
@@ -74,7 +101,53 @@ public sealed class FakeApi : IApiClient
         return Verify(mfaToken, code);
     }
 
-    public Task<DaySchedule> GetDayScheduleAsync(DateOnly day, CancellationToken ct = default) => Schedule(day);
+    public Task<DaySchedule> GetDayScheduleAsync(DateOnly day, CancellationToken ct = default)
+    {
+        ScheduleCalls++;
+        return Schedule(day);
+    }
+
+    public Task<List<PatientFound>> SearchPatientsAsync(string query, CancellationToken ct = default) => Search(query);
+
+    public Task<List<ServiceInfo>> GetServicesAsync(CancellationToken ct = default) => Services();
+
+    public Task<List<TherapistInfo>> GetTherapistsAsync(CancellationToken ct = default) => Team();
+
+    public Task<List<FreeSlot>> GetFreeSlotsAsync(
+        Guid serviceId, Guid? therapistId, DateOnly day, CancellationToken ct = default) =>
+        Slots(serviceId, therapistId, day);
+
+    public Task<DeskAppointment> BookByPhoneAsync(
+        Guid patientId, Guid serviceId, Guid? therapistId, DateTimeOffset start, CancellationToken ct = default)
+    {
+        Actions.Add($"book {patientId}");
+        return Book(patientId, serviceId, therapistId, start);
+    }
+
+    public Task<DeskAppointment> RescheduleByPhoneAsync(
+        Guid appointmentId, DateTimeOffset start, Guid? therapistId, CancellationToken ct = default)
+    {
+        Actions.Add($"reschedule {appointmentId}");
+        return Reschedule(appointmentId, start, therapistId);
+    }
+
+    public Task<CancelResult> CancelByPhoneAsync(Guid appointmentId, CancellationToken ct = default)
+    {
+        Actions.Add($"cancel {appointmentId}");
+        return Cancel(appointmentId);
+    }
+
+    public Task<DeskAppointment> CheckInAsync(Guid appointmentId, CancellationToken ct = default)
+    {
+        Actions.Add($"check-in {appointmentId}");
+        return CheckIn(appointmentId);
+    }
+
+    public Task<DeskAppointment> MarkNoShowAsync(Guid appointmentId, CancellationToken ct = default)
+    {
+        Actions.Add($"no-show {appointmentId}");
+        return NoShow(appointmentId);
+    }
 
     public Task LogoutAsync(CancellationToken ct = default)
     {
@@ -109,5 +182,39 @@ public sealed class FakeNavigator : INavigator
         MfaSetupRequired = setupRequired;
     }
 
-    public void GoToSchedule() => Screen = "schedule";
+    public DateTime? ScheduleDay { get; private set; }
+
+    public string? ScheduleInfo { get; private set; }
+
+    public DateTime? BookingDay { get; private set; }
+
+    public AppointmentItem? Moving { get; private set; }
+
+    public void GoToSchedule(DateTime? day = null, string? info = null)
+    {
+        Screen = "schedule";
+        ScheduleDay = day;
+        ScheduleInfo = info;
+    }
+
+    public void GoToBooking(DateTime day, AppointmentItem? moving = null)
+    {
+        Screen = "booking";
+        BookingDay = day;
+        Moving = moving;
+    }
+}
+
+/// <summary>Answers the confirmation questions with a prepared answer, and records them.</summary>
+public sealed class FakeDialogs : IDialogService
+{
+    public bool Answer { get; set; } = true;
+
+    public List<string> Questions { get; } = new();
+
+    public bool Confirm(string message)
+    {
+        Questions.Add(message);
+        return Answer;
+    }
 }

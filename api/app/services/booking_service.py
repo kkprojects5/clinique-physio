@@ -113,6 +113,16 @@ def _own(db: Session, patient: Patient, appointment_id: uuid.UUID) -> Appointmen
     return appointment
 
 
+def locked_appointment(db: Session, appointment_id: uuid.UUID) -> Appointment:
+    """Any appointment, locked for a change by the front desk."""
+    appointment = db.scalar(
+        select(Appointment).where(Appointment.id == appointment_id).with_for_update()
+    )
+    if appointment is None:
+        raise NotFound
+    return appointment
+
+
 def _offered_slot(
     db: Session,
     service_id: uuid.UUID,
@@ -176,18 +186,48 @@ def hold(
     now: datetime | None = None,
 ) -> Appointment:
     """Keep a slot 10 minutes for this patient while they pay the deposit."""
+    return _create_booking(db, patient, user.id, service_id, therapist_id, start, now, online=True)
 
+
+def book_by_phone(
+    db: Session,
+    patient: Patient,
+    actor: User,
+    service_id: uuid.UUID,
+    therapist_id: uuid.UUID | None,
+    start: datetime,
+    now: datetime | None = None,
+) -> Appointment:
+    """The front desk books for a patient on the phone (B-FRD-02): confirmed at once,
+    the patient pays at the clinic. Same rules as online: only offered times, no overlap,
+    an initial evaluation before a first treatment."""
+    return _create_booking(
+        db, patient, actor.id, service_id, therapist_id, start, now, online=False
+    )
+
+
+def _create_booking(
+    db: Session,
+    patient: Patient,
+    actor_id: uuid.UUID,
+    service_id: uuid.UUID,
+    therapist_id: uuid.UUID | None,
+    start: datetime,
+    now: datetime | None,
+    online: bool,
+) -> Appointment:
     def work() -> Appointment:
         moment = now or datetime.now(UTC)
         release_expired_holds(db, moment)
-        # A new hold replaces this patient's unpaid hold: one slot at a time.
-        for previous in db.scalars(
-            select(Appointment)
-            .where(Appointment.patient_id == patient.id, Appointment.status == "held")
-            .with_for_update()
-        ):
-            record(db, previous, "expired", user.id, "replaced by a new hold")
-        db.flush()
+        if online:
+            # A new hold replaces this patient's unpaid hold: one slot at a time.
+            for previous in db.scalars(
+                select(Appointment)
+                .where(Appointment.patient_id == patient.id, Appointment.status == "held")
+                .with_for_update()
+            ):
+                record(db, previous, "expired", actor_id, "replaced by a new hold")
+            db.flush()
 
         service = db.get(Service, service_id)
         if service is None or not service.is_active:
@@ -199,24 +239,25 @@ def hold(
                 "A first treatment needs an initial evaluation before it. "
                 "Please book an initial evaluation first."
             )
+        status = "held" if online else "confirmed"
         appointment = Appointment(
             id=uuid.uuid4(),
             patient_id=patient.id,
             therapist_id=chosen,
             service_id=service.id,
             during=Range(start, start + timedelta(minutes=service.duration_min)),
-            status="held",
-            hold_expires_at=moment + timedelta(minutes=HOLD_MINUTES),
-            created_by=user.id,
+            status=status,
+            hold_expires_at=moment + timedelta(minutes=HOLD_MINUTES) if online else None,
+            created_by=actor_id,
         )
         db.add(appointment)
         db.add(
             AppointmentStatusHistory(
                 appointment_id=appointment.id,
                 from_status=None,
-                to_status="held",
-                changed_by=user.id,
-                reason="booked online",
+                to_status=status,
+                changed_by=actor_id,
+                reason="booked online" if online else "booked by phone (front desk)",
             )
         )
         db.flush()  # the database checks the no-overlap rule here
@@ -245,8 +286,36 @@ def cancel(
     refund(appointment) gives the deposit back (Stripe); it runs before the cancellation is
     saved, so a failed refund cancels nothing and the patient can try again.
     """
-    moment = now or datetime.now(UTC)
     appointment = _own(db, patient, appointment_id)
+    return _cancel(db, appointment, user.id, now or datetime.now(UTC), refund, "")
+
+
+def cancel_by_phone(
+    db: Session,
+    actor: User,
+    appointment_id: uuid.UUID,
+    now: datetime | None = None,
+    refund: Callable[[Appointment], None] | None = None,
+) -> tuple[Appointment, bool]:
+    """The front desk cancels for a patient who calls (B-FRD-02). Same 24-hour refund rule."""
+    return _cancel(
+        db,
+        locked_appointment(db, appointment_id),
+        actor.id,
+        now or datetime.now(UTC),
+        refund,
+        "by phone: ",
+    )
+
+
+def _cancel(
+    db: Session,
+    appointment: Appointment,
+    actor_id: uuid.UUID,
+    moment: datetime,
+    refund: Callable[[Appointment], None] | None,
+    prefix: str,
+) -> tuple[Appointment, bool]:
     if appointment.status not in CHANGEABLE or appointment.during.lower <= moment:
         db.rollback()
         raise BookingError("This appointment can no longer be cancelled online.")
@@ -265,7 +334,7 @@ def cancel(
         except BookingError:
             db.rollback()
             raise
-    record(db, appointment, "cancelled_by_patient", user.id, reason)
+    record(db, appointment, "cancelled_by_patient", actor_id, prefix + reason)
     db.commit()
     return appointment, refunded
 
@@ -280,13 +349,52 @@ def reschedule(
     now: datetime | None = None,
 ) -> Appointment:
     """Move a paid appointment to another offered time, more than 24 hours ahead."""
-    moment = now or datetime.now(UTC)
+    return _reschedule(
+        db,
+        lambda: _own(db, patient, appointment_id),
+        user.id,
+        new_start,
+        therapist_id,
+        now or datetime.now(UTC),
+        online=True,
+    )
 
+
+def reschedule_by_phone(
+    db: Session,
+    actor: User,
+    appointment_id: uuid.UUID,
+    new_start: datetime,
+    therapist_id: uuid.UUID | None = None,
+    now: datetime | None = None,
+) -> Appointment:
+    """The front desk moves an appointment for a patient who calls (B-FRD-02). Unlike online,
+    this is allowed less than 24 hours before: the clinic decides."""
+    return _reschedule(
+        db,
+        lambda: locked_appointment(db, appointment_id),
+        actor.id,
+        new_start,
+        therapist_id,
+        now or datetime.now(UTC),
+        online=False,
+    )
+
+
+def _reschedule(
+    db: Session,
+    find: Callable[[], Appointment],
+    actor_id: uuid.UUID,
+    new_start: datetime,
+    therapist_id: uuid.UUID | None,
+    moment: datetime,
+    online: bool,
+) -> Appointment:
     def work() -> Appointment:
-        appointment = _own(db, patient, appointment_id)
-        if appointment.status != "confirmed":
+        appointment = find()
+        if appointment.status != "confirmed" or appointment.during.lower <= moment:
             raise BookingError("Only a confirmed appointment can be rescheduled.")
-        if not refund_due(appointment, moment):
+        if online and not refund_due(appointment, moment):
             raise BookingError(
                 f"Less than {FREE_CHANGE_HOURS} hours before the appointment, it can no longer "
                 "be changed online. Please call the clinic."
@@ -300,7 +408,8 @@ def reschedule(
         length = appointment.during.upper - appointment.during.lower
         appointment.during = Range(new_start, new_start + length)
         appointment.therapist_id = chosen
-        record(db, appointment, "confirmed", user.id, f"rescheduled from {old}")
+        prefix = "" if online else "by phone: "
+        record(db, appointment, "confirmed", actor_id, f"{prefix}rescheduled from {old}")
         db.flush()  # the database checks the no-overlap rule here
         return appointment
 

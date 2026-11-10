@@ -123,7 +123,7 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#69](https://github.com/stevatak/Khadizhat-Synth/issues/69) | US-BKG-02 | No double booking under concurrency | Must | D2 | Done |
 | [#70](https://github.com/stevatak/Khadizhat-Synth/issues/70) | US-BKG-03 | Temporary hold during payment | Must | D2 | Done |
 | [#71](https://github.com/stevatak/Khadizhat-Synth/issues/71) | US-BKG-04 | Deposit payment confirmed by Stripe | Must | D2 | Done |
-| [#72](https://github.com/stevatak/Khadizhat-Synth/issues/72) | US-BKG-05 | Appointment lifecycle | Must | D2 | In progress |
+| [#72](https://github.com/stevatak/Khadizhat-Synth/issues/72) | US-BKG-05 | Appointment lifecycle | Must | D2 | Done |
 | [#73](https://github.com/stevatak/Khadizhat-Synth/issues/73) | US-BKG-06 | Reschedule and cancel with the 24-hour rule | Must | D2 | Done |
 | [#74](https://github.com/stevatak/Khadizhat-Synth/issues/74) | US-BKG-07 | Times shown in Montréal time | Must | D1 | Done |
 | [#75](https://github.com/stevatak/Khadizhat-Synth/issues/75) | US-BKG-08 | Appointment reminders | Should | D3 | To do |
@@ -141,8 +141,8 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#87](https://github.com/stevatak/Khadizhat-Synth/issues/87) | US-EXE-04 | Adherence chart | Should | D3 | Done |
 | [#88](https://github.com/stevatak/Khadizhat-Synth/issues/88) | US-EXE-05 | Daily exercise reminder | Could | D3 | To do |
 | [#89](https://github.com/stevatak/Khadizhat-Synth/issues/89) | US-FRD-01 | Day schedule of all therapists | Must | D1 | Done |
-| [#90](https://github.com/stevatak/Khadizhat-Synth/issues/90) | US-FRD-02 | Book for a patient on the phone | Must | D2 | To do |
-| [#91](https://github.com/stevatak/Khadizhat-Synth/issues/91) | US-FRD-03 | Check-in and no-show | Must | D2 | To do |
+| [#90](https://github.com/stevatak/Khadizhat-Synth/issues/90) | US-FRD-02 | Book for a patient on the phone | Must | D2 | Done |
+| [#91](https://github.com/stevatak/Khadizhat-Synth/issues/91) | US-FRD-03 | Check-in and no-show | Must | D2 | Done |
 | [#92](https://github.com/stevatak/Khadizhat-Synth/issues/92) | US-FRD-04 | Walk-in patients | Should | D3 | To do |
 | [#93](https://github.com/stevatak/Khadizhat-Synth/issues/93) | US-FRD-05 | Record payments at the desk | Should | D3 | To do |
 | [#94](https://github.com/stevatak/Khadizhat-Synth/issues/94) | US-FRD-06 | Offline mode with conflict detection | Should | D3 | To do |
@@ -166,14 +166,19 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
 ### D2 progress
 
 - Done: US-BKG-02 (no double booking, with a clear 409 answer), US-BKG-03 (10-minute hold),
-  US-BKG-04 (Stripe deposit, signed webhook), US-BKG-06 (24-hour rule with Stripe refunds),
-  US-AUTH-05 (care relationship), US-CLN-01 to 05 (patient files, encrypted SOAP notes, signature
-  and amendments, audit log, no notes for front desk and admin), US-EXE-01, 02 and 04 (exercise
-  library, programs, adherence).
+  US-BKG-04 (Stripe deposit, signed webhook), US-BKG-05 (status history with the actor, including
+  check-in and no-show), US-BKG-06 (24-hour rule with Stripe refunds), US-AUTH-05 (care
+  relationship), US-CLN-01 to 05 (patient files, encrypted SOAP notes, signature and amendments,
+  audit log, no notes for front desk and admin), US-EXE-01, 02 and 04 (exercise library, programs,
+  adherence), US-FRD-02 and 03 (front desk: find a patient, book, move or cancel by phone,
+  check-in and no-show).
 - In progress: US-BKG-01 (website booking and Stripe payment done; mobile and email to do),
-  US-EXE-03 (check-off: API and mobile done; patient website view to do), US-BKG-05 (status history; check-in
-  and no-show to come), US-AVL-05 (team page; photos to come).
+  US-EXE-03 (check-off: API and mobile done; patient website view to do), US-AVL-05 (team page;
+  photos to come).
 - Website therapist workspace done: staff login with first-time QR code, my patients, patient
   file, SOAP notes (draft, sign, amend), exercise programs with adherence.
 - Mobile app: Exercises tab (program, check-off with pain level 0 to 10, undo today's).
-- Next: front-desk phone booking and check-in on the desktop app.
+- Desktop app: "Phone booking" screen (search by name, phone or date of birth; service; therapist
+  or first available; free times; book or move) and Arrived, No-show, Move and Cancel buttons on
+  each confirmed appointment of the day schedule.
+- Next: chatbot (US-BOT-01 to 05).

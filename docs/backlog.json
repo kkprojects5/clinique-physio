@@ -313,12 +313,12 @@
       "priority": "Must",
       "module": "booking",
       "deliverable": "D2",
-      "status": "partial",
+      "status": "done",
       "acceptance": [
         "held, pending_payment, confirmed, checked_in, completed, cancelled_by_patient, cancelled_by_clinic, no_show, expired (done)",
-        "Transitions logged with the actor (done for booking, payment, cancel, reschedule, expiry; check-in and no-show with the front desk)"
+        "Transitions logged with the actor (done for booking, payment, cancel, reschedule, expiry, check-in and no-show)"
       ],
-      "evidence": "api/tests/test_booking.py"
+      "evidence": "api/tests/test_booking.py, api/tests/test_front_desk.py"
     },
     {
       "id": "US-BKG-06",
@@ -612,11 +612,15 @@
       "priority": "Must",
       "module": "front-desk",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
-        "Search by name, phone or date of birth"
+        "Search by name, phone or date of birth (done: GET /desk/patients, at most 20 results, no clinical data)",
+        "Book for the caller in a free slot, confirmed at once and paid at the clinic; 409 if just taken (done)",
+        "Move or cancel for the caller; deposit refunded only more than 24 hours before (done)",
+        "Desktop app: search, service, therapist or first available, day, free times, book or move (done)",
+        "Every change recorded with the front-desk agent as the actor (done)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_front_desk.py, desktop/tests/CliniquePhysio.Desktop.Tests/FrontDeskTests.cs"
     },
     {
       "id": "US-FRD-03",
@@ -628,11 +632,13 @@
       "priority": "Must",
       "module": "front-desk",
       "deliverable": "D2",
-      "status": "open",
+      "status": "done",
       "acceptance": [
-        "No-show possible 15 minutes after the start"
+        "Check-in only for a confirmed appointment, on the day of the appointment (done)",
+        "No-show possible 15 minutes after the start; the deposit is kept (done)",
+        "Desktop app: Arrived and No-show buttons on each confirmed appointment, with a confirmation for no-show (done)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_front_desk.py, desktop/tests/CliniquePhysio.Desktop.Tests/FrontDeskTests.cs"
     },
     {
       "id": "US-FRD-04",

@@ -29,6 +29,20 @@
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Cursor" Value="Hand" />
         </Style>
+        <!-- Small action buttons on an appointment card (check-in, no-show, move, cancel). -->
+        <Style x:Key="CardButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="8,3" />
+            <Setter Property="Margin" Value="0,4,4,0" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style x:Key="CardLinkButton" TargetType="Button" BasedOn="{StaticResource CardButton}">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="{StaticResource TealDark}" />
+            <Setter Property="BorderBrush" Value="{StaticResource Teal}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <SolidColorBrush x:Key="InfoBack" Color="#DCEDEA" />
+
         <Style TargetType="TextBox">
             <Setter Property="Padding" Value="6" />
             <Setter Property="FontSize" Value="14" />
@@ -47,6 +61,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:ScheduleViewModel}">
             <views:ScheduleView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PhoneBookingViewModel}">
+            <views:PhoneBookingView />
         </DataTemplate>
     </Application.Resources>
 </Application>

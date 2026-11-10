@@ -52,6 +52,51 @@ public sealed class ApiClient : IApiClient
         return SendAsync<DaySchedule>(request, ct);
     }
 
+    public Task<List<PatientFound>> SearchPatientsAsync(string query, CancellationToken ct = default) =>
+        GetAsync<List<PatientFound>>($"api/v1/desk/patients?q={Uri.EscapeDataString(query)}", ct);
+
+    public Task<List<ServiceInfo>> GetServicesAsync(CancellationToken ct = default) =>
+        GetAsync<List<ServiceInfo>>("api/v1/services", ct);
+
+    public Task<List<TherapistInfo>> GetTherapistsAsync(CancellationToken ct = default) =>
+        GetAsync<List<TherapistInfo>>("api/v1/therapists", ct);
+
+    public Task<List<FreeSlot>> GetFreeSlotsAsync(
+        Guid serviceId, Guid? therapistId, DateOnly day, CancellationToken ct = default)
+    {
+        var date = day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        var path = $"api/v1/availability?service_id={serviceId}&date_from={date}&date_to={date}";
+        if (therapistId is Guid therapist)
+        {
+            path += $"&therapist_id={therapist}";
+        }
+
+        return GetAsync<List<FreeSlot>>(path, ct);
+    }
+
+    public Task<DeskAppointment> BookByPhoneAsync(
+        Guid patientId, Guid serviceId, Guid? therapistId, DateTimeOffset start, CancellationToken ct = default) =>
+        PostAsync<DeskAppointment>(
+            "api/v1/desk/appointments",
+            new { patient_id = patientId, service_id = serviceId, therapist_id = therapistId, start },
+            ct);
+
+    public Task<DeskAppointment> RescheduleByPhoneAsync(
+        Guid appointmentId, DateTimeOffset start, Guid? therapistId, CancellationToken ct = default) =>
+        PostAsync<DeskAppointment>(
+            $"api/v1/desk/appointments/{appointmentId}/reschedule",
+            new { start, therapist_id = therapistId },
+            ct);
+
+    public Task<CancelResult> CancelByPhoneAsync(Guid appointmentId, CancellationToken ct = default) =>
+        PostAsync<CancelResult>($"api/v1/desk/appointments/{appointmentId}/cancel", new { }, ct);
+
+    public Task<DeskAppointment> CheckInAsync(Guid appointmentId, CancellationToken ct = default) =>
+        PostAsync<DeskAppointment>($"api/v1/desk/appointments/{appointmentId}/check-in", new { }, ct);
+
+    public Task<DeskAppointment> MarkNoShowAsync(Guid appointmentId, CancellationToken ct = default) =>
+        PostAsync<DeskAppointment>($"api/v1/desk/appointments/{appointmentId}/no-show", new { }, ct);
+
     public async Task LogoutAsync(CancellationToken ct = default)
     {
         try
@@ -84,6 +129,9 @@ public sealed class ApiClient : IApiClient
             return false;
         }
     }
+
+    private Task<T> GetAsync<T>(string path, CancellationToken ct) =>
+        SendAsync<T>(new HttpRequestMessage(HttpMethod.Get, path), ct);
 
     private Task<T> PostAsync<T>(string path, object body, CancellationToken ct)
     {

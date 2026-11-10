@@ -11,14 +11,17 @@ public sealed class MainViewModel : ObservableObject, INavigator
     private readonly IApiClient _api;
     private readonly Session _session;
     private readonly Func<DateTime> _today;
+    private readonly IDialogService? _dialogs;
     private object? _currentView;
     private bool _isOnline = true;
 
-    public MainViewModel(IApiClient api, Session session, Func<DateTime>? today = null)
+    public MainViewModel(
+        IApiClient api, Session session, Func<DateTime>? today = null, IDialogService? dialogs = null)
     {
         _api = api;
         _session = session;
         _today = today ?? (() => DateTime.Today);
+        _dialogs = dialogs;
         CheckConnectionCommand = new AsyncRelayCommand(CheckConnectionAsync);
         SwitchLanguageCommand = new RelayCommand(SwitchLanguage);
     }
@@ -49,11 +52,18 @@ public sealed class MainViewModel : ObservableObject, INavigator
         _ = mfa.LoadCommand.ExecuteAsync(null);
     }
 
-    public void GoToSchedule()
+    public void GoToSchedule(DateTime? day = null, string? info = null)
     {
-        var schedule = new ScheduleViewModel(_api, _session, this, _today());
+        var schedule = new ScheduleViewModel(_api, _session, this, _today(), day, _dialogs, info);
         CurrentView = schedule;
         _ = schedule.LoadCommand.ExecuteAsync(null);
+    }
+
+    public void GoToBooking(DateTime day, AppointmentItem? moving = null)
+    {
+        var booking = new PhoneBookingViewModel(_api, _session, this, day, moving);
+        CurrentView = booking;
+        _ = booking.LoadCommand.ExecuteAsync(null);
     }
 
     private async Task CheckConnectionAsync() => IsOnline = await _api.IsOnlineAsync();

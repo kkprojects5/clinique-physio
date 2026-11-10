@@ -92,3 +92,20 @@ class PaymentStart(BaseModel):
     publishable_key: str
     amount_cents: int
     currency: str
+
+
+class PatientFound(BaseModel):
+    """A search result for the front desk: what is needed to recognize the caller."""
+
+    id: uuid.UUID
+    first_name: str
+    last_name: str
+    date_of_birth: date
+    phone: str
+
+
+class DeskBookingIn(BaseModel):
+    patient_id: uuid.UUID
+    service_id: uuid.UUID
+    therapist_id: uuid.UUID | None = None  # empty: first available therapist
+    start: datetime  # with time zone, as returned by GET /availability
