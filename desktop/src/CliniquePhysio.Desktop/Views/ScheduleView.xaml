@@ -3,22 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:CliniquePhysio.Desktop.Core.Localization;assembly=CliniquePhysio.Desktop.Core">
     <DockPanel>
-        <!-- Toolbar: day navigation, refresh, logout. -->
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,12">
+        <!-- Toolbar: day navigation, refresh, phone booking, logout. Wraps on a narrow window,
+             so the messages below always fit the width of the window. -->
+        <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+            <WrapPanel.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Margin" Value="0,0,8,8" />
+                </Style>
+            </WrapPanel.Resources>
             <Button Command="{Binding PreviousCommand}"
                     Content="{Binding [schedule.previous], Source={x:Static loc:Localizer.Instance}}" />
-            <DatePicker SelectedDate="{Binding SelectedDate}" Width="150" Margin="0,0,8,0" VerticalContentAlignment="Center" />
+            <DatePicker SelectedDate="{Binding SelectedDate}" Width="150" Margin="0,0,8,8" VerticalContentAlignment="Center" />
             <Button Command="{Binding NextCommand}"
                     Content="{Binding [schedule.next], Source={x:Static loc:Localizer.Instance}}" />
             <Button Command="{Binding TodayCommand}"
                     Content="{Binding [schedule.today], Source={x:Static loc:Localizer.Instance}}" />
             <Button Command="{Binding LoadCommand}"
                     Content="{Binding [schedule.refresh], Source={x:Static loc:Localizer.Instance}}" />
-            <Button Command="{Binding NewBookingCommand}" Margin="16,0,8,0"
+            <Button Command="{Binding NewBookingCommand}" Margin="16,0,8,8"
                     Content="{Binding [schedule.newBooking], Source={x:Static loc:Localizer.Instance}}" />
             <Button Background="Transparent" Foreground="{StaticResource TealDark}" Command="{Binding LogoutCommand}"
                     Content="{Binding [schedule.logout], Source={x:Static loc:Localizer.Instance}}" />
-        </StackPanel>
+        </WrapPanel>
 
         <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
             <TextBlock FontSize="22" FontWeight="Bold" Foreground="{StaticResource TealDark}" Text="{Binding Title}" />
