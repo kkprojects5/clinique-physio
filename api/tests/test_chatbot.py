@@ -297,7 +297,7 @@ def test_ai_answer_citing_a_given_passage_is_used(db):
     reply = ask(db, "Où se garer ?", "fr", fake)
 
     assert reply.mode == "ai"
-    assert reply.answer == fake.answer
+    assert reply.answer == "Le stationnement est dans la rue ou rue Rivard."  # marker removed
     assert [p.id for p in reply.sources] == ["parking"]
 
 

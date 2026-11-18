@@ -70,7 +70,9 @@ def _decide(
         written = accept(raw, passages)
         if written:
             cited = [p for p in passages if f"[{p.id}]" in written]
-            return Reply(uuid.uuid4(), Kind.ANSWER, written, cited, "ai")
+            # The sources are shown under the answer: the [id] markers are removed from the text.
+            shown = re.sub(r"\s*\[[a-z0-9-]+\]", "", written).strip()
+            return Reply(uuid.uuid4(), Kind.ANSWER, shown, cited, "ai")
     best = passages[0]
     return Reply(uuid.uuid4(), Kind.ANSWER, best.text, [best])
 
