@@ -1,6 +1,6 @@
 # Vision and requirements — Clinique Physio Mont-Royal
 
-Status: **D1 (v0.1.0)**. Related documents: [architecture.md](architecture.md),
+Status: **D3 in progress**. Related documents: [architecture.md](architecture.md),
 [erd.md](erd.md), [threat-model.md](threat-model.md),
 [data-classification.md](data-classification.md).
 
@@ -101,7 +101,7 @@ Priorities use **MoSCoW** (Must, Should, Could). Statuses: **Done** (all accepta
 met and tested), **In progress** (some criteria met), **To do**. Each issue holds the full story
 ("As a …, I want …, so that …") and its acceptance criteria.
 
-Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 11, D2 23, D3 17.
+Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 11, D2 18, D3 22.
 
 <!-- BACKLOG-TABLE:START -->
 | Issue | ID | User story | Priority | Deliverable | Status |
@@ -152,11 +152,11 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#98](https://github.com/stevatak/Khadizhat-Synth/issues/98) | US-ADM-04 | Privacy requests | Should | D3 | To do |
 | [#99](https://github.com/stevatak/Khadizhat-Synth/issues/99) | US-ADM-05 | Confidentiality incident register | Should | D3 | To do |
 | [#100](https://github.com/stevatak/Khadizhat-Synth/issues/100) | US-ADM-06 | Knowledge base management | Should | D3 | To do |
-| [#101](https://github.com/stevatak/Khadizhat-Synth/issues/101) | US-BOT-01 | Ask practical questions | Must | D2 | To do |
-| [#102](https://github.com/stevatak/Khadizhat-Synth/issues/102) | US-BOT-02 | Refuse diagnosis and handle emergencies | Must | D2 | To do |
-| [#103](https://github.com/stevatak/Khadizhat-Synth/issues/103) | US-BOT-03 | Resist prompt injection and protect privacy | Must | D2 | To do |
-| [#104](https://github.com/stevatak/Khadizhat-Synth/issues/104) | US-BOT-04 | Measured answer quality | Must | D2 | To do |
-| [#105](https://github.com/stevatak/Khadizhat-Synth/issues/105) | US-BOT-05 | Answer feedback | Should | D2 | To do |
+| [#101](https://github.com/stevatak/Khadizhat-Synth/issues/101) | US-BOT-01 | Ask practical questions | Must | D3 | Done |
+| [#102](https://github.com/stevatak/Khadizhat-Synth/issues/102) | US-BOT-02 | Refuse diagnosis and handle emergencies | Must | D3 | Done |
+| [#103](https://github.com/stevatak/Khadizhat-Synth/issues/103) | US-BOT-03 | Resist prompt injection and protect privacy | Must | D3 | Done |
+| [#104](https://github.com/stevatak/Khadizhat-Synth/issues/104) | US-BOT-04 | Measured answer quality | Must | D3 | Done |
+| [#105](https://github.com/stevatak/Khadizhat-Synth/issues/105) | US-BOT-05 | Answer feedback | Should | D3 | Done |
 <!-- BACKLOG-TABLE:END -->
 
 ### D1 status
@@ -181,4 +181,15 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
 - Desktop app: "Phone booking" screen (search by name, phone or date of birth; service; therapist
   or first available; free times; book or move) and Arrived, No-show, Move and Cancel buttons on
   each confirmed appointment of the day schedule.
-- Next: chatbot (US-BOT-01 to 05).
+- Chatbot done (US-BOT-01 to 05, moved to D3): answers in French and English only from the
+  clinic's passages, with the source shown; emergencies get 911 / 811 / 9-8-8 only; diagnosis
+  and treatment requests, prompt injection and questions about people are refused; personal
+  details masked, log kept 30 days; feedback; 40-question evaluation in CI
+  ([chatbot-evaluation.md](chatbot-evaluation.md)). OpenAI embeddings (pgvector) and AI
+  wording when the key is set, keyword search otherwise ([ADR-0008](adr/0008-chatbot.md)).
+
+### D3 plan
+
+- Next: admin basics (US-ADM-01 services and staff, US-ADM-03 audit log viewer), then the
+  partial stories (booking email, patient exercise page, mobile booking), then Law 25 admin
+  pages (US-ADM-04, 05) and the offline desk mode (US-FRD-06) if time allows.

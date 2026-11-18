@@ -242,5 +242,24 @@
     "chooseExercise": "Choisissez au moins un exercice.",
     "adviceForPatient": "Conseils pour le patient (facultatif)",
     "giveProgram": "Donner le programme"
+  },
+  "chat": {
+    "open": "💬 Questions ?",
+    "title": "Questions pratiques",
+    "close": "Fermer le clavardage",
+    "notice": "Assistant automatisé : je réponds aux questions pratiques à partir des documents de la clinique. Aucun conseil médical. Urgence : 911. Ne donnez aucun renseignement de santé.",
+    "hint": "Exemples : Où se garer ? Comment annuler un rendez-vous ? L’assurance rembourse-t-elle ?",
+    "botSays": "Réponse :",
+    "source": "Source :",
+    "label": "Votre question",
+    "placeholder": "Écrivez votre question",
+    "send": "Envoyer",
+    "thinking": "Je cherche…",
+    "helpful": "Cette réponse vous a aidé ?",
+    "yes": "Oui",
+    "no": "Non",
+    "thanks": "Merci pour votre avis.",
+    "error": "Le service est momentanément indisponible. Appelez l’accueil au 514-555-0100.",
+    "tooMany": "Trop de questions en peu de temps. Réessayez dans une minute."
   }
 }

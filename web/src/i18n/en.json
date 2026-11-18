@@ -242,5 +242,24 @@
     "chooseExercise": "Choose at least one exercise.",
     "adviceForPatient": "Advice for the patient (optional)",
     "giveProgram": "Give the program"
+  },
+  "chat": {
+    "open": "💬 Questions?",
+    "title": "Practical questions",
+    "close": "Close the chat",
+    "notice": "Automated assistant: I answer practical questions from the clinic’s documents. No medical advice. Emergency: 911. Do not share health information.",
+    "hint": "Examples: Where can I park? How do I cancel an appointment? Does insurance cover it?",
+    "botSays": "Answer:",
+    "source": "Source:",
+    "label": "Your question",
+    "placeholder": "Type your question",
+    "send": "Send",
+    "thinking": "Searching…",
+    "helpful": "Was this answer helpful?",
+    "yes": "Yes",
+    "no": "No",
+    "thanks": "Thank you for your feedback.",
+    "error": "The service is temporarily unavailable. Call the front desk at 514-555-0100.",
+    "tooMany": "Too many questions in a short time. Try again in a minute."
   }
 }

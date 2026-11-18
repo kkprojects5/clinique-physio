@@ -2054,6 +2054,83 @@
         }
       }
     },
+    "/api/v1/chat/messages": {
+      "post": {
+        "tags": [
+          "chatbot"
+        ],
+        "summary": "Ask",
+        "description": "Ask a practical question. Answers come only from the clinic's documents.\n\n`kind` says what happened: `answer`, `unknown` (not in the documents), `emergency`\n(911 / 811 / 9-8-8 only), `medical` (diagnosis or treatment refused), `injection` or\n`private` (refused). Never send health information: the chat is not a medical service.",
+        "operationId": "ask_api_v1_chat_messages_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat/feedback": {
+      "post": {
+        "tags": [
+          "chatbot"
+        ],
+        "summary": "Feedback",
+        "description": "Was this answer helpful? Once per answer (B-BOT-05).",
+        "operationId": "feedback_api_v1_chat_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/webhooks/stripe": {
       "post": {
         "tags": [
@@ -2235,6 +2312,70 @@
           "deposit_refunded"
         ],
         "title": "CancelOut"
+      },
+      "ChatIn": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Message"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "fr",
+              "en"
+            ],
+            "title": "Language",
+            "default": "fr"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ChatIn"
+      },
+      "ChatOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "answer",
+              "unknown",
+              "emergency",
+              "medical",
+              "injection",
+              "private"
+            ],
+            "title": "Kind"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceOut"
+            },
+            "type": "array",
+            "title": "Sources"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "answer",
+          "sources"
+        ],
+        "title": "ChatOut"
       },
       "CheckOffIn": {
         "properties": {
@@ -2546,6 +2687,25 @@
           "default_reps"
         ],
         "title": "ExerciseOut"
+      },
+      "FeedbackIn": {
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Message Id"
+          },
+          "helpful": {
+            "type": "boolean",
+            "title": "Helpful"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message_id",
+          "helpful"
+        ],
+        "title": "FeedbackIn"
       },
       "ForgotPasswordRequest": {
         "properties": {
@@ -3733,6 +3893,24 @@
         "type": "object",
         "title": "SoapIn",
         "description": "SOAP note: Subjective, Objective, Assessment, Plan. At least one part must be filled."
+      },
+      "SourceOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "SourceOut"
       },
       "StaffSessionResponse": {
         "properties": {

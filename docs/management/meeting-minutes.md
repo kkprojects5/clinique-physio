@@ -8,7 +8,7 @@ the same day. Decisions that change the design also become an ADR in [../adr](..
 ```
 ## YYYY-MM-DD — <subject, for example "D1 review">
 
-**Present:** Claire Mancini (developer), <supervisor>
+**Present:** KK (developer), <supervisor>
 **Form:** in person / online / email
 
 ### Points discussed

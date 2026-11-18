@@ -8,9 +8,10 @@ services:
     region: virginia  # close to the Neon database (AWS us-east-1)
     rootDir: api
     buildCommand: pip install -r requirements.txt
-    # Apply database migrations, then start the API. --proxy-headers makes rate limiting
+    # Apply database migrations, load the chatbot passages (embeddings), then start the API.
+    # --proxy-headers makes rate limiting
     # use the real client IP behind Render's proxy.
-    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips "*"
+    startCommand: alembic upgrade head && python -m app.chatbot.ingest && uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips "*"
     healthCheckPath: /health
     autoDeploy: true
     envVars:
@@ -37,4 +38,7 @@ services:
       - key: STRIPE_PUBLISHABLE_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      # Chatbot AI provider: set in the Render dashboard, never in this file.
+      - key: OPENAI_API_KEY
         sync: false

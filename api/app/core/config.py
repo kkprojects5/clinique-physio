@@ -32,6 +32,15 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""  # signing secret of the webhook endpoint (whsec_...)
     currency: str = "cad"
 
+    # Chatbot AI provider (spec section 8, ADR-0008). Empty key: the chatbot shows the clinic
+    # passages found by keyword search, without AI. The key is never sent to the browser.
+    openai_api_key: str = ""
+    openai_chat_model: str = "gpt-5.4-mini"
+    openai_embedding_model: str = "text-embedding-3-small"
+    openai_timeout_seconds: float = 15
+    # Below this similarity (0 to 1), an embedding match is ignored.
+    chat_min_similarity: float = 0.30
+
     # Login sessions (B-AUTH-02)
     access_token_minutes: int = 10  # short-lived: a stolen access token expires quickly
     refresh_token_days_patient: int = 7

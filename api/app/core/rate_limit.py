@@ -18,3 +18,4 @@ VERIFY_EMAIL_LIMIT = "10/minute"
 REFRESH_LIMIT = "30/minute"
 ACCOUNT_RECOVERY_LIMIT = "5/minute"
 BOOKING_LIMIT = "20/minute"  # holds, cancellations and reschedules per IP
+CHAT_LIMIT = "10/minute"  # chatbot questions and feedback per IP

@@ -13,3 +13,4 @@ replaces it if it changes.
 | [0005](0005-desktop-core-library.md) | Desktop: WPF screens + a separate, testable Core library (MVVM) | Accepted |
 | [0006](0006-deployment-copy.md) | Deploy from a copy of the repository in the developer's account | Accepted (temporary) |
 | [0007](0007-stripe-payment-intent-webhook.md) | Deposit with a Stripe PaymentIntent, confirmed only by a signed webhook | Accepted |
+| [0008](0008-chatbot.md) | Chatbot answers only from clinic passages: OpenAI embeddings and wording, safe fallback | Accepted |

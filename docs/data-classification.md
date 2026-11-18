@@ -142,7 +142,7 @@ person receives care, so it is treated as **Health**.
 |---|---|---|
 | Logs | Request ids, error types, masked emails | Passwords, tokens, phone numbers, note contents |
 | Emails and push notifications | Date, time, clinic address, links | Any clinical information (BR-B-08) |
-| LLM provider (chatbot, D2) | The visitor's question and approved policy passages | Patient records, appointments, notes |
+| LLM provider (OpenAI, chatbot, ADR-0008) | The visitor's question with personal details masked, and approved public passages | Patient records, appointments, notes, names typed by staff |
 | Front desk | Name, phone, service, status | Clinical notes, pain levels, programs |
 
 ## 4. Retention (to be finalized in D3)

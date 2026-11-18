@@ -9,6 +9,7 @@ from app.routers import (
     appointments,
     auth,
     catalog,
+    chat,
     desk,
     exercises,
     me,
@@ -58,6 +59,7 @@ app.include_router(appointments.router, prefix="/api/v1")
 app.include_router(therapist.router, prefix="/api/v1")
 app.include_router(desk.router, prefix="/api/v1")
 app.include_router(exercises.router, prefix="/api/v1")
+app.include_router(chat.router, prefix="/api/v1")
 app.include_router(webhooks.router, prefix="/api/v1")
 
 

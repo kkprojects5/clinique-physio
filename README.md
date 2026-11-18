@@ -189,4 +189,4 @@ Please report security problems privately to the project owner rather than in a 
 
 ## Author
 
-Claire Mancini, Vanier College, 2026.
+KK, Vanier College, 2026.

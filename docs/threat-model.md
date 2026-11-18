@@ -153,6 +153,18 @@ flowchart LR
 | T-INF-5 | D | API flooded with requests | Rate limits on authentication endpoints; host platform limits | NFR-05 | ✅ partial (see R-3) |
 | T-INF-6 | I | Detailed errors reveal internals | Generic error messages to clients; validation errors without stack traces | OWASP A05 | ✅ |
 
+### 4.6 Chatbot (ADR-0008)
+
+| ID | STRIDE | Threat | Mitigation | Req. | Status |
+|---|---|---|---|---|---|
+| T-BOT-1 | E | Prompt injection: the visitor tries to change the bot's rules or make it reveal them | Injection patterns refused before any AI call; rules in the system message; question and passages sent as marked data, tags cannot be closed; AI answer accepted only if it cites a given passage and passes the safety rules again | B-BOT-03 | ✅ `test_prompt_injection_is_refused_and_nothing_is_revealed`, `test_question_cannot_close_the_data_tags`, `test_unsafe_or_ungrounded_ai_answers_fall_back_to_the_passage` |
+| T-BOT-2 | I | The bot reveals patient data | No access to any patient table; questions about a person or a file refused | B-BOT-03, BR-8 | ✅ `test_questions_about_people_or_files_are_refused` |
+| T-BOT-3 | I | Personal or health details typed by the visitor are kept or sent to the AI provider | Emails, phones, health insurance, card numbers and postal codes masked before logging and before OpenAI; log deleted after 30 days | Law 25 | ✅ `test_personal_details_are_masked`, `test_provider_gets_only_the_masked_question_and_public_passages`, `test_conversations_older_than_30_days_are_deleted` |
+| T-BOT-4 | T | Harmful answer: diagnosis, treatment advice, or a missed emergency | Fixed rules before search: emergencies get only 911 / 811 / 9-8-8, medical requests refused; never generated | B-BOT-02 | ✅ evaluation set in CI (100% required) and 27 extra phrasings in tests |
+| T-BOT-5 | T | Wrong or invented answer (hallucination) | Answers only from clinic passages; below a minimum score the bot says it does not know | B-BOT-01 | ✅ `test_question_outside_the_documents_gets_i_dont_know_not_a_guess` |
+| T-BOT-6 | D | Flooding the chat to run up the AI bill | 10 questions per minute per IP; questions limited to 500 characters; answers capped at 400 tokens | NFR-05 | ✅ `test_chat_is_rate_limited_per_ip` |
+| T-BOT-7 | I | OpenAI key leaked | Key only in `.env` and Render settings; never sent to the browser; errors log only their type | NFR-02 | ✅ `test_provider_errors_never_reveal_the_key_or_the_question` |
+
 ## 5. Residual and accepted risks
 
 | ID | Risk | Why accepted (for now) | Plan |

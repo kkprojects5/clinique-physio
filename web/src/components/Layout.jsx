@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
+import ChatWidget from './ChatWidget';
 
 const NAV = [
   { to: '/', key: 'home', end: true },
@@ -90,6 +91,7 @@ export default function Layout() {
           <Link to="/mot-de-passe-oublie">{t('account.forgot.link')}</Link>
         </p>
       </footer>
+      <ChatWidget />
     </>
   );
 }

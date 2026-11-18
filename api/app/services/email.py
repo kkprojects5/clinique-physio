@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def mask_email(email: str) -> str:
-    """claire@example.com -> c***@example.com"""
+    """patient@example.com -> p***@example.com"""
     local, _, domain = email.partition("@")
     return f"{local[:1]}***@{domain}"
 

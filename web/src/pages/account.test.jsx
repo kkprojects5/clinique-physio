@@ -31,20 +31,20 @@ describe('forgot password (B-AUTH-03)', () => {
   it('sends the email and shows the same neutral message', async () => {
     const calls = mockPost(() => 202);
     renderAt('/mot-de-passe-oublie');
-    await userEvent.type(screen.getByLabelText('Adresse courriel'), 'claire@example.com');
+    await userEvent.type(screen.getByLabelText('Adresse courriel'), 'patient@example.com');
     await userEvent.click(screen.getByRole('button', { name: 'Envoyer le lien' }));
 
     expect(await screen.findByRole('status')).toHaveTextContent('Si un compte existe');
     expect(calls[0]).toEqual({
       path: '/api/v1/auth/password/forgot',
-      body: { email: 'claire@example.com' },
+      body: { email: 'patient@example.com' },
     });
   });
 
   it('explains when there were too many attempts', async () => {
     mockPost(() => 429);
     renderAt('/mot-de-passe-oublie');
-    await userEvent.type(screen.getByLabelText('Adresse courriel'), 'claire@example.com');
+    await userEvent.type(screen.getByLabelText('Adresse courriel'), 'patient@example.com');
     await userEvent.click(screen.getByRole('button', { name: 'Envoyer le lien' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Trop de tentatives');

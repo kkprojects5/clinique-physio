@@ -393,16 +393,29 @@ erDiagram
         uuid id PK
         uuid document_id FK
         int chunk_index
+        text passage_id "same id in fr and en"
         text content
-        vector embedding "pgvector"
+        vector embedding "pgvector, 1536"
         text content_hash
+    }
+    chat_messages {
+        uuid id PK
+        text language
+        text question "personal details masked"
+        text answer
+        text kind
+        text_array sources "passage ids"
+        text mode "passage or ai"
+        bool helpful
+        timestamptz created_at "deleted after 30 days"
     }
 
 ```
 
 - Each document is split into chunks, and each chunk has an embedding vector used for similarity search.
 - These tables never contain patient information.
-- Conversation tables (`chat_*`) are added in D2.
+- `chat_messages` keeps each question (masked) and answer for 30 days, for quality measurement
+  and feedback (B-BOT-04, 05). It has no link to any patient or user.
 
 ## Design notes
 

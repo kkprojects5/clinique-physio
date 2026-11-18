@@ -789,14 +789,14 @@
       "so_that": "I get answers at any time",
       "priority": "Must",
       "module": "chatbot",
-      "deliverable": "D2",
-      "status": "open",
+      "deliverable": "D3",
+      "status": "done",
       "acceptance": [
-        "Answers in French and English from the clinic's documents only",
-        "Cites the documents used",
-        "Says 'I don't know' instead of inventing"
+        "Answers in French and English from the clinic's documents only (done: 21 passages per language)",
+        "Cites the documents used (done: source shown under each answer)",
+        "Says 'I don't know' instead of inventing (done: minimum score, then the clinic's phone number)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_chatbot.py, api/tests/test_chatbot_ai.py, web/src/components/chat.test.jsx, docs/chatbot-evaluation.md"
     },
     {
       "id": "US-BOT-02",
@@ -807,14 +807,14 @@
       "so_that": "no patient is harmed by a chatbot answer",
       "priority": "Must",
       "module": "chatbot",
-      "deliverable": "D2",
-      "status": "open",
+      "deliverable": "D3",
+      "status": "done",
       "acceptance": [
-        "100% of diagnosis requests refused",
-        "Emergency messages detected",
-        "Discloses that it is an automated assistant"
+        "100% of diagnosis requests refused (done: evaluation set and 15 extra phrasings in tests)",
+        "Emergency messages detected (done: 911 / 811 / 9-8-8 only)",
+        "Discloses that it is an automated assistant (done: notice at the top of the chat)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_chatbot.py, api/tests/test_chatbot_ai.py, web/src/components/chat.test.jsx, docs/chatbot-evaluation.md"
     },
     {
       "id": "US-BOT-03",
@@ -825,14 +825,15 @@
       "so_that": "it cannot be turned against the clinic",
       "priority": "Must",
       "module": "chatbot",
-      "deliverable": "D2",
-      "status": "open",
+      "deliverable": "D3",
+      "status": "done",
       "acceptance": [
-        "Not connected to patient files",
-        "Personal data masked in logs, kept 30 days",
-        "Rate limited"
+        "Not connected to patient files (done: no access to any patient table; questions about a person refused)",
+        "Personal data masked in logs, kept 30 days (done)",
+        "Rate limited (done: 10 per minute per IP)",
+        "Instructions hidden in questions refused; AI answers must cite a given passage and pass the safety rules again (done)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_chatbot.py, api/tests/test_chatbot_ai.py, web/src/components/chat.test.jsx, docs/chatbot-evaluation.md"
     },
     {
       "id": "US-BOT-04",
@@ -843,13 +844,13 @@
       "so_that": "we know it works",
       "priority": "Must",
       "module": "chatbot",
-      "deliverable": "D2",
-      "status": "open",
+      "deliverable": "D3",
+      "status": "done",
       "acceptance": [
-        "20 questions at D2, 40 with adversarial ones at D3",
-        "Hit rate, correctness, citation accuracy, refusal accuracy, latency"
+        "40 questions including adversarial ones (done: api/eval/chatbot_eval.json, checked in CI)",
+        "Hit rate, correctness, citation accuracy, refusal accuracy, latency (done: docs/chatbot-evaluation.md)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_chatbot.py, api/tests/test_chatbot_ai.py, web/src/components/chat.test.jsx, docs/chatbot-evaluation.md"
     },
     {
       "id": "US-BOT-05",
@@ -860,12 +861,12 @@
       "so_that": "the clinic can improve the assistant",
       "priority": "Should",
       "module": "chatbot",
-      "deliverable": "D2",
-      "status": "open",
+      "deliverable": "D3",
+      "status": "done",
       "acceptance": [
-        "Feedback stored"
+        "Feedback stored (done: once per answer)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_chatbot.py, api/tests/test_chatbot_ai.py, web/src/components/chat.test.jsx, docs/chatbot-evaluation.md"
     }
   ]
 }
