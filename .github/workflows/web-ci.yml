@@ -49,5 +49,10 @@ jobs:
         env:
           VITE_API_URL: https://clinique-physio-api.onrender.com
 
-      - name: Known vulnerabilities (npm audit, high and critical)
-        run: npm audit --audit-level=high
+      # What is shipped to visitors' browsers must have no high or critical advisory.
+      - name: Known vulnerabilities in the website (npm audit, high and critical)
+        run: npm audit --omit=dev --audit-level=high
+      # Build and test tools (Vite, Vitest, ESLint) never reach the browser: only critical
+      # advisories block; high ones are listed in the threat model (R-10) until a fix ships.
+      - name: Known vulnerabilities in build and test tools (npm audit, critical)
+        run: npm audit --audit-level=critical

@@ -178,6 +178,7 @@ flowchart LR
 | R-7 | Single signing key (HS256) shared by all tokens | Simple and safe while only the API issues and verifies tokens | Key rotation procedure in the D3 runbook |
 | R-8 | .NET 8 reaches end of support in November 2026; ESLint 9 is deprecated | No known vulnerability; the spec requires .NET 8; ESLint 10 not yet supported by the React plugins | Upgrade when allowed and supported |
 | R-9 | No email provider is connected yet: in production, confirmation and password reset emails are only logged (with a masked address), not delivered | Demo accounts are already confirmed; the flows are proven by automated tests and shown locally, where the email is printed in the API console | Connect a transactional email provider (planned with reminders, B-BKG-08) |
+| R-10 | `picomatch` (used inside Vite and Vitest, the build and test tools) has a "high" advisory (GHSA-fc5q-39xc-vjpf, ReDoS) with no fixed version yet | Build tools only: they match our own file patterns on the developer's machine and in CI, never attacker input, and are not shipped to the browser. CI blocks any high advisory in the website's own dependencies and any critical one in the tools | Dependabot proposes the fixed version when it ships; then CI blocks high advisories in the tools again |
 
 ## 6. Review
 
