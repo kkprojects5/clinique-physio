@@ -10,10 +10,11 @@ fictional. The chat opens with the **Questions ?** button at the bottom right of
 | 3 | ![Emergency](3-emergency.png) | "J'ai mal à la poitrine": only 911, Info-Santé 811 and the 9-8-8 crisis line, highlighted in red. No other content. | B-BOT-02 |
 | 4 | ![Not in the documents](4-not-in-documents.png) | "Quel temps fera-t-il demain ?": the answer is not in the clinic's documents, so the bot says so and gives the front desk's number instead of guessing. | B-BOT-01 |
 | 5 | ![English, AI wording](5-english-ai-wording.png) | In English, OpenAI rewrites the insurance passage into a natural answer. It is accepted only because it cites that passage and passes the safety rules again. | B-BOT-01, 03 |
+| 6 | ![Markers removed](6-markers-removed.png) | Before and after the fix: the older answer still ends with `[parking]`, the new one ends cleanly with the source underneath. The question was typed in French while the site was in English: the bot finds the topic in either language and answers in the site's language. | B-BOT-01 |
 
 In screenshots 1 and 5, the source marker at the end of the sentence (`[parking]`,
-`[insurance]`) was removed from the text in the next version: the source stays shown under
-the answer.
+`[insurance]`) comes from the AI's citation; it was then removed from the text (screenshot 6).
+The source stays shown under the answer.
 
 ## Measured quality
 
