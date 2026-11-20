@@ -101,7 +101,7 @@ Priorities use **MoSCoW** (Must, Should, Could). Statuses: **Done** (all accepta
 met and tested), **In progress** (some criteria met), **To do**. Each issue holds the full story
 ("As a …, I want …, so that …") and its acceptance criteria.
 
-Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 11, D2 18, D3 22.
+Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 11, D2 17, D3 23.
 
 <!-- BACKLOG-TABLE:START -->
 | Issue | ID | User story | Priority | Deliverable | Status |
@@ -146,9 +146,9 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#92](https://github.com/stevatak/Khadizhat-Synth/issues/92) | US-FRD-04 | Walk-in patients | Should | D3 | To do |
 | [#93](https://github.com/stevatak/Khadizhat-Synth/issues/93) | US-FRD-05 | Record payments at the desk | Should | D3 | To do |
 | [#94](https://github.com/stevatak/Khadizhat-Synth/issues/94) | US-FRD-06 | Offline mode with conflict detection | Should | D3 | To do |
-| [#95](https://github.com/stevatak/Khadizhat-Synth/issues/95) | US-ADM-01 | Manage services, staff and rooms | Must | D2 | To do |
+| [#95](https://github.com/stevatak/Khadizhat-Synth/issues/95) | US-ADM-01 | Manage services, staff and rooms | Must | D3 | Done |
 | [#96](https://github.com/stevatak/Khadizhat-Synth/issues/96) | US-ADM-02 | Reports | Should | D3 | To do |
-| [#97](https://github.com/stevatak/Khadizhat-Synth/issues/97) | US-ADM-03 | Audit log viewer | Must | D3 | To do |
+| [#97](https://github.com/stevatak/Khadizhat-Synth/issues/97) | US-ADM-03 | Audit log viewer | Must | D3 | Done |
 | [#98](https://github.com/stevatak/Khadizhat-Synth/issues/98) | US-ADM-04 | Privacy requests | Should | D3 | To do |
 | [#99](https://github.com/stevatak/Khadizhat-Synth/issues/99) | US-ADM-05 | Confidentiality incident register | Should | D3 | To do |
 | [#100](https://github.com/stevatak/Khadizhat-Synth/issues/100) | US-ADM-06 | Knowledge base management | Should | D3 | To do |
@@ -190,6 +190,8 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
 
 ### D3 plan
 
-- Next: admin basics (US-ADM-01 services and staff, US-ADM-03 audit log viewer), then the
-  partial stories (booking email, patient exercise page, mobile booking), then Law 25 admin
+- Administration done (US-ADM-01, US-ADM-03): services and prices, staff accounts by
+  invitation (the administrator never sees a password), deactivation that closes sessions at
+  once, audit log viewer with filters, unusual access highlighted.
+- Next: the partial stories (booking email, patient exercise page, mobile booking), then Law 25 admin
   pages (US-ADM-04, 05) and the offline desk mode (US-FRD-06) if time allows.

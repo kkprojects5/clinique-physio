@@ -54,17 +54,12 @@ class Email:
         send_email(self.to, self.subject, self.body)
 
 
-def request_reset(db: Session, email: str) -> Email | None:
-    """Create a reset link. Returns the email to send, or None if there is no such account.
+def new_password_link(db: Session, user: User, minutes: int) -> str:
+    """A one-time link to choose a password; older unused links are cancelled. Not committed.
 
-    The caller answers the same way in both cases and sends the email in the background.
+    Also used to invite a new staff member (B-ADM-01), with a longer validity.
     """
-    user = db.scalar(select(User).where(User.email == email.lower()))
-    if user is None or not user.is_active:
-        return None
-
     now = datetime.now(UTC)
-    # Only the newest link works: older unused links are cancelled.
     db.execute(
         update(PasswordResetToken)
         .where(PasswordResetToken.user_id == user.id, PasswordResetToken.used_at.is_(None))
@@ -75,12 +70,23 @@ def request_reset(db: Session, email: str) -> Email | None:
         PasswordResetToken(
             user_id=user.id,
             token_hash=hash_refresh_token(raw),
-            expires_at=now + timedelta(minutes=settings.password_reset_minutes),
+            expires_at=now + timedelta(minutes=minutes),
         )
     )
-    db.commit()
+    return f"{settings.web_base_url}/reinitialiser-mot-de-passe?token={raw}"
 
-    link = f"{settings.web_base_url}/reinitialiser-mot-de-passe?token={raw}"
+
+def request_reset(db: Session, email: str) -> Email | None:
+    """Create a reset link. Returns the email to send, or None if there is no such account.
+
+    The caller answers the same way in both cases and sends the email in the background.
+    """
+    user = db.scalar(select(User).where(User.email == email.lower()))
+    if user is None or not user.is_active:
+        return None
+
+    link = new_password_link(db, user, settings.password_reset_minutes)
+    db.commit()
     body = RESET_BODY[user.language].format(minutes=settings.password_reset_minutes, link=link)
     return Email(user.email, RESET_SUBJECT[user.language], body)
 

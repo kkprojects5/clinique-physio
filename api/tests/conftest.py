@@ -2,7 +2,8 @@
 
 - Tests run on their OWN database ("<your database>_test"), created and migrated
   automatically, so they never touch your demo data and always start clean.
-- Test-only secrets are set here, before the app is imported.
+- Test-only secrets are set here, before the app is imported. The OpenAI key is always
+  emptied, so no test ever calls the real AI provider.
 - Each API test runs inside a transaction that is rolled back at the end.
 """
 
@@ -28,6 +29,9 @@ os.environ.setdefault("JWT_SECRET", "test-only-secret-not-used-anywhere-else-012
 os.environ.setdefault("FIELD_ENCRYPTION_KEY", "rQ0kC2Jx0c3kWbqgJzQvYQe0m2lJ3H6xg5D2K8nWZ4o=")
 os.environ.setdefault("COOKIE_SECURE", "false")  # the test client uses http, not https
 os.environ.setdefault("RATE_LIMIT_ENABLED", "false")  # turned on only in its own tests
+# Tests never call OpenAI, even when the developer's .env has a real key: the chatbot tests
+# use fakes, and a real call would cost money and give answers that vary (ADR-0008).
+os.environ["OPENAI_API_KEY"] = ""
 
 import pytest  # noqa: E402
 from alembic import command  # noqa: E402

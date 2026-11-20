@@ -21,7 +21,13 @@ export function mockRoutes(routes, { loggedIn = true, me = PATIENT } = {}) {
       const u = new URL(url);
       const key = `${options.method || 'GET'} ${u.pathname.replace('/api/v1', '')}`;
       const body = options.body ? JSON.parse(options.body) : undefined;
-      calls.push({ key, body, headers: options.headers || {}, credentials: options.credentials });
+      calls.push({
+        key,
+        body,
+        url: u.search,
+        headers: options.headers || {},
+        credentials: options.credentials,
+      });
       const handler = all[key];
       const [status, data] = handler ? handler(body, u) : [404, {}];
       return { ok: status < 300, status, json: async () => data };

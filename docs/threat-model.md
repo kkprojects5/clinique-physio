@@ -165,6 +165,16 @@ flowchart LR
 | T-BOT-6 | D | Flooding the chat to run up the AI bill | 10 questions per minute per IP; questions limited to 500 characters; answers capped at 400 tokens | NFR-05 | ✅ `test_chat_is_rate_limited_per_ip` |
 | T-BOT-7 | I | OpenAI key leaked | Key only in `.env` and Render settings; never sent to the browser; errors log only their type | NFR-02 | ✅ `test_provider_errors_never_reveal_the_key_or_the_question` |
 
+### 4.7 Administration (B-ADM-01, B-ADM-03)
+
+| ID | STRIDE | Threat | Mitigation | Req. | Status |
+|---|---|---|---|---|---|
+| T-ADM-1 | E | A non-admin (or an admin without MFA) changes services or accounts | Every `/admin` endpoint requires the admin role read from the database and an MFA session | B-AUTH-04 | ✅ `test_only_administrators_use_the_admin_pages`, `test_admin_needs_the_two_factor_session` |
+| T-ADM-2 | E | Privilege escalation: creating a new administrator through the API | Only therapist and front-desk accounts can be created (schema and service); admins cannot deactivate themselves or another admin | — | ✅ `test_invalid_staff_accounts_are_refused`, `test_service_layer_also_refuses_new_administrators`, `test_admin_cannot_deactivate_itself_or_another_admin` |
+| T-ADM-3 | I | The administrator knows a staff member's password | New accounts get a random unusable password and a one-time link (72 h, only its hash stored); MFA still set up at the first login | B-AUTH-03, 04 | ✅ `test_new_therapist_gets_an_invitation_never_a_password`, `test_invited_staff_chooses_a_password_then_still_needs_mfa` |
+| T-ADM-4 | S | A departed employee keeps using an open session | Deactivation revokes refresh tokens at once; access tokens are refused because the account is checked on each request | B-AUTH-02 | ✅ `test_deactivating_closes_sessions_and_hides_the_therapist` |
+| T-ADM-5 | R | Abuse of access to patient files goes unnoticed | Audit viewer with filters; refused accesses and more than 10 different patients read in an hour are highlighted; reading the log is itself logged; entries cannot be changed (trigger) | B-ADM-03, B-CLN-04 | ✅ `test_many_patient_files_in_one_hour_are_highlighted`, `test_reading_the_audit_log_is_itself_logged` |
+
 ## 5. Residual and accepted risks
 
 | ID | Risk | Why accepted (for now) | Plan |

@@ -20,6 +20,7 @@ from app.models import (
     Service,
     Therapist,
     TherapistService,
+    User,
 )
 from app.services.slots import CLINIC_TZ, Period, WeeklyRule, compute_slots, local_to_utc
 
@@ -50,7 +51,13 @@ def list_services(db: Session) -> list[tuple[Service, list[uuid.UUID]]]:
 
 
 def list_therapists(db: Session) -> list[tuple[Therapist, list[uuid.UUID]]]:
-    therapists = db.scalars(select(Therapist).order_by(Therapist.last_name)).all()
+    """Therapists with an active account (a deactivated one leaves the team page, B-ADM-01)."""
+    therapists = db.scalars(
+        select(Therapist)
+        .join(User, User.id == Therapist.user_id)
+        .where(User.is_active.is_(True))
+        .order_by(Therapist.last_name)
+    ).all()
     links = _links(db)
     return [
         (t, [link.service_id for link in links if link.therapist_id == t.id]) for t in therapists
@@ -83,7 +90,13 @@ def find_slots(
     if service is None or not service.is_active:
         raise InvalidSearch("unknown service")
 
-    query = select(TherapistService.therapist_id).where(TherapistService.service_id == service_id)
+    # Only therapists whose account is active offer slots (B-ADM-01).
+    query = (
+        select(TherapistService.therapist_id)
+        .join(Therapist, Therapist.id == TherapistService.therapist_id)
+        .join(User, User.id == Therapist.user_id)
+        .where(TherapistService.service_id == service_id, User.is_active.is_(True))
+    )
     if therapist_id is not None:
         query = query.where(TherapistService.therapist_id == therapist_id)
     therapist_ids = list(db.scalars(query))

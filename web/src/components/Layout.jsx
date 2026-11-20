@@ -50,6 +50,13 @@ export default function Layout() {
                   </NavLink>
                 </li>
               )}
+              {user?.role === 'admin' && (
+                <li>
+                  <NavLink to="/administration" className="nav__link">
+                    {t('nav.admin')}
+                  </NavLink>
+                </li>
+              )}
               {user?.role === 'patient' && (
                 <li>
                   <NavLink to="/mes-rendez-vous" className="nav__link">

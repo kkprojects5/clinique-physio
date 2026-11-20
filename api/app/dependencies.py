@@ -93,6 +93,16 @@ def require_front_desk(user: StaffUser) -> User:
 FrontDeskUser = Annotated[User, Depends(require_front_desk)]
 
 
+def require_admin(user: StaffUser) -> User:
+    """Administration endpoints (B-ADM-01, 03): administrators only, with MFA."""
+    if user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Administrators only.")
+    return user
+
+
+AdminUser = Annotated[User, Depends(require_admin)]
+
+
 def require_patient(db: DbSession, user: CurrentUser) -> Patient:
     """Patient endpoints: the logged-in user's own patient record."""
     patient = db.scalar(select(Patient).where(Patient.user_id == user.id))

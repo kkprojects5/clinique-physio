@@ -9,7 +9,8 @@
     "myAppointments": "My appointments",
     "login": "Log in",
     "logout": "Log out",
-    "workspace": "Therapist workspace"
+    "workspace": "Therapist workspace",
+    "admin": "Administration"
   },
   "language": {
     "label": "Language",
@@ -261,5 +262,103 @@
     "thanks": "Thank you for your feedback.",
     "error": "The service is temporarily unavailable. Call the front desk at 514-555-0100.",
     "tooMany": "Too many questions in a short time. Try again in a minute."
+  },
+  "admin": {
+    "title": "Administration",
+    "tabs": {
+      "services": "Services",
+      "staff": "Staff",
+      "audit": "Audit log"
+    },
+    "status": "Status",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "activate": "Reactivate",
+    "save": "Save",
+    "cancel": "Cancel",
+    "roles": {
+      "therapist": "Physiotherapist",
+      "front_desk": "Front desk",
+      "admin": "Administrator",
+      "patient": "Patient"
+    },
+    "services": {
+      "intro": "A service is never deleted: once deactivated it disappears from booking, and appointments already booked stay.",
+      "name": "Service",
+      "duration": "Length",
+      "price": "Price",
+      "deposit": "Deposit",
+      "therapists": "Physiotherapists",
+      "new": "New service",
+      "editTitle": "Edit the service",
+      "name_fr": "Name (French)",
+      "name_en": "Name (English)",
+      "priceDollars": "Price ($)",
+      "depositDollars": "Online deposit ($)",
+      "initial": "Initial evaluation (required for a first visit)",
+      "badMoney": "Enter the amounts in dollars, for example 95.00.",
+      "depositTooHigh": "The deposit cannot be more than the price."
+    },
+    "staff": {
+      "intro": "The new member receives an email link to choose their password, then sets up their 6-digit code at the first login. You never see their password.",
+      "person": "Person",
+      "role": "Role",
+      "lastLogin": "Last login",
+      "future": "Upcoming appointments",
+      "notSetUp": "Not set up yet",
+      "resend": "Resend invitation",
+      "new": "New staff member",
+      "create": "Create and send the invitation",
+      "language": "Email language",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "licence_number": "Licence number",
+      "invitationHint": "The link is valid for 72 hours and works only once.",
+      "created": "Account created. An invitation was sent to {{email}}.",
+      "invitationSent": "New invitation sent to {{email}}. The old link no longer works.",
+      "confirmDeactivate": "Deactivate {{email}}'s account? Their sessions will be closed at once.",
+      "confirmDeactivateWithAppointments": "{{email}} has {{count}} upcoming appointments, which the front desk will need to move. Deactivate the account and close their sessions?"
+    },
+    "audit": {
+      "intro": "Who opened or changed what, when and from which app. Entries can never be changed or deleted, and this reading is itself recorded.",
+      "from": "From",
+      "to": "To",
+      "action": "Action",
+      "actor": "Person (email)",
+      "all": "All",
+      "filter": "Filter",
+      "none": "No entries for these filters.",
+      "when": "When",
+      "what": "On what",
+      "patient": "Patient",
+      "app": "App",
+      "older": "Older entries",
+      "actions": {
+        "read": "Read",
+        "create": "Created",
+        "update": "Changed",
+        "sign": "Signed",
+        "amend": "Amended",
+        "access_denied": "Access refused",
+        "deactivate": "Deactivated",
+        "activate": "Reactivated",
+        "invite": "Invitation"
+      },
+      "resources": {
+        "clinical_note": "Clinical note",
+        "patient": "Patient file",
+        "program": "Exercise program",
+        "service": "Service",
+        "user": "Account",
+        "audit_log": "Audit log"
+      },
+      "patientFilter": "Patient: {{name}}",
+      "removePatient": "Remove the patient filter",
+      "unusual": "Unusual",
+      "unusualHint": "In red: access refused, or more than 10 different patients opened by the same person in one hour. Click a patient's name to see every access to their file."
+    }
   }
 }

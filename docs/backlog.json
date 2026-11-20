@@ -694,12 +694,16 @@
       "so_that": "the system matches the clinic",
       "priority": "Must",
       "module": "admin",
-      "deliverable": "D2",
-      "status": "open",
+      "deliverable": "D3",
+      "status": "done",
       "acceptance": [
-        "Fictional licence numbers"
+        "Services: create, change prices, assign therapists, deactivate (never deleted) (done)",
+        "Staff: create therapist and front-desk accounts with fictional licence numbers; invitation link, never a password chosen by the admin; MFA at first login (done)",
+        "Deactivating an account closes its sessions at once and hides a therapist from booking and the team page (done)",
+        "No new administrator through the API; an admin cannot deactivate itself or another admin (done)",
+        "Rooms: not included (see US-AVL-04, rooms as a resource)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_admin.py, web/src/pages/admin.test.jsx"
     },
     {
       "id": "US-ADM-02",
@@ -725,12 +729,13 @@
       "priority": "Must",
       "module": "admin",
       "deliverable": "D3",
-      "status": "open",
+      "status": "done",
       "acceptance": [
-        "Filters by user, patient, action, date",
-        "Highlight many files read in a short time"
+        "Filters by user, patient, action, date (done; click a patient's name to see every access to their file)",
+        "Highlight many files read in a short time (done: more than 10 different patients in one hour, and every refused access)",
+        "Reading the audit log is itself logged; entries cannot be changed or deleted (done)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_admin.py, web/src/pages/admin.test.jsx"
     },
     {
       "id": "US-ADM-04",

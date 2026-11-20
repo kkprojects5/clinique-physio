@@ -17,6 +17,7 @@ import { AuthProvider } from './auth/AuthContext';
 import RequireAuth from './auth/RequireAuth';
 import TherapistPatients from './pages/therapist/Patients';
 import PatientFile from './pages/therapist/PatientFile';
+import Admin from './pages/admin/Admin';
 
 export default function App() {
   return (
@@ -69,6 +70,14 @@ export default function App() {
             element={
               <RequireAuth needRole="patient">
                 <MyAppointments />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="administration"
+            element={
+              <RequireAuth needRole="admin">
+                <Admin />
               </RequireAuth>
             }
           />

@@ -6,6 +6,7 @@ from slowapi.errors import RateLimitExceeded
 from app.core.config import settings
 from app.core.rate_limit import limiter
 from app.routers import (
+    admin,
     appointments,
     auth,
     catalog,
@@ -59,6 +60,7 @@ app.include_router(appointments.router, prefix="/api/v1")
 app.include_router(therapist.router, prefix="/api/v1")
 app.include_router(desk.router, prefix="/api/v1")
 app.include_router(exercises.router, prefix="/api/v1")
+app.include_router(admin.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
 app.include_router(webhooks.router, prefix="/api/v1")
 

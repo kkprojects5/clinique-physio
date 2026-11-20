@@ -5,7 +5,11 @@ import QRCode from 'qrcode';
 import { useAuth } from '../auth/AuthContext';
 import { Problem } from './ForgotPassword';
 
-const HOME_BY_ROLE = { patient: '/mes-rendez-vous', therapist: '/espace-therapeute' };
+const HOME_BY_ROLE = {
+  patient: '/mes-rendez-vous',
+  therapist: '/espace-therapeute',
+  admin: '/administration',
+};
 
 /** Only go back to a page of this site (never to another website: open redirect). */
 export function safeNext(value, role = 'patient') {

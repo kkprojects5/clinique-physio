@@ -9,7 +9,8 @@
     "myAppointments": "Mes rendez-vous",
     "login": "Connexion",
     "logout": "Déconnexion",
-    "workspace": "Espace thérapeute"
+    "workspace": "Espace thérapeute",
+    "admin": "Administration"
   },
   "language": {
     "label": "Langue",
@@ -261,5 +262,103 @@
     "thanks": "Merci pour votre avis.",
     "error": "Le service est momentanément indisponible. Appelez l’accueil au 514-555-0100.",
     "tooMany": "Trop de questions en peu de temps. Réessayez dans une minute."
+  },
+  "admin": {
+    "title": "Administration",
+    "tabs": {
+      "services": "Services",
+      "staff": "Personnel",
+      "audit": "Journal d’audit"
+    },
+    "status": "Statut",
+    "actions": "Actions",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "edit": "Modifier",
+    "deactivate": "Désactiver",
+    "activate": "Réactiver",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "roles": {
+      "therapist": "Physiothérapeute",
+      "front_desk": "Accueil",
+      "admin": "Administrateur",
+      "patient": "Patient"
+    },
+    "services": {
+      "intro": "Un service n’est jamais supprimé : désactivé, il disparaît de la réservation et les rendez-vous déjà pris restent.",
+      "name": "Service",
+      "duration": "Durée",
+      "price": "Prix",
+      "deposit": "Dépôt",
+      "therapists": "Physiothérapeutes",
+      "new": "Nouveau service",
+      "editTitle": "Modifier le service",
+      "name_fr": "Nom (français)",
+      "name_en": "Nom (anglais)",
+      "priceDollars": "Prix ($)",
+      "depositDollars": "Dépôt en ligne ($)",
+      "initial": "Évaluation initiale (obligatoire pour une première visite)",
+      "badMoney": "Entrez les montants en dollars, par exemple 95,00.",
+      "depositTooHigh": "Le dépôt ne peut pas dépasser le prix."
+    },
+    "staff": {
+      "intro": "Le nouveau membre reçoit un lien par courriel pour choisir son mot de passe, puis configure son code à 6 chiffres à la première connexion. Vous ne voyez jamais son mot de passe.",
+      "person": "Personne",
+      "role": "Rôle",
+      "lastLogin": "Dernière connexion",
+      "future": "Rendez-vous à venir",
+      "notSetUp": "Pas encore configuré",
+      "resend": "Renvoyer l’invitation",
+      "new": "Nouveau membre du personnel",
+      "create": "Créer et envoyer l’invitation",
+      "language": "Langue des courriels",
+      "first_name": "Prénom",
+      "last_name": "Nom",
+      "licence_number": "Numéro de permis",
+      "invitationHint": "Le lien est valide 72 heures et ne fonctionne qu’une fois.",
+      "created": "Compte créé. Une invitation a été envoyée à {{email}}.",
+      "invitationSent": "Nouvelle invitation envoyée à {{email}}. L’ancien lien ne fonctionne plus.",
+      "confirmDeactivate": "Désactiver le compte de {{email}} ? Ses sessions seront fermées immédiatement.",
+      "confirmDeactivateWithAppointments": "{{email}} a {{count}} rendez-vous à venir, qu’il faudra déplacer depuis l’accueil. Désactiver le compte et fermer ses sessions ?"
+    },
+    "audit": {
+      "intro": "Qui a consulté ou modifié quoi, quand et depuis quelle application. Les entrées ne peuvent jamais être modifiées ni supprimées, et cette consultation est elle-même enregistrée.",
+      "from": "Du",
+      "to": "Au",
+      "action": "Action",
+      "actor": "Personne (courriel)",
+      "all": "Toutes",
+      "filter": "Filtrer",
+      "none": "Aucune entrée pour ces critères.",
+      "when": "Quand",
+      "what": "Sur quoi",
+      "patient": "Patient",
+      "app": "Application",
+      "older": "Entrées plus anciennes",
+      "actions": {
+        "read": "Consultation",
+        "create": "Création",
+        "update": "Modification",
+        "sign": "Signature",
+        "amend": "Correction",
+        "access_denied": "Accès refusé",
+        "deactivate": "Désactivation",
+        "activate": "Réactivation",
+        "invite": "Invitation"
+      },
+      "resources": {
+        "clinical_note": "Note clinique",
+        "patient": "Dossier patient",
+        "program": "Programme d’exercices",
+        "service": "Service",
+        "user": "Compte",
+        "audit_log": "Journal d’audit"
+      },
+      "patientFilter": "Patient : {{name}}",
+      "removePatient": "Retirer le filtre patient",
+      "unusual": "Inhabituel",
+      "unusualHint": "En rouge : accès refusé, ou plus de 10 patients différents ouverts par la même personne en une heure. Cliquez sur un nom de patient pour voir tous les accès à son dossier."
+    }
   }
 }

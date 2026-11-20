@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     web_base_url: str = "http://localhost:5173"
     email_verification_hours: int = 24
     password_reset_minutes: int = 30  # a reset link works once, for 30 minutes
+    staff_invite_hours: int = 72  # a new staff member has 3 days to choose a password
 
     # Stripe, test mode only (B-BKG-04). Empty secret key: online payment is switched off.
     stripe_secret_key: str = ""
