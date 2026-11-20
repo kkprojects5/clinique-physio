@@ -8,13 +8,17 @@ import { colors } from './src/theme';
 import LoginScreen from './src/screens/LoginScreen';
 import AppointmentsScreen from './src/screens/AppointmentsScreen';
 import ExercisesScreen from './src/screens/ExercisesScreen';
+import BookScreen from './src/screens/BookScreen';
+
+type Tab = 'appointments' | 'book' | 'exercises';
+const TAB_LABELS = { appointments: 'tabAppointments', book: 'tabBook', exercises: 'tabExercises' } as const;
 
 export default function App() {
   const [language, setLanguage] = useState<Language>('fr');
   const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const [tab, setTab] = useState<'appointments' | 'exercises'>('appointments');
+  const [tab, setTab] = useState<Tab>('appointments');
 
   // Reopen the app logged in if a token is still stored (it is refused once expired).
   useEffect(() => {
@@ -62,7 +66,7 @@ export default function App() {
           {!ready ? null : token ? (
             <>
               <View style={styles.tabs} accessibilityRole="tablist">
-                {(['appointments', 'exercises'] as const).map((name) => (
+                {(['appointments', 'book', 'exercises'] as const).map((name) => (
                   <Pressable
                     key={name}
                     onPress={() => setTab(name)}
@@ -71,7 +75,7 @@ export default function App() {
                     style={[styles.tab, tab === name && styles.tabActive]}
                   >
                     <Text style={[styles.tabText, tab === name && styles.tabTextActive]}>
-                      {translate(language, name === 'appointments' ? 'tabAppointments' : 'tabExercises')}
+                      {translate(language, TAB_LABELS[name])}
                     </Text>
                   </Pressable>
                 ))}
@@ -82,6 +86,13 @@ export default function App() {
                   accessToken={token}
                   onExpired={() => loggedOut(translate(language, 'error.expired'))}
                   onLogout={() => loggedOut(null)}
+                />
+              ) : tab === 'book' ? (
+                <BookScreen
+                  language={language}
+                  accessToken={token}
+                  onExpired={() => loggedOut(translate(language, 'error.expired'))}
+                  onBooked={() => setTab('appointments')}
                 />
               ) : (
                 <ExercisesScreen

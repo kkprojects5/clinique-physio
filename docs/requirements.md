@@ -101,7 +101,7 @@ Priorities use **MoSCoW** (Must, Should, Could). Statuses: **Done** (all accepta
 met and tested), **In progress** (some criteria met), **To do**. Each issue holds the full story
 ("As a …, I want …, so that …") and its acceptance criteria.
 
-Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 11, D2 17, D3 23.
+Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 11, D2 15, D3 25.
 
 <!-- BACKLOG-TABLE:START -->
 | Issue | ID | User story | Priority | Deliverable | Status |
@@ -119,7 +119,7 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#65](https://github.com/stevatak/Khadizhat-Synth/issues/65) | US-AVL-03 | Bookable slot computation | Must | D1 | Done |
 | [#66](https://github.com/stevatak/Khadizhat-Synth/issues/66) | US-AVL-04 | Rooms as a resource | Should | D3 | To do |
 | [#67](https://github.com/stevatak/Khadizhat-Synth/issues/67) | US-AVL-05 | Therapist profile page | Should | D2 | In progress |
-| [#68](https://github.com/stevatak/Khadizhat-Synth/issues/68) | US-BKG-01 | Online booking with deposit | Must | D2 | In progress |
+| [#68](https://github.com/stevatak/Khadizhat-Synth/issues/68) | US-BKG-01 | Online booking with deposit | Must | D3 | Done |
 | [#69](https://github.com/stevatak/Khadizhat-Synth/issues/69) | US-BKG-02 | No double booking under concurrency | Must | D2 | Done |
 | [#70](https://github.com/stevatak/Khadizhat-Synth/issues/70) | US-BKG-03 | Temporary hold during payment | Must | D2 | Done |
 | [#71](https://github.com/stevatak/Khadizhat-Synth/issues/71) | US-BKG-04 | Deposit payment confirmed by Stripe | Must | D2 | Done |
@@ -196,5 +196,7 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
 - Patient website: My exercises page (US-EXE-03 done). Booking emails to the patient when an
   appointment is confirmed (online or by phone), moved or cancelled, with only practical
   information (US-BKG-01; delivered once an email provider is connected, R-9).
-- Next: the remaining partial story (mobile booking), then Law 25 admin
+- Mobile booking done (US-BKG-01 done): Book tab with service, therapist or first available,
+  day and time, then the deposit paid with Stripe's payment sheet (test mode).
+- Next: Law 25 admin
   pages (US-ADM-04, 05) and the offline desk mode (US-FRD-06) if time allows.

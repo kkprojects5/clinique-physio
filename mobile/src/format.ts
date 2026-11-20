@@ -33,3 +33,24 @@ export function dayBefore(date: string): string {
   const [y, m, d] = date.split('-').map(Number);
   return new Date(Date.UTC(y, m - 1, d - 1)).toISOString().slice(0, 10);
 }
+
+/** Today's date at the clinic, "2026-11-24", whatever time zone the phone is in. */
+export function clinicToday(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(now);
+}
+
+/** The next `count` dates from `first` included: ["2026-11-24", "2026-11-25", ...]. */
+export function nextDays(first: string, count: number): string[] {
+  const [y, m, d] = first.split('-').map(Number);
+  return Array.from({ length: count }, (_, i) =>
+    new Date(Date.UTC(y, m - 1, d + i)).toISOString().slice(0, 10),
+  );
+}
+
+/** "30,00 $" / "$30.00" from cents (money is always counted in cents, never decimals). */
+export function money(cents: number, language: Language): string {
+  return new Intl.NumberFormat(language === 'en' ? 'en-CA' : 'fr-CA', {
+    style: 'currency',
+    currency: 'CAD',
+  }).format(cents / 100);
+}

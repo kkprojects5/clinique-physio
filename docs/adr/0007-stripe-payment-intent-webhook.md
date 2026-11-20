@@ -47,3 +47,13 @@ may fake a payment confirmation, and a patient must never pay for an appointment
 - Without Stripe keys, online payment answers 503 and the rest of the API keeps working.
 - Proven by `api/tests/test_payments.py` (signature, replay, idempotency, late payment refund,
   refund on cancellation, failed refund).
+
+## Update (D3): mobile app
+
+The mobile app uses the same PaymentIntent and webhook, with Stripe's native payment sheet
+(`@stripe/stripe-react-native`, the version bundled with Expo SDK 58, available in Expo Go).
+The app receives only the client secret and the publishable key from `POST
+/appointments/{id}/pay`; card details go straight from the sheet to Stripe. The app then waits
+for the appointment to become `confirmed` (set only by the signed webhook), exactly like the
+website. Proved by `mobile/src/__tests__/booking.test.tsx` with a fake payment sheet.
+

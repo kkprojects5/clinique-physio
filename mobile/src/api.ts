@@ -114,3 +114,62 @@ export function checkOff(token: string, itemId: string, painLevel: number | null
 export function undoCheckOff(token: string, checkOffId: string): Promise<void> {
   return request<void>(`/me/program/check-offs/${checkOffId}`, { method: 'DELETE' }, token);
 }
+
+// --- Booking (B-BKG-01) ------------------------------------------------------------------
+
+export type Service = {
+  id: string;
+  name_fr: string;
+  name_en: string;
+  duration_min: number;
+  price_cents: number;
+  deposit_cents: number;
+  is_initial_evaluation: boolean;
+  therapist_ids: string[];
+};
+
+export type Therapist = { id: string; first_name: string; last_name: string };
+
+export type Slot = { therapist_id: string; start: string; end: string; start_local: string };
+
+export type Booking = MyAppointment & { hold_expires_at: string | null; deposit_cents: number };
+
+export type PaymentStart = {
+  appointment: Booking;
+  client_secret: string; // given to Stripe's payment sheet only; never stored or logged
+  publishable_key: string;
+  amount_cents: number;
+  currency: string;
+};
+
+export function services(): Promise<Service[]> {
+  return request<Service[]>('/services');
+}
+
+export function therapists(): Promise<Therapist[]> {
+  return request<Therapist[]>('/therapists');
+}
+
+/** Free times of one day (Montréal date "2026-11-24"). No therapist: everyone who gives it. */
+export function freeSlots(serviceId: string, therapistId: string | null, day: string): Promise<Slot[]> {
+  const query = new URLSearchParams({ service_id: serviceId, date_from: day, date_to: day });
+  if (therapistId) query.set('therapist_id', therapistId);
+  return request<Slot[]>(`/availability?${query.toString()}`);
+}
+
+/** Keep the slot 10 minutes while paying. 409 ('conflict') if it was just taken. */
+export function hold(token: string, serviceId: string, slot: Slot): Promise<Booking> {
+  return request<Booking>(
+    '/appointments/hold',
+    {
+      method: 'POST',
+      body: JSON.stringify({ service_id: serviceId, therapist_id: slot.therapist_id, start: slot.start }),
+    },
+    token,
+  );
+}
+
+/** Start (or resume) paying the deposit: gives what Stripe's payment sheet needs. */
+export function startPayment(token: string, appointmentId: string): Promise<PaymentStart> {
+  return request<PaymentStart>(`/appointments/${appointmentId}/pay`, { method: 'POST' }, token);
+}
