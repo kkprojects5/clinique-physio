@@ -4,6 +4,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.core.config import settings
+from app.core.logging import setup_logging
 from app.core.rate_limit import limiter
 from app.routers import (
     admin,
@@ -18,6 +19,8 @@ from app.routers import (
     therapist,
     webhooks,
 )
+
+setup_logging()
 
 app = FastAPI(
     title="Clinique Physio Mont-Royal API",

@@ -162,3 +162,33 @@ def test_refused_change_sends_nothing(client, db, clinic, outbox):  # noqa: F811
 
     assert response.status_code == 404
     assert outbox == []
+
+
+def test_queued_emails_appear_in_the_server_log_without_the_address():
+    """Render's log shows that the email left, with a masked address and no body.
+
+    The test sets the app's logging up again from scratch, because the test database
+    migration (Alembic) resets logging; on Render, Alembic runs in its own process.
+    """
+    import io
+    import logging
+
+    from app.core.logging import setup_logging
+    from app.services.email import send_email
+
+    app_logger = logging.getLogger("app")
+    email_logger = logging.getLogger("app.services.email")
+    saved = (app_logger.handlers[:], app_logger.level, app_logger.disabled, email_logger.disabled)
+    app_logger.handlers = []
+    app_logger.disabled = email_logger.disabled = False
+    try:
+        setup_logging()
+        output = io.StringIO()
+        app_logger.handlers[0].setStream(output)
+        send_email("marie.tremblay@example.com", "Rendez-vous confirmé", "secret body")
+    finally:
+        app_logger.handlers, app_logger.level, app_logger.disabled, email_logger.disabled = saved
+
+    log = output.getvalue()
+    assert "INFO" in log and "m***@example.com" in log and "Rendez-vous confirmé" in log
+    assert "marie.tremblay" not in log and "secret body" not in log
