@@ -11,7 +11,8 @@
     "logout": "Log out",
     "workspace": "Therapist workspace",
     "admin": "Administration",
-    "myExercises": "My exercises"
+    "myExercises": "My exercises",
+    "myData": "My data"
   },
   "language": {
     "label": "Language",
@@ -269,7 +270,9 @@
     "tabs": {
       "services": "Services",
       "staff": "Staff",
-      "audit": "Audit log"
+      "audit": "Audit log",
+      "privacy": "Requests (Law 25)",
+      "incidents": "Incidents"
     },
     "status": "Status",
     "actions": "Actions",
@@ -346,7 +349,12 @@
         "access_denied": "Access refused",
         "deactivate": "Deactivated",
         "activate": "Reactivated",
-        "invite": "Invitation"
+        "invite": "Invitation",
+        "export": "Export",
+        "erase": "Erasure",
+        "in_progress": "In progress",
+        "completed": "Answered",
+        "refused": "Refused"
       },
       "resources": {
         "clinical_note": "Clinical note",
@@ -354,12 +362,52 @@
         "program": "Exercise program",
         "service": "Service",
         "user": "Account",
-        "audit_log": "Audit log"
+        "audit_log": "Audit log",
+        "privacy_request": "Privacy request",
+        "incident": "Incident"
       },
       "patientFilter": "Patient: {{name}}",
       "removePatient": "Remove the patient filter",
       "unusual": "Unusual",
       "unusualHint": "In red: access refused, or more than 10 different patients opened by the same person in one hour. Click a patient's name to see every access to their file."
+    },
+    "privacy": {
+      "intro": "Patients' requests (Law 25). Answer within 30 days: late requests are in red. The patient receives the answer by email.",
+      "none": "No requests.",
+      "due": "answer by {{date}} at the latest",
+      "overdue": "Late",
+      "handle": "Handle",
+      "export": "Prepare the export (no clinical notes)",
+      "exportLabel": "Patient's personal information",
+      "eraseHint": "Closes the account, erases contact details and withdraws consents. The health record is kept until the end of its retention period, with the reason written in the answer.",
+      "erase": "Erase and answer",
+      "confirmErase": "Close {{name}}'s account and erase their contact details? This cannot be undone.",
+      "outcome": "Answer given to the patient",
+      "inProgress": "Mark in progress",
+      "complete": "Answer (completed)",
+      "refuse": "Refuse (with the reason)"
+    },
+    "incidents": {
+      "intro": "Confidentiality incident register (Law 25). Entries are kept at least 5 years and cannot be deleted. An incident with a risk of serious injury must be reported to the Commission d'accès à l'information and to the people concerned.",
+      "none": "No incidents recorded.",
+      "new": "Record an incident",
+      "occurred_at": "Date of the incident",
+      "discovered_at": "Date the clinic learned about it",
+      "description": "What happened",
+      "data_categories": "Information concerned",
+      "measures": "Measures taken",
+      "people": "People concerned",
+      "risk": "Risk",
+      "risks": {
+        "low": "Low risk",
+        "serious": "Risk of serious injury"
+      },
+      "data": "Information",
+      "cai": "Commission notified on",
+      "persons": "People notified on",
+      "toNotify": "Notifications to make: risk of serious injury.",
+      "markCai": "Commission notified today",
+      "markPersons": "People notified today"
     }
   },
   "myExercises": {
@@ -377,5 +425,32 @@
     "undo": "Undo",
     "alreadyDone": "This exercise is already checked off today.",
     "doneFor": "Done: {{name}}"
+  },
+  "myData": {
+    "title": "My data",
+    "intro": "Law 25 lets you see, correct or delete the personal information the clinic keeps about you. The clinic answers within 30 days.",
+    "newRequest": "New request",
+    "what": "What do you want to do?",
+    "types": {
+      "access": "See my information (access)",
+      "correction": "Correct some information",
+      "deletion": "Delete my account and my information"
+    },
+    "deletionHint": "Your account will be closed and your contact details erased. The health record is kept 5 years after the last visit, as the professional order requires, then anonymized.",
+    "details": "Details (optional)",
+    "noHealth": "Do not write health information here.",
+    "send": "Send the request",
+    "sent": "Request sent. You will receive the answer by email and here.",
+    "alreadyOpen": "You already have an open request of this type.",
+    "myRequests": "My requests",
+    "none": "No requests.",
+    "dates": "Asked on {{asked}} · answer by {{due}} at the latest",
+    "answer": "Answer:",
+    "statuses": {
+      "received": "Received",
+      "in_progress": "In progress",
+      "completed": "Answered",
+      "refused": "Refused"
+    }
   }
 }

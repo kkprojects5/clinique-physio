@@ -118,8 +118,8 @@ person receives care, so it is treated as **Health**.
 | Data | Class | Why | Who can see it | Status |
 |---|---|---|---|---|
 | Consent type, version, date given, date withdrawn | Personal | Prove what the person agreed to and when (Law 25) | The person; admin | ✅ |
-| Access, correction and deletion requests | Personal | Law 25 rights of the person | The person; admin (person in charge of privacy) | ⏳ (D3) |
-| Confidentiality incident register | Internal (may contain Personal) | Law 25 obligation to record incidents | Admin only | ⏳ (D3) |
+| Access, correction and deletion requests | Personal | Law 25 rights of the person | The person; admin (person in charge of privacy) | ✅ |
+| Confidentiality incident register | Internal (may contain Personal) | Law 25 obligation to record incidents | Admin only | ✅ |
 
 ### refresh_tokens and audit_logs
 
@@ -145,11 +145,14 @@ person receives care, so it is treated as **Health**.
 | LLM provider (OpenAI, chatbot, ADR-0008) | The visitor's question with personal details masked, and approved public passages | Patient records, appointments, notes, names typed by staff |
 | Front desk | Name, phone, service, status | Clinical notes, pain levels, programs |
 
-## 4. Retention (to be finalized in D3)
+## 4. Retention
 
 | Data | Planned retention |
 |---|---|
 | Clinical notes | Kept 5 years after the last visit (professional order rule, fictional for this project), then anonymized; never physically deleted before |
 | Chatbot conversation logs | 30 days |
 | Refresh tokens | Deleted after expiry |
-| Accounts without any appointment | Deleted on request (Law 25 right to deletion) |
+| Accounts without any appointment | Anonymized on request (Law 25 right to deletion), at once |
+| Accounts with a health record | On request: closed at once, contact details erased, consents withdrawn; the health record is kept 5 years after the last visit, then anonymized (reason written in the answer to the request) |
+| Privacy requests | Kept with their answer, to prove the clinic answered within 30 days |
+| Confidentiality incident register | At least 5 years after the clinic became aware of the incident; entries can never be deleted (database trigger) |

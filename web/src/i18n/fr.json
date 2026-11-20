@@ -11,7 +11,8 @@
     "logout": "Déconnexion",
     "workspace": "Espace thérapeute",
     "admin": "Administration",
-    "myExercises": "Mes exercices"
+    "myExercises": "Mes exercices",
+    "myData": "Mes données"
   },
   "language": {
     "label": "Langue",
@@ -269,7 +270,9 @@
     "tabs": {
       "services": "Services",
       "staff": "Personnel",
-      "audit": "Journal d’audit"
+      "audit": "Journal d’audit",
+      "privacy": "Demandes (Loi 25)",
+      "incidents": "Incidents"
     },
     "status": "Statut",
     "actions": "Actions",
@@ -346,7 +349,12 @@
         "access_denied": "Accès refusé",
         "deactivate": "Désactivation",
         "activate": "Réactivation",
-        "invite": "Invitation"
+        "invite": "Invitation",
+        "export": "Export",
+        "erase": "Effacement",
+        "in_progress": "En traitement",
+        "completed": "Réponse",
+        "refused": "Refus"
       },
       "resources": {
         "clinical_note": "Note clinique",
@@ -354,12 +362,52 @@
         "program": "Programme d’exercices",
         "service": "Service",
         "user": "Compte",
-        "audit_log": "Journal d’audit"
+        "audit_log": "Journal d’audit",
+        "privacy_request": "Demande Loi 25",
+        "incident": "Incident"
       },
       "patientFilter": "Patient : {{name}}",
       "removePatient": "Retirer le filtre patient",
       "unusual": "Inhabituel",
       "unusualHint": "En rouge : accès refusé, ou plus de 10 patients différents ouverts par la même personne en une heure. Cliquez sur un nom de patient pour voir tous les accès à son dossier."
+    },
+    "privacy": {
+      "intro": "Demandes des patients (Loi 25). Répondre dans les 30 jours : les demandes en retard sont en rouge. Le patient reçoit la réponse par courriel.",
+      "none": "Aucune demande.",
+      "due": "réponse au plus tard le {{date}}",
+      "overdue": "En retard",
+      "handle": "Traiter",
+      "export": "Préparer l’export (sans notes cliniques)",
+      "exportLabel": "Renseignements personnels du patient",
+      "eraseHint": "Ferme le compte, efface les coordonnées et retire les consentements. Le dossier de santé est gardé jusqu’à la fin de sa durée de conservation, avec la raison écrite dans la réponse.",
+      "erase": "Effacer et répondre",
+      "confirmErase": "Fermer le compte de {{name}} et effacer ses coordonnées ? Cette action est définitive.",
+      "outcome": "Réponse donnée au patient",
+      "inProgress": "Marquer en traitement",
+      "complete": "Répondre (terminée)",
+      "refuse": "Refuser (avec la raison)"
+    },
+    "incidents": {
+      "intro": "Registre des incidents de confidentialité (Loi 25). Les entrées sont gardées au moins 5 ans et ne peuvent pas être supprimées. Un incident à risque de préjudice sérieux doit être signalé à la Commission d’accès à l’information et aux personnes concernées.",
+      "none": "Aucun incident enregistré.",
+      "new": "Enregistrer un incident",
+      "occurred_at": "Date de l’incident",
+      "discovered_at": "Date où la clinique l’a appris",
+      "description": "Ce qui s’est passé",
+      "data_categories": "Renseignements concernés",
+      "measures": "Mesures prises",
+      "people": "Personnes concernées",
+      "risk": "Risque",
+      "risks": {
+        "low": "Risque faible",
+        "serious": "Risque de préjudice sérieux"
+      },
+      "data": "Renseignements",
+      "cai": "Commission avisée le",
+      "persons": "Personnes avisées le",
+      "toNotify": "Avis à faire : risque de préjudice sérieux.",
+      "markCai": "Commission avisée aujourd’hui",
+      "markPersons": "Personnes avisées aujourd’hui"
     }
   },
   "myExercises": {
@@ -377,5 +425,32 @@
     "undo": "Annuler",
     "alreadyDone": "Cet exercice est déjà coché aujourd’hui.",
     "doneFor": "C’est fait : {{name}}"
+  },
+  "myData": {
+    "title": "Mes données",
+    "intro": "La Loi 25 vous permet de voir, de faire corriger ou de faire supprimer les renseignements personnels que la clinique garde sur vous. La clinique répond dans un délai de 30 jours.",
+    "newRequest": "Nouvelle demande",
+    "what": "Que voulez-vous faire ?",
+    "types": {
+      "access": "Voir mes renseignements (accès)",
+      "correction": "Corriger un renseignement",
+      "deletion": "Supprimer mon compte et mes renseignements"
+    },
+    "deletionHint": "Votre compte sera fermé et vos coordonnées effacées. Le dossier de santé est gardé 5 ans après la dernière visite, comme l’exige l’ordre professionnel, puis anonymisé.",
+    "details": "Précisions (facultatif)",
+    "noHealth": "N’écrivez pas de renseignements de santé ici.",
+    "send": "Envoyer la demande",
+    "sent": "Demande envoyée. Vous recevrez la réponse par courriel et ici.",
+    "alreadyOpen": "Vous avez déjà une demande de ce type en cours.",
+    "myRequests": "Mes demandes",
+    "none": "Aucune demande.",
+    "dates": "Demandée le {{asked}} · réponse au plus tard le {{due}}",
+    "answer": "Réponse :",
+    "statuses": {
+      "received": "Reçue",
+      "in_progress": "En traitement",
+      "completed": "Répondue",
+      "refused": "Refusée"
+    }
   }
 }

@@ -334,11 +334,14 @@ erDiagram
     privacy_requests {
         uuid id PK
         uuid patient_id FK
-        text type "access, deletion, correction"
-        text status
+        text type "access, correction, deletion"
+        text details
+        text status "received, in_progress, completed, refused"
         timestamptz requested_at
+        timestamptz due_at "30 days later"
         timestamptz completed_at
         uuid handled_by FK
+        text outcome "answer or reason"
     }
     incident_register {
         uuid id PK
@@ -346,10 +349,14 @@ erDiagram
         timestamptz discovered_at
         text description
         text data_categories
-        text risk_level
+        int people_affected
+        text risk_level "low, serious"
         text measures
-        timestamptz notified_at
+        timestamptz cai_notified_at
+        timestamptz persons_notified_at
         uuid recorded_by FK
+        timestamptz created_at
+        timestamptz updated_at
     }
     audit_logs {
         bigint id PK
@@ -371,7 +378,8 @@ erDiagram
 ```
 
 - `audit_logs` is append-only: the application can insert and read rows but never change or delete them.
-- `incident_register` is the confidentiality incident register Law 25 requires (B-ADM-05).
+- `incident_register` is the confidentiality incident register Law 25 requires (B-ADM-05). A database trigger refuses any deletion: entries are kept at least 5 years.
+- `privacy_requests` must be answered within 30 days (`due_at`); a deletion keeps the health record under retention and says why in `outcome` (B-ADM-04).
 
 ## 6. Chatbot knowledge base
 

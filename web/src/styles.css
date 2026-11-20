@@ -799,3 +799,34 @@ td.actions,
   color: var(--teal-dark);
   font-weight: 700;
 }
+
+/* Law 25: privacy requests and incidents (B-ADM-04, B-ADM-05) */
+.request-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.request-list p {
+  margin: 0.25rem 0;
+}
+.panel--alert {
+  border-left: 4px solid #b3261e;
+}
+.answer {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+.answer textarea,
+.form textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.export {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+}

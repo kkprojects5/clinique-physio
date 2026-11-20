@@ -3,11 +3,15 @@ import { useTranslation } from 'react-i18next';
 import ServicesAdmin from './ServicesAdmin';
 import StaffAdmin from './StaffAdmin';
 import AuditAdmin from './AuditAdmin';
+import PrivacyAdmin from './PrivacyAdmin';
+import IncidentsAdmin from './IncidentsAdmin';
 
 const TABS = [
   ['services', ServicesAdmin],
   ['staff', StaffAdmin],
   ['audit', AuditAdmin],
+  ['privacy', PrivacyAdmin],
+  ['incidents', IncidentsAdmin],
 ];
 
 /** Clinic administration (B-ADM-01, B-ADM-03). The API checks the admin role and MFA. */

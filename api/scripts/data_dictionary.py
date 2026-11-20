@@ -122,6 +122,16 @@ TABLES = {
         "Every status change of an appointment, with who made it. Rows are only added.",
         "B-BKG-05",
     ),
+    "privacy_requests": (
+        "Law 25",
+        "Requests from patients to see, correct or delete their information; answered within 30 days.",
+        "B-ADM-04",
+    ),
+    "incident_register": (
+        "Law 25",
+        "Confidentiality incident register; entries are never deleted (database trigger), kept 5 years or more.",
+        "B-ADM-05",
+    ),
     "kb_documents": (
         "Chatbot",
         "The chatbot's knowledge files (one per language). Public information only.",
@@ -471,6 +481,38 @@ COLUMNS = {
         "Vector of 1536 numbers from the AI provider; empty without an API key.",
         PUB,
     ),
+    ("privacy_requests", "id"): ID,
+    ("privacy_requests", "patient_id"): ("The patient who made the request.", PER),
+    ("privacy_requests", "type"): ("access, correction or deletion.", PER),
+    ("privacy_requests", "details"): ("What the person asks, in their own words.", PER),
+    ("privacy_requests", "status"): ("received, in_progress, completed or refused.", INT),
+    ("privacy_requests", "requested_at"): ("When the request was made (UTC).", INT),
+    ("privacy_requests", "due_at"): ("Answer deadline: 30 days after the request.", INT),
+    ("privacy_requests", "completed_at"): ("When the answer was given; empty while open.", INT),
+    ("privacy_requests", "handled_by"): ("The administrator who answered.", INT),
+    ("privacy_requests", "outcome"): ("The answer given, or the reason for refusing.", PER),
+    ("incident_register", "id"): ID,
+    ("incident_register", "occurred_at"): ("When the incident happened (UTC).", INT),
+    ("incident_register", "discovered_at"): ("When the clinic became aware of it (UTC).", INT),
+    ("incident_register", "description"): ("What happened.", INT),
+    ("incident_register", "data_categories"): ("Kinds of personal information concerned.", INT),
+    ("incident_register", "people_affected"): ("Number of people concerned, if known.", INT),
+    ("incident_register", "risk_level"): ("low, or serious (risk of serious injury).", INT),
+    ("incident_register", "measures"): (
+        "Measures taken to reduce the risk and prevent another.",
+        INT,
+    ),
+    ("incident_register", "cai_notified_at"): (
+        "When the Commission d'accès à l'information was notified; empty if not (yet).",
+        INT,
+    ),
+    ("incident_register", "persons_notified_at"): (
+        "When the people concerned were notified; empty if not (yet).",
+        INT,
+    ),
+    ("incident_register", "recorded_by"): ("The administrator who recorded it.", INT),
+    ("incident_register", "created_at"): CREATED,
+    ("incident_register", "updated_at"): ("Last change to the entry (UTC).", INT),
 }
 
 PLANNED = [

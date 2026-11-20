@@ -175,6 +175,16 @@ flowchart LR
 | T-ADM-4 | S | A departed employee keeps using an open session | Deactivation revokes refresh tokens at once; access tokens are refused because the account is checked on each request | B-AUTH-02 | ✅ `test_deactivating_closes_sessions_and_hides_the_therapist` |
 | T-ADM-5 | R | Abuse of access to patient files goes unnoticed | Audit viewer with filters; refused accesses and more than 10 different patients read in an hour are highlighted; reading the log is itself logged; entries cannot be changed (trigger) | B-ADM-03, B-CLN-04 | ✅ `test_many_patient_files_in_one_hour_are_highlighted`, `test_reading_the_audit_log_is_itself_logged` |
 
+### 4.8 Law 25: privacy requests and incidents (B-ADM-04, B-ADM-05)
+
+| ID | STRIDE | Threat | Mitigation | Req. | Status |
+|---|---|---|---|---|---|
+| T-L25-1 | I | A patient sees another patient's requests | `/me/privacy-requests` lists only the logged-in patient's own requests | B-AUTH-05 | ✅ `test_patients_see_only_their_own_requests` |
+| T-L25-2 | I | Clinical notes reach the administrator through an access export | The export contains account, profile, consents, appointments and payments only; the clinical record is given by the treating physiotherapist (BR-6) | B-ADM-04, BR-6 | ✅ `test_export_for_an_access_request_has_no_clinical_notes` |
+| T-L25-3 | R | A deletion destroys health records the clinic must keep, or keeps more than needed | Erasure closes the account and erases contact details at once; the health record is kept until the end of retention with the reason written; a patient without record is fully anonymized | B-ADM-04 | ✅ `test_deletion_keeps_the_health_record_with_the_reason`, `test_deletion_without_health_record_anonymizes_everything` |
+| T-L25-4 | T | Incident register entries are removed to hide an incident | No delete endpoint, and a database trigger refuses any deletion; every change is in the audit log | B-ADM-05 | ✅ `test_incident_entries_can_never_be_deleted` |
+| T-L25-5 | R | A serious incident is never reported | Entries with a risk of serious injury show the missing notifications until their dates are recorded | B-ADM-05 | ✅ `test_record_an_incident_and_see_missing_notifications` |
+
 ## 5. Residual and accepted risks
 
 | ID | Risk | Why accepted (for now) | Plan |

@@ -2534,6 +2534,405 @@
         }
       }
     },
+    "/api/v1/me/privacy-requests": {
+      "get": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "My Requests",
+        "operationId": "my_requests_api_v1_me_privacy_requests_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PrivacyRequestOut"
+                  },
+                  "type": "array",
+                  "title": "Response My Requests Api V1 Me Privacy Requests Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "Submit Request",
+        "description": "Ask to see, correct or delete my information. The clinic answers within 30 days.",
+        "operationId": "submit_request_api_v1_me_privacy_requests_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrivacyRequestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivacyRequestOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/privacy-requests": {
+      "get": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "List Requests",
+        "description": "Open requests first, oldest deadline first; `overdue` when 30 days have passed.",
+        "operationId": "list_requests_api_v1_admin_privacy_requests_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PrivacyRequestAdminOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Requests Api V1 Admin Privacy Requests Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/privacy-requests/{request_id}": {
+      "patch": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "Update Request",
+        "description": "In progress, completed or refused (with the answer). The patient is told by email.",
+        "operationId": "update_request_api_v1_admin_privacy_requests__request_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrivacyRequestUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivacyRequestOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/privacy-requests/{request_id}/export": {
+      "get": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "Export Request",
+        "description": "Personal information kept about the patient (access request). No clinical notes.",
+        "operationId": "export_request_api_v1_admin_privacy_requests__request_id__export_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Export Request Api V1 Admin Privacy Requests  Request Id  Export Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/privacy-requests/{request_id}/erase": {
+      "post": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "Erase Request",
+        "description": "Complete a deletion request: account closed, contact details erased, health record\nkept until the end of its retention period (reason written in the answer).",
+        "operationId": "erase_request_api_v1_admin_privacy_requests__request_id__erase_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivacyRequestOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/incidents": {
+      "get": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "List Incidents",
+        "operationId": "list_incidents_api_v1_admin_incidents_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IncidentOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Incidents Api V1 Admin Incidents Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "Record Incident",
+        "description": "Record a confidentiality incident. Entries are kept at least 5 years, never deleted.",
+        "operationId": "record_incident_api_v1_admin_incidents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/incidents/{incident_id}": {
+      "patch": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "Update Incident",
+        "description": "Keep an entry up to date: measures taken, notification dates.",
+        "operationId": "update_incident_api_v1_admin_incidents__incident_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Incident Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidentUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/chat/messages": {
       "post": {
         "tags": [
@@ -3445,6 +3844,310 @@
         ],
         "title": "HoldRequest"
       },
+      "IncidentIn": {
+        "properties": {
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Occurred At"
+          },
+          "discovered_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Discovered At"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 5,
+            "title": "Description"
+          },
+          "data_categories": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Data Categories"
+          },
+          "people_affected": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People Affected"
+          },
+          "risk_level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "serious"
+            ],
+            "title": "Risk Level"
+          },
+          "measures": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 2,
+            "title": "Measures"
+          },
+          "cai_notified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cai Notified At"
+          },
+          "persons_notified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persons Notified At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "occurred_at",
+          "discovered_at",
+          "description",
+          "data_categories",
+          "risk_level",
+          "measures"
+        ],
+        "title": "IncidentIn"
+      },
+      "IncidentOut": {
+        "properties": {
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Occurred At"
+          },
+          "discovered_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Discovered At"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 5,
+            "title": "Description"
+          },
+          "data_categories": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Data Categories"
+          },
+          "people_affected": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People Affected"
+          },
+          "risk_level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "serious"
+            ],
+            "title": "Risk Level"
+          },
+          "measures": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 2,
+            "title": "Measures"
+          },
+          "cai_notified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cai Notified At"
+          },
+          "persons_notified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persons Notified At"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "recorded_by": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Recorded By"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "to_notify": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "To Notify"
+          }
+        },
+        "type": "object",
+        "required": [
+          "occurred_at",
+          "discovered_at",
+          "description",
+          "data_categories",
+          "risk_level",
+          "measures",
+          "id",
+          "recorded_by",
+          "created_at",
+          "updated_at",
+          "to_notify"
+        ],
+        "title": "IncidentOut"
+      },
+      "IncidentUpdate": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000,
+                "minLength": 5
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "data_categories": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Categories"
+          },
+          "people_affected": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People Affected"
+          },
+          "risk_level": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "serious"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Level"
+          },
+          "measures": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measures"
+          },
+          "cai_notified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cai Notified At"
+          },
+          "persons_notified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persons Notified At"
+          }
+        },
+        "type": "object",
+        "title": "IncidentUpdate",
+        "description": "Only the fields sent are changed."
+      },
       "LoginRequest": {
         "properties": {
           "email": {
@@ -3920,6 +4623,233 @@
         ],
         "title": "PaymentStart",
         "description": "What the website needs to show Stripe's card form."
+      },
+      "PrivacyRequestAdminOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "requested_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Requested At"
+          },
+          "due_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Due At"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "patient_name": {
+            "type": "string",
+            "title": "Patient Name"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "overdue": {
+            "type": "boolean",
+            "title": "Overdue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "details",
+          "status",
+          "requested_at",
+          "due_at",
+          "completed_at",
+          "outcome",
+          "patient_id",
+          "patient_name",
+          "email",
+          "overdue"
+        ],
+        "title": "PrivacyRequestAdminOut"
+      },
+      "PrivacyRequestIn": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "access",
+              "correction",
+              "deletion"
+            ],
+            "title": "Type"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "title": "PrivacyRequestIn"
+      },
+      "PrivacyRequestOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "requested_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Requested At"
+          },
+          "due_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Due At"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "details",
+          "status",
+          "requested_at",
+          "due_at",
+          "completed_at",
+          "outcome"
+        ],
+        "title": "PrivacyRequestOut"
+      },
+      "PrivacyRequestUpdate": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_progress",
+              "completed",
+              "refused"
+            ],
+            "title": "Status"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "PrivacyRequestUpdate"
       },
       "ProgramIn": {
         "properties": {

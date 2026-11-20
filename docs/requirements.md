@@ -48,7 +48,7 @@ must respect Québec's **Law 25** on the protection of personal information.
 | O6. Better exercise adherence | Patients check off sessions on mobile; therapist sees completed vs planned | D2 |
 | O7. Fewer routine questions at the desk | Chatbot: 100% refusal of diagnosis requests, answers cite the clinic's documents, evaluated on 20 (D2) then 40 (D3) questions | D2–D3 |
 | O8. The desk keeps working offline | Day schedule readable and check-ins queued without the API; conflicts detected on sync | D3 |
-| O9. Law 25 compliance | Consents recorded with version and date; privacy requests and incident register available to the admin | D1 (consents) ✅, D3 |
+| O9. Law 25 compliance | Consents recorded with version and date; privacy requests and incident register available to the admin | D1 (consents) ✅, D3 ✅ |
 | O10. Quality and maintainability | CI green on every pull request for the four apps; no high-severity dependency alerts | D1 ✅ |
 
 ## 5. Scope
@@ -149,8 +149,8 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#95](https://github.com/stevatak/Khadizhat-Synth/issues/95) | US-ADM-01 | Manage services, staff and rooms | Must | D3 | Done |
 | [#96](https://github.com/stevatak/Khadizhat-Synth/issues/96) | US-ADM-02 | Reports | Should | D3 | To do |
 | [#97](https://github.com/stevatak/Khadizhat-Synth/issues/97) | US-ADM-03 | Audit log viewer | Must | D3 | Done |
-| [#98](https://github.com/stevatak/Khadizhat-Synth/issues/98) | US-ADM-04 | Privacy requests | Should | D3 | To do |
-| [#99](https://github.com/stevatak/Khadizhat-Synth/issues/99) | US-ADM-05 | Confidentiality incident register | Should | D3 | To do |
+| [#98](https://github.com/stevatak/Khadizhat-Synth/issues/98) | US-ADM-04 | Privacy requests | Should | D3 | Done |
+| [#99](https://github.com/stevatak/Khadizhat-Synth/issues/99) | US-ADM-05 | Confidentiality incident register | Should | D3 | Done |
 | [#100](https://github.com/stevatak/Khadizhat-Synth/issues/100) | US-ADM-06 | Knowledge base management | Should | D3 | To do |
 | [#101](https://github.com/stevatak/Khadizhat-Synth/issues/101) | US-BOT-01 | Ask practical questions | Must | D3 | Done |
 | [#102](https://github.com/stevatak/Khadizhat-Synth/issues/102) | US-BOT-02 | Refuse diagnosis and handle emergencies | Must | D3 | Done |
@@ -198,5 +198,9 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
   information (US-BKG-01; delivered once an email provider is connected, R-9).
 - Mobile booking done (US-BKG-01 done): Book tab with service, therapist or first available,
   day and time, then the deposit paid with Stripe's payment sheet (test mode).
-- Next: Law 25 admin
+- Law 25 done (US-ADM-04, US-ADM-05): "My data" page for patients (access, correction,
+  deletion requests, 30-day deadline), administrator follow-up with export and erasure that
+  keeps health records under retention with the reason, and the confidentiality incident
+  register (never deleted, notifications to make shown).
+- Next: offline desk mode (US-FRD-06) if time allows, then D3 documents and presentation.
   pages (US-ADM-04, 05) and the offline desk mode (US-FRD-06) if time allows.

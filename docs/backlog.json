@@ -747,11 +747,14 @@
       "priority": "Should",
       "module": "admin",
       "deliverable": "D3",
-      "status": "open",
+      "status": "done",
       "acceptance": [
-        "Health records under retention are anonymized or kept with a reason"
+        "Patients ask to see, correct or delete their information from \"My data\"; 30-day deadline shown, late requests in red (done)",
+        "Access: export of the personal information kept, without clinical notes (given by the treating physiotherapist) (done)",
+        "Health records under retention are anonymized or kept with a reason (done: deletion closes the account and erases contact details; the health record is kept 5 years after the last visit, reason written in the answer)",
+        "The patient is told by email when the request is answered (done)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_privacy.py, web/src/pages/privacy.test.jsx"
     },
     {
       "id": "US-ADM-05",
@@ -763,11 +766,13 @@
       "priority": "Should",
       "module": "admin",
       "deliverable": "D3",
-      "status": "open",
+      "status": "done",
       "acceptance": [
-        "Date, description, data concerned, risk, measures, notifications"
+        "Date, description, data concerned, risk, measures, notifications (done)",
+        "Entries never deleted (database trigger), kept 5 years or more (done)",
+        "Incidents with a risk of serious injury show the notifications still to make (Commission, people concerned) (done)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_privacy.py, web/src/pages/privacy.test.jsx"
     },
     {
       "id": "US-ADM-06",

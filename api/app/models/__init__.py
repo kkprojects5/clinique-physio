@@ -14,6 +14,7 @@ from app.models.exercise import Exercise, ExerciseLog, Program, ProgramItem
 from app.models.knowledge import DocumentChunk, KbDocument
 from app.models.patient import Patient
 from app.models.payment import Payment, PaymentEvent
+from app.models.privacy import Incident, PrivacyRequest
 from app.models.service import Service, TherapistService
 from app.models.therapist import Therapist
 from app.models.user import ROLES, Consent, PasswordResetToken, RefreshToken, User
@@ -28,6 +29,7 @@ __all__ = [
     "AuditLog",
     "ClinicalNote",
     "Exercise",
+    "Incident",
     "KbDocument",
     "ExerciseLog",
     "AppointmentStatusHistory",
@@ -38,6 +40,7 @@ __all__ = [
     "DocumentChunk",
     "PasswordResetToken",
     "Patient",
+    "PrivacyRequest",
     "Payment",
     "PaymentEvent",
     "Program",
