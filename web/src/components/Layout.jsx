@@ -64,6 +64,13 @@ export default function Layout() {
                   </NavLink>
                 </li>
               )}
+              {user?.role === 'patient' && (
+                <li>
+                  <NavLink to="/mes-exercices" className="nav__link">
+                    {t('nav.myExercises')}
+                  </NavLink>
+                </li>
+              )}
               <li>
                 {user ? (
                   <button type="button" className="nav__link nav__button" onClick={signOut}>

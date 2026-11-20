@@ -10,7 +10,8 @@
     "login": "Connexion",
     "logout": "Déconnexion",
     "workspace": "Espace thérapeute",
-    "admin": "Administration"
+    "admin": "Administration",
+    "myExercises": "Mes exercices"
   },
   "language": {
     "label": "Langue",
@@ -360,5 +361,21 @@
       "unusual": "Inhabituel",
       "unusualHint": "En rouge : accès refusé, ou plus de 10 patients différents ouverts par la même personne en une heure. Cliquez sur un nom de patient pour voir tous les accès à son dossier."
     }
+  },
+  "myExercises": {
+    "title": "Mes exercices",
+    "none": "Vous n’avez pas de programme d’exercices en cours. Votre physiothérapeute peut vous en donner un lors d’un rendez-vous.",
+    "by": "Programme de {{name}}, du {{from}} au {{to}}.",
+    "adherence": "Séances faites : {{percent}} % du programme",
+    "dose": "{{sets}} séries de {{reps}} répétitions, {{times}} fois par semaine",
+    "thisWeek": "Cette semaine : {{done}} sur {{planned}}",
+    "instructions": "Comment faire l’exercice",
+    "pain": "Douleur ressentie (0 = aucune, 10 = maximale)",
+    "noPain": "Ne pas indiquer",
+    "done": "C’est fait",
+    "doneToday": "Fait aujourd’hui",
+    "undo": "Annuler",
+    "alreadyDone": "Cet exercice est déjà coché aujourd’hui.",
+    "doneFor": "C’est fait : {{name}}"
   }
 }

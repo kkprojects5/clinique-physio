@@ -772,3 +772,30 @@ td.actions,
   font-size: 0.85rem;
   font-weight: 600;
 }
+
+/* My exercises (B-EXE-03) */
+.exercise-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+.exercise h2 {
+  margin-top: 0;
+}
+.exercise details {
+  margin: 0.5rem 0 1rem;
+}
+.check-off {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+.check-off .field {
+  margin: 0;
+}
+.done-today {
+  color: var(--teal-dark);
+  font-weight: 700;
+}

@@ -137,7 +137,7 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#83](https://github.com/stevatak/Khadizhat-Synth/issues/83) | US-CLN-06 | Document upload | Could | D3 | To do |
 | [#84](https://github.com/stevatak/Khadizhat-Synth/issues/84) | US-EXE-01 | Exercise library | Must | D2 | Done |
 | [#85](https://github.com/stevatak/Khadizhat-Synth/issues/85) | US-EXE-02 | Assign a program | Must | D2 | Done |
-| [#86](https://github.com/stevatak/Khadizhat-Synth/issues/86) | US-EXE-03 | Follow my program | Must | D2 | In progress |
+| [#86](https://github.com/stevatak/Khadizhat-Synth/issues/86) | US-EXE-03 | Follow my program | Must | D3 | Done |
 | [#87](https://github.com/stevatak/Khadizhat-Synth/issues/87) | US-EXE-04 | Adherence chart | Should | D3 | Done |
 | [#88](https://github.com/stevatak/Khadizhat-Synth/issues/88) | US-EXE-05 | Daily exercise reminder | Could | D3 | To do |
 | [#89](https://github.com/stevatak/Khadizhat-Synth/issues/89) | US-FRD-01 | Day schedule of all therapists | Must | D1 | Done |
@@ -193,5 +193,8 @@ All 11 D1 stories are done, each proved by automated tests run in CI (completed 
 - Administration done (US-ADM-01, US-ADM-03): services and prices, staff accounts by
   invitation (the administrator never sees a password), deactivation that closes sessions at
   once, audit log viewer with filters, unusual access highlighted.
-- Next: the partial stories (booking email, patient exercise page, mobile booking), then Law 25 admin
+- Patient website: My exercises page (US-EXE-03 done). Booking emails to the patient when an
+  appointment is confirmed (online or by phone), moved or cancelled, with only practical
+  information (US-BKG-01; delivered once an email provider is connected, R-9).
+- Next: the remaining partial story (mobile booking), then Law 25 admin
   pages (US-ADM-04, 05) and the offline desk mode (US-FRD-06) if time allows.

@@ -8,7 +8,7 @@ import uuid
 from datetime import date
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request, status
 
 from app.core import rate_limit
 from app.core.rate_limit import limiter
@@ -26,7 +26,13 @@ from app.schemas.schedule import (
     ServiceRef,
     TherapistRef,
 )
-from app.services import booking_service, front_desk_service, payment_service, schedule_service
+from app.services import (
+    booking_service,
+    front_desk_service,
+    notification_service,
+    payment_service,
+    schedule_service,
+)
 from app.services.slots import CLINIC_TZ
 from app.services.stripe_gateway import StripeGateway, get_gateway
 
@@ -111,7 +117,11 @@ def find_patients(
 @router.post("/appointments", status_code=status.HTTP_201_CREATED)
 @limiter.limit(rate_limit.BOOKING_LIMIT)
 def book_by_phone(
-    request: Request, data: DeskBookingIn, db: DbSession, desk: FrontDeskUser
+    request: Request,
+    data: DeskBookingIn,
+    db: DbSession,
+    desk: FrontDeskUser,
+    background: BackgroundTasks,
 ) -> DeskAppointment:
     """Book for a patient on the phone: confirmed at once (paid at the clinic). 409 if taken."""
     patient = db.get(Patient, data.patient_id)
@@ -123,6 +133,10 @@ def book_by_phone(
         )
     except booking_service.BookingError as error:
         raise _refused(error) from None
+    background.add_task(
+        notification_service.send,
+        notification_service.booking_email(db, appointment, "confirmed"),
+    )
     return _desk_out(db, appointment)
 
 
@@ -134,6 +148,7 @@ def cancel_by_phone(
     db: DbSession,
     desk: FrontDeskUser,
     gateway: Gateway,
+    background: BackgroundTasks,
 ) -> CancelOut:
     """Cancel for a patient who calls. Deposit refunded only more than 24 hours before."""
     try:
@@ -145,6 +160,8 @@ def cancel_by_phone(
         )
     except booking_service.BookingError as error:
         raise _refused(error) from None
+    email = notification_service.booking_email(db, appointment, "cancelled", refunded)
+    background.add_task(notification_service.send, email)
     return CancelOut(appointment=booking_out(db, appointment), deposit_refunded=refunded)
 
 
@@ -156,6 +173,7 @@ def reschedule_by_phone(
     data: RescheduleRequest,
     db: DbSession,
     desk: FrontDeskUser,
+    background: BackgroundTasks,
 ) -> DeskAppointment:
     """Move an appointment for a patient who calls, to another free time (any time before)."""
     try:
@@ -164,6 +182,9 @@ def reschedule_by_phone(
         )
     except booking_service.BookingError as error:
         raise _refused(error) from None
+    background.add_task(
+        notification_service.send, notification_service.booking_email(db, appointment, "moved")
+    )
     return _desk_out(db, appointment)
 
 

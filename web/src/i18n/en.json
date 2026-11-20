@@ -10,7 +10,8 @@
     "login": "Log in",
     "logout": "Log out",
     "workspace": "Therapist workspace",
-    "admin": "Administration"
+    "admin": "Administration",
+    "myExercises": "My exercises"
   },
   "language": {
     "label": "Language",
@@ -360,5 +361,21 @@
       "unusual": "Unusual",
       "unusualHint": "In red: access refused, or more than 10 different patients opened by the same person in one hour. Click a patient's name to see every access to their file."
     }
+  },
+  "myExercises": {
+    "title": "My exercises",
+    "none": "You have no exercise program in progress. Your physiotherapist can give you one at an appointment.",
+    "by": "Program by {{name}}, from {{from}} to {{to}}.",
+    "adherence": "Sessions done: {{percent}}% of the program",
+    "dose": "{{sets}} sets of {{reps}} reps, {{times}} times a week",
+    "thisWeek": "This week: {{done}} of {{planned}}",
+    "instructions": "How to do the exercise",
+    "pain": "Pain felt (0 = none, 10 = worst)",
+    "noPain": "Do not say",
+    "done": "Done",
+    "doneToday": "Done today",
+    "undo": "Undo",
+    "alreadyDone": "This exercise is already checked off today.",
+    "doneFor": "Done: {{name}}"
   }
 }

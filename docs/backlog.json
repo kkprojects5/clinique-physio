@@ -249,9 +249,9 @@
       "acceptance": [
         "Choose a service, a therapist (or first available), a date and a time, then pay the deposit: website (done)",
         "Same on the mobile app (to do)",
-        "Confirmation shown (done) and sent by email (to do)"
+        "Confirmation shown (done) and sent by email, also when moved or cancelled, without clinical information (done; delivered once an email provider is connected, R-9)"
       ],
-      "evidence": "web/src/pages/booking.test.jsx, api/tests/test_booking.py, api/tests/test_payments.py"
+      "evidence": "web/src/pages/booking.test.jsx, api/tests/test_booking.py, api/tests/test_payments.py, api/tests/test_notifications.py"
     },
     {
       "id": "US-BKG-02",
@@ -543,14 +543,14 @@
       "so_that": "I stay on track",
       "priority": "Must",
       "module": "exercises",
-      "deliverable": "D2",
-      "status": "partial",
+      "deliverable": "D3",
+      "status": "done",
       "acceptance": [
         "API: see my program, check off once a day with pain 0 to 10 (done)",
         "Mobile app: Exercises tab, check off with pain level, undo today's (done)",
-        "Website: patient view of the program (to do)"
+        "Website: My exercises page with the same check-off, pain level and undo (done)"
       ],
-      "evidence": "api/tests/test_exercises.py, mobile/src/__tests__/exercises.test.tsx"
+      "evidence": "api/tests/test_exercises.py, mobile/src/__tests__/exercises.test.tsx, web/src/pages/myExercises.test.jsx"
     },
     {
       "id": "US-EXE-04",

@@ -3,7 +3,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
 
 from app.core import rate_limit
 from app.core.config import settings
@@ -19,7 +19,7 @@ from app.schemas.schedule import (
     ServiceRef,
     TherapistRef,
 )
-from app.services import booking_service, payment_service
+from app.services import booking_service, notification_service, payment_service
 from app.services.slots import CLINIC_TZ
 from app.services.stripe_gateway import StripeGateway, get_gateway
 
@@ -78,6 +78,7 @@ def cancel_appointment(
     user: CurrentUser,
     patient: CurrentPatient,
     gateway: Gateway,
+    background: BackgroundTasks,
 ) -> CancelOut:
     """Cancel my appointment. Deposit refunded only more than 24 hours before."""
     try:
@@ -90,6 +91,8 @@ def cancel_appointment(
         )
     except booking_service.BookingError as error:
         raise _refused(error) from None
+    email = notification_service.booking_email(db, appointment, "cancelled", refunded)
+    background.add_task(notification_service.send, email)
     return CancelOut(appointment=_out(db, appointment), deposit_refunded=refunded)
 
 
@@ -102,6 +105,7 @@ def reschedule_appointment(
     db: DbSession,
     user: CurrentUser,
     patient: CurrentPatient,
+    background: BackgroundTasks,
 ) -> BookingOut:
     """Move my confirmed appointment to another free time, more than 24 hours ahead."""
     try:
@@ -110,6 +114,9 @@ def reschedule_appointment(
         )
     except booking_service.BookingError as error:
         raise _refused(error) from None
+    background.add_task(
+        notification_service.send, notification_service.booking_email(db, appointment, "moved")
+    )
     return _out(db, appointment)
 
 

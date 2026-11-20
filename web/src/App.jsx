@@ -13,6 +13,7 @@ import Register from './pages/Register';
 import Book from './pages/Book';
 import BookingDone from './pages/BookingDone';
 import MyAppointments from './pages/MyAppointments';
+import MyExercises from './pages/MyExercises';
 import { AuthProvider } from './auth/AuthContext';
 import RequireAuth from './auth/RequireAuth';
 import TherapistPatients from './pages/therapist/Patients';
@@ -70,6 +71,14 @@ export default function App() {
             element={
               <RequireAuth needRole="patient">
                 <MyAppointments />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="mes-exercices"
+            element={
+              <RequireAuth needRole="patient">
+                <MyExercises />
               </RequireAuth>
             }
           />
