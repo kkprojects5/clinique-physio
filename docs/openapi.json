@@ -575,6 +575,43 @@
         }
       }
     },
+    "/api/v1/therapists/{therapist_id}/photo": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Therapist Photo",
+        "description": "The therapist's photo (400 x 400 JPEG). The link changes when the photo changes.",
+        "operationId": "therapist_photo_api_v1_therapists__therapist_id__photo_get",
+        "parameters": [
+          {
+            "name": "therapist_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Therapist Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/availability": {
       "get": {
         "tags": [
@@ -2810,6 +2847,105 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/therapists/{therapist_id}/photo": {
+      "put": {
+        "tags": [
+          "administration"
+        ],
+        "summary": "Upload Photo",
+        "description": "The image is the request body (Content-Type image/jpeg, image/png or image/webp).\n\nIt is re-encoded as a 400 x 400 JPEG without metadata before it is stored.",
+        "operationId": "upload_photo_api_v1_admin_therapists__therapist_id__photo_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "therapist_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Therapist Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "title": "Response Upload Photo Api V1 Admin Therapists  Therapist Id  Photo Put"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "administration"
+        ],
+        "summary": "Delete Photo",
+        "operationId": "delete_photo_api_v1_admin_therapists__therapist_id__photo_delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "therapist_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Therapist Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -6353,6 +6489,17 @@
           "future_appointments": {
             "type": "integer",
             "title": "Future Appointments"
+          },
+          "photo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Url"
           }
         },
         "type": "object",
@@ -6497,6 +6644,17 @@
             },
             "type": "array",
             "title": "Service Ids"
+          },
+          "photo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Url"
           }
         },
         "type": "object",

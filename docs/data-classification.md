@@ -61,6 +61,7 @@ needed in the session notes (D2).
 | Field | Class | Why it is collected | Who can see it | Protection | Status |
 |---|---|---|---|---|---|
 | `first_name`, `last_name`, `specialties`, `languages`, `bio_fr`, `bio_en` | Public | Help patients choose a therapist (team page) | Everyone | Changed only by admin | ✅ |
+| `photo`, `photo_updated_at` | Public | Help patients recognize their therapist (B-AVL-05) | Everyone | Added only by admin with the therapist's agreement; re-encoded without metadata (no location); removed when asked; hidden when the account is deactivated | ✅ |
 | `licence_number` | Internal | Required on official insurance receipts (B-BKG-10) | Staff; printed on the patient's own receipts | Not in the public team list (tested: `test_therapists_list_shows_public_info_only`) | ✅ |
 
 ### services, therapist_services, availability_rules, rooms

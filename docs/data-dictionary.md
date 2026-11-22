@@ -105,6 +105,8 @@ Physiotherapist profile, linked to one user; public team page. (B-AVL-05)
 | `languages` | text[] | Yes | `{}` |  | Languages spoken with patients (codes such as fr, en). | Public |
 | `bio_fr` | text | No |  |  | Short biography in French. | Public |
 | `bio_en` | text | No |  |  | Short biography in English. | Public |
+| `photo` | bytea | No |  |  | Photo for the team page: 400 x 400 JPEG re-encoded on upload, no metadata. | Public |
+| `photo_updated_at` | timestamp with time zone | No |  |  | When the photo last changed (cache version). | Public |
 
 ### consents
 

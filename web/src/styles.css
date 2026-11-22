@@ -864,3 +864,41 @@ td.actions,
   font-size: 1.6rem;
   font-weight: 700;
 }
+
+/* Therapist photos (B-AVL-05) */
+.person {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.portrait {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+  background: var(--line);
+}
+.portrait--small {
+  width: 48px;
+  height: 48px;
+}
+.portrait--initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--paper);
+  background: var(--teal, #1f5e58);
+}
+.portrait--small.portrait--initials {
+  font-size: 1rem;
+}
+.photo-cell {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

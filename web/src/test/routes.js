@@ -20,7 +20,7 @@ export function mockRoutes(routes, { loggedIn = true, me = PATIENT } = {}) {
     vi.fn(async (url, options = {}) => {
       const u = new URL(url);
       const key = `${options.method || 'GET'} ${u.pathname.replace('/api/v1', '')}`;
-      const body = options.body ? JSON.parse(options.body) : undefined;
+      const body = typeof options.body === 'string' ? JSON.parse(options.body) : options.body;
       calls.push({
         key,
         body,

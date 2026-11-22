@@ -249,7 +249,7 @@ def receipt_pdf(
     line(words["patient"], f"{patient.first_name} {patient.last_name}")
     line(words["therapist"], f"{therapist.first_name} {therapist.last_name}")
     line(words["licence"], therapist.licence_number)
-    line(words["service"], f"{service_name} ({service.duration_min} min)")
+    line(words["service"], service_name)  # the name already says how long
     line(words["date"], _day(appointment.during.lower, lang))
     pdf.ln(3)
     line(words["price"], _money(billing.price_cents, lang))

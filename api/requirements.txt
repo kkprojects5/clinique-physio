@@ -13,3 +13,4 @@ slowapi
 stripe
 pgvector
 fpdf2
+pillow

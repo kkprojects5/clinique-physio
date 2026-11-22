@@ -36,13 +36,15 @@ export async function apiPost(path, body) {
  */
 export async function authRequest(path, { method = 'GET', body, token, file = false } = {}) {
   const headers = { Accept: file ? 'application/pdf' : 'application/json', 'X-Client-App': 'web' };
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  // A file (a photo) is sent as it is, with its own type; anything else as JSON.
+  const isFile = typeof Blob !== 'undefined' && body instanceof Blob;
+  if (body !== undefined) headers['Content-Type'] = isFile ? body.type : 'application/json';
   if (token) headers.Authorization = `Bearer ${token}`;
   const response = await fetch(`${API_URL}/api/v1${path}`, {
     method,
     headers,
     credentials: 'include',
-    body: body === undefined ? undefined : JSON.stringify(body),
+    body: body === undefined ? undefined : isFile ? body : JSON.stringify(body),
   });
   if (file && response.ok) return { status: response.status, data: await response.blob() };
   const data = await response.json().catch(() => null);

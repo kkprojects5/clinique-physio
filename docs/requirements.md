@@ -118,7 +118,7 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#64](https://github.com/stevatak/Khadizhat-Synth/issues/64) | US-AVL-02 | Therapist working hours and time off | Must | D1 | Done |
 | [#65](https://github.com/stevatak/Khadizhat-Synth/issues/65) | US-AVL-03 | Bookable slot computation | Must | D1 | Done |
 | [#66](https://github.com/stevatak/Khadizhat-Synth/issues/66) | US-AVL-04 | Rooms as a resource | Should | D3 | To do |
-| [#67](https://github.com/stevatak/Khadizhat-Synth/issues/67) | US-AVL-05 | Therapist profile page | Should | D2 | In progress |
+| [#67](https://github.com/stevatak/Khadizhat-Synth/issues/67) | US-AVL-05 | Therapist profile page | Should | D2 | Done |
 | [#68](https://github.com/stevatak/Khadizhat-Synth/issues/68) | US-BKG-01 | Online booking with deposit | Must | D3 | Done |
 | [#69](https://github.com/stevatak/Khadizhat-Synth/issues/69) | US-BKG-02 | No double booking under concurrency | Must | D2 | Done |
 | [#70](https://github.com/stevatak/Khadizhat-Synth/issues/70) | US-BKG-03 | Temporary hold during payment | Must | D2 | Done |

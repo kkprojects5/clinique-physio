@@ -28,6 +28,7 @@ class TherapistOut(BaseModel):
     bio_fr: str | None
     bio_en: str | None
     service_ids: list[uuid.UUID]
+    photo_url: str | None = None  # relative to the API; none: the page shows initials
 
 
 class SlotOut(BaseModel):

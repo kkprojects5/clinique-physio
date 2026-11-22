@@ -19,7 +19,7 @@ from app.schemas.admin import (
     StaffOut,
 )
 from app.schemas.billing import TherapistWeekOut, WeekReportOut
-from app.services import admin_service, report_service
+from app.services import admin_service, photo_service, report_service
 from app.services.admin_service import AdminError, AuditFilter
 from app.services.availability_service import today_local
 
@@ -60,6 +60,7 @@ def _staff_out(view: admin_service.StaffView) -> StaffOut:
         last_name=t.last_name if t else None,
         licence_number=t.licence_number if t else None,
         future_appointments=view.future_appointments,
+        photo_url=photo_service.photo_url(t) if t else None,
     )
 
 
@@ -230,3 +231,41 @@ def weekly_report(
             for t in report.therapists
         ],
     )
+
+
+# --- Therapist photos (B-AVL-05) -------------------------------------------------------------
+
+
+@router.put("/therapists/{therapist_id}/photo")
+async def upload_photo(
+    therapist_id: uuid.UUID, request: Request, admin: AdminUser, db: DbSession
+) -> dict[str, str | None]:
+    """The image is the request body (Content-Type image/jpeg, image/png or image/webp).
+
+    It is re-encoded as a 400 x 400 JPEG without metadata before it is stored."""
+    kind = request.headers.get("content-type", "").split(";")[0].strip().lower()
+    if kind not in photo_service.CONTENT_TYPES:
+        raise HTTPException(status_code=415, detail="Use a JPEG, PNG or WebP image.")
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > photo_service.MAX_BYTES:
+        raise HTTPException(status_code=413, detail="The photo must be 3 MB or less.")
+    data = bytearray()
+    async for chunk in request.stream():
+        data += chunk
+        if len(data) > photo_service.MAX_BYTES:
+            raise HTTPException(status_code=413, detail="The photo must be 3 MB or less.")
+    try:
+        therapist = photo_service.set_photo(db, admin, therapist_id, bytes(data), request)
+    except photo_service.NotFound:
+        raise HTTPException(status_code=404, detail="Therapist not found.") from None
+    except photo_service.PhotoError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from None
+    return {"photo_url": photo_service.photo_url(therapist)}
+
+
+@router.delete("/therapists/{therapist_id}/photo", status_code=status.HTTP_204_NO_CONTENT)
+def delete_photo(therapist_id: uuid.UUID, request: Request, admin: AdminUser, db: DbSession):
+    try:
+        photo_service.remove_photo(db, admin, therapist_id, request)
+    except photo_service.NotFound:
+        raise HTTPException(status_code=404, detail="Therapist not found.") from None

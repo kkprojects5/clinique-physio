@@ -1,8 +1,9 @@
 """Therapist profile (B-AVL-05)."""
 
 import uuid
+from datetime import datetime
 
-from sqlalchemy import ForeignKey, Text, text
+from sqlalchemy import DateTime, ForeignKey, LargeBinary, Text, text
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -23,3 +24,6 @@ class Therapist(Base):
     languages: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
     bio_fr: Mapped[str | None] = mapped_column(Text)
     bio_en: Mapped[str | None] = mapped_column(Text)
+    # 400 x 400 JPEG re-encoded by photo_service (no metadata); loaded only when asked for.
+    photo: Mapped[bytes | None] = mapped_column(LargeBinary, deferred=True)
+    photo_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

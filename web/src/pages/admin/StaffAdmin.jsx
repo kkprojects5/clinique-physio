@@ -6,6 +6,10 @@ import { formatDay } from '../../utils/format';
 import { LoadError, Loading } from '../../components/Status';
 import { Problem } from '../ForgotPassword';
 import { apiError } from './Admin';
+import { Portrait } from '../Team';
+
+const PHOTO_TYPES = 'image/jpeg,image/png,image/webp';
+const MAX_PHOTO = 3 * 1024 * 1024;
 
 // Staff accounts (B-ADM-01). A new member receives an email link to choose their password
 // and sets up their 6-digit code at the first login: the administrator never sees a password.
@@ -49,6 +53,38 @@ export default function StaffAdmin() {
     else setProblem(apiError(data, t('status.error')));
   }
 
+  async function changePhoto(member, file) {
+    setMessage('');
+    setProblem('');
+    if (!file) return;
+    if (!PHOTO_TYPES.split(',').includes(file.type)) {
+      setProblem(t('admin.staff.photoType'));
+      return;
+    }
+    if (file.size > MAX_PHOTO) {
+      setProblem(t('admin.staff.photoSize'));
+      return;
+    }
+    const { status, data } = await api(`/admin/therapists/${member.therapist_id}/photo`, {
+      method: 'PUT',
+      body: file,
+    });
+    if (status === 200) {
+      setMessage(t('admin.staff.photoSaved', { name: member.first_name }));
+      staff.reload();
+    } else setProblem(apiError(data, t('admin.staff.photoRefused')));
+  }
+
+  async function removePhoto(member) {
+    setMessage('');
+    setProblem('');
+    const { status, data } = await api(`/admin/therapists/${member.therapist_id}/photo`, {
+      method: 'DELETE',
+    });
+    if (status === 204) staff.reload();
+    else setProblem(apiError(data, t('status.error')));
+  }
+
   return (
     <>
       <p className="hint">{t('admin.staff.intro')}</p>
@@ -67,6 +103,7 @@ export default function StaffAdmin() {
               <th scope="col">{t('admin.status')}</th>
               <th scope="col">{t('admin.staff.lastLogin')}</th>
               <th scope="col">{t('admin.staff.future')}</th>
+              <th scope="col">{t('admin.staff.photo')}</th>
               <th scope="col">
                 <span className="visually-hidden">{t('admin.actions')}</span>
               </th>
@@ -90,6 +127,37 @@ export default function StaffAdmin() {
                 </td>
                 <td>{m.last_login_at ? formatDay(m.last_login_at, i18n.language) : '—'}</td>
                 <td>{m.therapist_id ? m.future_appointments : '—'}</td>
+                <td>
+                  {m.therapist_id ? (
+                    <div className="photo-cell">
+                      <Portrait person={m} small />
+                      <label className="button button--small button--ghost">
+                        {t(m.photo_url ? 'admin.staff.changePhoto' : 'admin.staff.addPhoto')}
+                        <input
+                          type="file"
+                          accept={PHOTO_TYPES}
+                          className="visually-hidden"
+                          aria-label={t('admin.staff.photoFor', { name: m.first_name })}
+                          onChange={(e) => {
+                            changePhoto(m, e.target.files?.[0]);
+                            e.target.value = '';
+                          }}
+                        />
+                      </label>
+                      {m.photo_url && (
+                        <button
+                          type="button"
+                          className="link-button"
+                          onClick={() => removePhoto(m)}
+                        >
+                          {t('admin.staff.removePhoto')}
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    '—'
+                  )}
+                </td>
                 <td className="actions">
                   {m.role !== 'admin' && (
                     <>

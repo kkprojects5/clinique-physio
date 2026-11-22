@@ -37,7 +37,8 @@
   "team": {
     "title": "Our team",
     "specialties": "Clinical interests",
-    "languages": "Languages spoken"
+    "languages": "Languages spoken",
+    "photoOf": "Photo of {{name}}"
   },
   "availability": {
     "title": "Availability",
@@ -325,7 +326,16 @@
       "created": "Account created. An invitation was sent to {{email}}.",
       "invitationSent": "New invitation sent to {{email}}. The old link no longer works.",
       "confirmDeactivate": "Deactivate {{email}}'s account? Their sessions will be closed at once.",
-      "confirmDeactivateWithAppointments": "{{email}} has {{count}} upcoming appointments, which the front desk will need to move. Deactivate the account and close their sessions?"
+      "confirmDeactivateWithAppointments": "{{email}} has {{count}} upcoming appointments, which the front desk will need to move. Deactivate the account and close their sessions?",
+      "photo": "Photo",
+      "addPhoto": "Add a photo",
+      "changePhoto": "Change photo",
+      "removePhoto": "Remove",
+      "photoFor": "Photo of {{name}} (JPEG, PNG or WebP, 3 MB or less)",
+      "photoType": "Choose a JPEG, PNG or WebP image.",
+      "photoSize": "The photo must be 3 MB or less.",
+      "photoSaved": "Photo of {{name}} saved. It appears on the Our team page.",
+      "photoRefused": "This image was refused. Try another photo."
     },
     "audit": {
       "intro": "Who opened or changed what, when and from which app. Entries can never be changed or deleted, and this reading is itself recorded.",

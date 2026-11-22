@@ -216,6 +216,11 @@ COLUMNS = {
     ("therapists", "languages"): ("Languages spoken with patients (codes such as fr, en).", PUB),
     ("therapists", "bio_fr"): ("Short biography in French.", PUB),
     ("therapists", "bio_en"): ("Short biography in English.", PUB),
+    ("therapists", "photo"): (
+        "Photo for the team page: 400 x 400 JPEG re-encoded on upload, no metadata.",
+        PUB,
+    ),
+    ("therapists", "photo_updated_at"): ("When the photo last changed (cache version).", PUB),
     ("consents", "id"): ID,
     ("consents", "user_id"): ("Who gave the consent.", INT),
     ("consents", "type"): ("privacy_policy (required) or electronic_comms (optional).", PER),

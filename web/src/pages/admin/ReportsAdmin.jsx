@@ -108,7 +108,7 @@ export default function ReportsAdmin() {
             <dt>{t('admin.reports.desk')}</dt>
             <dd>{formatPrice(r.desk_cents, lang)}</dd>
             <dt>{t('admin.reports.refunds')}</dt>
-            <dd>{formatPrice(-r.refunds_cents, lang)}</dd>
+            <dd>{formatPrice(r.refunds_cents ? -r.refunds_cents : 0, lang)}</dd>
           </dl>
           <div className="table-wrap">
             <table>

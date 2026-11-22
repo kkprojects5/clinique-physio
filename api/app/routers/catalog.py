@@ -1,13 +1,13 @@
-"""Public booking information: services, therapists and free slots (B-AVL-01, 03)."""
+"""Public booking information: services, therapists and free slots (B-AVL-01, 03, 05)."""
 
 import uuid
 from datetime import date
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Response, status
 
 from app.dependencies import DbSession
 from app.schemas.catalog import ServiceOut, SlotOut, TherapistOut
-from app.services import availability_service
+from app.services import availability_service, photo_service
 from app.services.slots import CLINIC_TZ
 
 router = APIRouter(tags=["catalog"])
@@ -46,9 +46,24 @@ def list_therapists(db: DbSession) -> list[TherapistOut]:
             bio_fr=t.bio_fr,
             bio_en=t.bio_en,
             service_ids=service_ids,
+            photo_url=photo_service.photo_url(t),
         )
         for t, service_ids in availability_service.list_therapists(db)
     ]
+
+
+@router.get("/therapists/{therapist_id}/photo", response_class=Response)
+def therapist_photo(therapist_id: uuid.UUID, db: DbSession) -> Response:
+    """The therapist's photo (400 x 400 JPEG). The link changes when the photo changes."""
+    try:
+        content = photo_service.public_photo(db, therapist_id)
+    except photo_service.NotFound:
+        raise HTTPException(status_code=404, detail="No photo.") from None
+    return Response(
+        content=content,
+        media_type="image/jpeg",
+        headers={"Cache-Control": "public, max-age=86400"},
+    )
 
 
 @router.get("/availability")

@@ -185,7 +185,7 @@ flowchart LR
 | T-L25-4 | T | Incident register entries are removed to hide an incident | No delete endpoint, and a database trigger refuses any deletion; every change is in the audit log | B-ADM-05 | ✅ `test_incident_entries_can_never_be_deleted` |
 | T-L25-5 | R | A serious incident is never reported | Entries with a risk of serious injury show the missing notifications until their dates are recorded | B-ADM-05 | ✅ `test_record_an_incident_and_see_missing_notifications` |
 
-### 4.9 Desk payments, receipts and reports (B-FRD-05, B-BKG-10, B-ADM-02)
+### 4.9 Desk payments, receipts, reports and photos (B-FRD-05, B-BKG-10, B-ADM-02, B-AVL-05)
 
 | ID | STRIDE | Threat | Mitigation | Req. | Status |
 |---|---|---|---|---|---|
@@ -194,6 +194,9 @@ flowchart LR
 | T-PAY-3 | I | A patient downloads another patient's receipt | `/appointments/{id}/receipt` checks ownership and answers 404 for another patient's appointment; every download is logged | B-BKG-10, B-AUTH-05 | ✅ `test_no_receipt_for_another_patients_appointment` |
 | T-PAY-4 | I | A receipt reveals health information or stays in a shared cache | The receipt has practical details only (service, date, amounts, licence number), no notes; sent with `Cache-Control: no-store`; the desktop app saves it in the user's own temporary folder | B-BKG-10, NFR-02 | ✅ `test_patient_downloads_a_pdf_receipt` |
 | T-PAY-5 | I | Reports expose patients | Reports hold counts and totals only, for administrators with MFA | B-ADM-02 | ✅ `test_admin_reads_the_report_without_patient_names`, `test_other_roles_cannot_read_reports` |
+| T-PHO-1 | T/E | An uploaded "photo" carries a script, a second file or a decompression bomb | Only JPEG, PNG or WebP; size and pixel limits; the image is decoded and re-encoded as a new JPEG, never stored as uploaded; served as `image/jpeg` with `nosniff` | B-AVL-05 | ✅ `test_files_that_are_not_valid_images_are_refused`, `test_wrong_content_type_is_refused` |
+| T-PHO-2 | I | A photo reveals where it was taken (GPS) or the camera | Metadata (EXIF) is dropped by the re-encoding | B-AVL-05 | ✅ `test_location_and_camera_details_are_removed` |
+| T-PHO-3 | E | Someone other than the administrator changes a photo | Upload and removal need an administrator with MFA; every change is in the audit log | B-AVL-05 | ✅ `test_only_the_administrator_changes_photos` |
 | T-PAY-6 | S | A receipt is taken for a real clinic's official document | Every receipt says it comes from a fictional clinic made for a student project | B-BKG-10 | ✅ `test_receipt_text_has_the_insurer_details` |
 
 ## 5. Residual and accepted risks

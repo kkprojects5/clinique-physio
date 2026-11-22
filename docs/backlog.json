@@ -228,12 +228,14 @@
       "priority": "Should",
       "module": "availability",
       "deliverable": "D2",
-      "status": "partial",
+      "status": "done",
       "acceptance": [
         "Team page with names, specialties, languages, bio (done)",
-        "Photo (D2)"
+        "Photo on the team page, or the therapist's initials when there is none (done)",
+        "The administrator adds, changes or removes a photo from the Staff tab (done)",
+        "Uploaded images are checked and re-encoded as a 400 x 400 JPEG without metadata (location, camera); JPEG, PNG or WebP only, 3 MB or less (done)"
       ],
-      "evidence": "web/src/pages/Team.jsx"
+      "evidence": "api/tests/test_photos.py, web/src/pages/photos.test.jsx"
     },
     {
       "id": "US-BKG-01",

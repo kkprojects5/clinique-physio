@@ -61,6 +61,7 @@ class StaffOut(BaseModel):
     last_name: str | None
     licence_number: str | None
     future_appointments: int  # a deactivated therapist's appointments must be moved
+    photo_url: str | None = None  # therapists only
 
 
 class TherapistFields(BaseModel):
