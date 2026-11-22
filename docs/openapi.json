@@ -465,6 +465,37 @@
         ]
       }
     },
+    "/api/v1/me/receipts": {
+      "get": {
+        "tags": [
+          "me"
+        ],
+        "summary": "Read My Receipts",
+        "description": "My past visits with a receipt for my insurer, newest first (B-BKG-10).",
+        "operationId": "read_my_receipts_api_v1_me_receipts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReceiptRef"
+                  },
+                  "type": "array",
+                  "title": "Response Read My Receipts Api V1 Me Receipts Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/staff/session": {
       "get": {
         "tags": [
@@ -819,6 +850,48 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/appointments/{appointment_id}/receipt": {
+      "get": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "My Receipt",
+        "description": "The patient's receipt for their insurer (PDF), in their language (B-BKG-10).",
+        "operationId": "my_receipt_api_v1_appointments__appointment_id__receipt_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -1782,6 +1855,167 @@
         }
       }
     },
+    "/api/v1/desk/appointments/{appointment_id}/billing": {
+      "get": {
+        "tags": [
+          "front desk"
+        ],
+        "summary": "Read Billing",
+        "description": "Price, what was paid (deposit online, balance at the desk) and what is left.",
+        "operationId": "read_billing_api_v1_desk_appointments__appointment_id__billing_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/desk/appointments/{appointment_id}/payments": {
+      "post": {
+        "tags": [
+          "front desk"
+        ],
+        "summary": "Record Payment",
+        "description": "The patient paid the balance (cash, debit or credit). The server computes the amount.",
+        "operationId": "record_payment_api_v1_desk_appointments__appointment_id__payments_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeskPaymentIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/desk/appointments/{appointment_id}/receipt": {
+      "get": {
+        "tags": [
+          "front desk"
+        ],
+        "summary": "Desk Receipt",
+        "description": "The receipt to print for the patient (PDF).",
+        "operationId": "desk_receipt_api_v1_desk_appointments__appointment_id__receipt_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(fr|en)$",
+              "default": "fr",
+              "title": "Lang"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/exercises": {
       "get": {
         "tags": [
@@ -2534,6 +2768,62 @@
         }
       }
     },
+    "/api/v1/admin/reports/weekly": {
+      "get": {
+        "tags": [
+          "administration"
+        ],
+        "summary": "Weekly Report",
+        "description": "The week (Monday to Sunday, Montréal time) that contains `week`; this week by default.\n\nCounts and totals only: no patient is named.",
+        "operationId": "weekly_report_api_v1_admin_reports_weekly_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "week",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Week"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeekReportOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/me/privacy-requests": {
       "get": {
         "tags": [
@@ -3261,6 +3551,64 @@
         ],
         "title": "AvailabilityOut"
       },
+      "BillingOut": {
+        "properties": {
+          "appointment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Appointment Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "price_cents": {
+            "type": "integer",
+            "title": "Price Cents"
+          },
+          "paid_cents": {
+            "type": "integer",
+            "title": "Paid Cents"
+          },
+          "due_cents": {
+            "type": "integer",
+            "title": "Due Cents"
+          },
+          "can_pay": {
+            "type": "boolean",
+            "title": "Can Pay"
+          },
+          "receipt_available": {
+            "type": "boolean",
+            "title": "Receipt Available"
+          },
+          "receipt_number": {
+            "type": "string",
+            "title": "Receipt Number"
+          },
+          "payments": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentLine"
+            },
+            "type": "array",
+            "title": "Payments"
+          }
+        },
+        "type": "object",
+        "required": [
+          "appointment_id",
+          "status",
+          "price_cents",
+          "paid_cents",
+          "due_cents",
+          "can_pay",
+          "receipt_available",
+          "receipt_number",
+          "payments"
+        ],
+        "title": "BillingOut",
+        "description": "What the appointment costs, what was paid and what is left (all in cents)."
+      },
       "BookingOut": {
         "properties": {
           "id": {
@@ -3578,6 +3926,25 @@
           "start"
         ],
         "title": "DeskBookingIn"
+      },
+      "DeskPaymentIn": {
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "cash",
+              "debit",
+              "credit"
+            ],
+            "title": "Method"
+          }
+        },
+        "type": "object",
+        "required": [
+          "method"
+        ],
+        "title": "DeskPaymentIn",
+        "description": "The amount is never sent: the server computes the balance."
       },
       "ExceptionIn": {
         "properties": {
@@ -4585,6 +4952,35 @@
         "title": "PatientRef",
         "description": "What the front desk needs to recognise and call a patient. No clinical data (B-CLN-05)."
       },
+      "PaymentLine": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "amount_cents": {
+            "type": "integer",
+            "title": "Amount Cents"
+          },
+          "paid_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Paid At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "method",
+          "amount_cents",
+          "paid_at"
+        ],
+        "title": "PaymentLine"
+      },
       "PaymentStart": {
         "properties": {
           "appointment": {
@@ -5059,6 +5455,52 @@
           "items"
         ],
         "title": "ProgramOut"
+      },
+      "ReceiptRef": {
+        "properties": {
+          "appointment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Appointment Id"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start"
+          },
+          "service_fr": {
+            "type": "string",
+            "title": "Service Fr"
+          },
+          "service_en": {
+            "type": "string",
+            "title": "Service En"
+          },
+          "therapist": {
+            "type": "string",
+            "title": "Therapist"
+          },
+          "paid_cents": {
+            "type": "integer",
+            "title": "Paid Cents"
+          },
+          "receipt_number": {
+            "type": "string",
+            "title": "Receipt Number"
+          }
+        },
+        "type": "object",
+        "required": [
+          "appointment_id",
+          "start",
+          "service_fr",
+          "service_en",
+          "therapist",
+          "paid_cents",
+          "receipt_number"
+        ],
+        "title": "ReceiptRef",
+        "description": "A past visit that has a receipt (B-BKG-10)."
       },
       "RegisterRequest": {
         "properties": {
@@ -6094,6 +6536,67 @@
         ],
         "title": "TherapistRef"
       },
+      "TherapistWeekOut": {
+        "properties": {
+          "therapist_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Therapist Id"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "appointments": {
+            "type": "integer",
+            "title": "Appointments"
+          },
+          "seen": {
+            "type": "integer",
+            "title": "Seen"
+          },
+          "no_shows": {
+            "type": "integer",
+            "title": "No Shows"
+          },
+          "booked_minutes": {
+            "type": "integer",
+            "title": "Booked Minutes"
+          },
+          "working_minutes": {
+            "type": "integer",
+            "title": "Working Minutes"
+          },
+          "occupancy": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupancy"
+          }
+        },
+        "type": "object",
+        "required": [
+          "therapist_id",
+          "first_name",
+          "last_name",
+          "appointments",
+          "seen",
+          "no_shows",
+          "booked_minutes",
+          "working_minutes",
+          "occupancy"
+        ],
+        "title": "TherapistWeekOut"
+      },
       "TokenResponse": {
         "properties": {
           "access_token": {
@@ -6171,6 +6674,108 @@
           "token"
         ],
         "title": "VerifyEmailRequest"
+      },
+      "WeekReportOut": {
+        "properties": {
+          "week_start": {
+            "type": "string",
+            "format": "date",
+            "title": "Week Start"
+          },
+          "week_end": {
+            "type": "string",
+            "format": "date",
+            "title": "Week End"
+          },
+          "appointments": {
+            "type": "integer",
+            "title": "Appointments"
+          },
+          "seen": {
+            "type": "integer",
+            "title": "Seen"
+          },
+          "no_shows": {
+            "type": "integer",
+            "title": "No Shows"
+          },
+          "cancelled_by_patient": {
+            "type": "integer",
+            "title": "Cancelled By Patient"
+          },
+          "cancelled_by_clinic": {
+            "type": "integer",
+            "title": "Cancelled By Clinic"
+          },
+          "confirmed": {
+            "type": "integer",
+            "title": "Confirmed"
+          },
+          "no_show_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "No Show Rate"
+          },
+          "occupancy": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupancy"
+          },
+          "revenue_cents": {
+            "type": "integer",
+            "title": "Revenue Cents"
+          },
+          "deposits_cents": {
+            "type": "integer",
+            "title": "Deposits Cents"
+          },
+          "desk_cents": {
+            "type": "integer",
+            "title": "Desk Cents"
+          },
+          "refunds_cents": {
+            "type": "integer",
+            "title": "Refunds Cents"
+          },
+          "therapists": {
+            "items": {
+              "$ref": "#/components/schemas/TherapistWeekOut"
+            },
+            "type": "array",
+            "title": "Therapists"
+          }
+        },
+        "type": "object",
+        "required": [
+          "week_start",
+          "week_end",
+          "appointments",
+          "seen",
+          "no_shows",
+          "cancelled_by_patient",
+          "cancelled_by_clinic",
+          "confirmed",
+          "no_show_rate",
+          "occupancy",
+          "revenue_cents",
+          "deposits_cents",
+          "desk_cents",
+          "refunds_cents",
+          "therapists"
+        ],
+        "title": "WeekReportOut"
       }
     },
     "securitySchemes": {

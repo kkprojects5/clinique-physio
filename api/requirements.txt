@@ -12,3 +12,4 @@ pyotp
 slowapi
 stripe
 pgvector
+fpdf2

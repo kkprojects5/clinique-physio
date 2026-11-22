@@ -272,7 +272,8 @@
       "staff": "Staff",
       "audit": "Audit log",
       "privacy": "Requests (Law 25)",
-      "incidents": "Incidents"
+      "incidents": "Incidents",
+      "reports": "Reports"
     },
     "status": "Status",
     "actions": "Actions",
@@ -408,6 +409,30 @@
       "toNotify": "Notifications to make: risk of serious injury.",
       "markCai": "Commission notified today",
       "markPersons": "People notified today"
+    },
+    "reports": {
+      "intro": "Report for the week (Monday to Sunday). Counts and totals only: no patient names.",
+      "previous": "◀ Previous week",
+      "next": "Next week ▶",
+      "thisWeek": "This week",
+      "week": "Week of {{from}} to {{to}}",
+      "appointments": "Appointments",
+      "occupancy": "Occupancy",
+      "noShowRate": "No-show rate",
+      "revenue": "Revenue this week",
+      "seen": "Patients seen",
+      "upcoming": "Confirmed, upcoming",
+      "noShows": "No-shows",
+      "cancelledPatient": "Cancelled by the patient",
+      "cancelledClinic": "Cancelled by the clinic",
+      "deposits": "Online deposits",
+      "desk": "Desk payments",
+      "refunds": "Refunds",
+      "byTherapist": "By physiotherapist",
+      "therapist": "Physiotherapist",
+      "hours": "Hours booked / worked",
+      "hoursValue": "{{booked}} h / {{working}} h",
+      "definitions": "Occupancy: booked time (confirmed, seen, no-shows) divided by working hours minus time off. No-show rate: no-shows divided by expected patients. Revenue: money received during the week, minus refunds."
     }
   },
   "myExercises": {
@@ -452,5 +477,12 @@
       "completed": "Answered",
       "refused": "Refused"
     }
+  },
+  "receipts": {
+    "title": "My receipts",
+    "intro": "Receipts for your past visits, for your insurer.",
+    "paid": "Paid: {{amount}}",
+    "download": "Download the receipt (PDF)",
+    "failed": "The receipt could not be downloaded. Please try again."
   }
 }

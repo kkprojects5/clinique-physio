@@ -70,6 +70,14 @@ public sealed class FakeApi : IApiClient
 
     public Func<Guid, Task<DeskAppointment>> NoShow { get; set; } = _ => Task.FromResult(new DeskAppointment());
 
+    public Func<Guid, Task<Billing>> GetBilling { get; set; } =
+        id => Task.FromResult(new Billing { AppointmentId = id, PriceCents = 8000, PaidCents = 2000, DueCents = 6000, CanPay = true });
+
+    public Func<Guid, string, Task<Billing>> Pay { get; set; } =
+        (id, _) => Task.FromResult(new Billing { AppointmentId = id, PriceCents = 8000, PaidCents = 8000, ReceiptAvailable = true });
+
+    public Func<Guid, string, Task<byte[]>> Receipt { get; set; } = (_, _) => Task.FromResult(new byte[] { 37, 80, 68, 70 });
+
     /// <summary>Every desk action, in order, e.g. "check-in 3f2a…" (to check what was sent).</summary>
     public List<string> Actions { get; } = new();
 
@@ -149,6 +157,20 @@ public sealed class FakeApi : IApiClient
         return NoShow(appointmentId);
     }
 
+    public Task<Billing> GetBillingAsync(Guid appointmentId, CancellationToken ct = default) => GetBilling(appointmentId);
+
+    public Task<Billing> RecordPaymentAsync(Guid appointmentId, string method, CancellationToken ct = default)
+    {
+        Actions.Add($"pay {appointmentId} {method}");
+        return Pay(appointmentId, method);
+    }
+
+    public Task<byte[]> GetReceiptAsync(Guid appointmentId, string language, CancellationToken ct = default)
+    {
+        Actions.Add($"receipt {appointmentId} {language}");
+        return Receipt(appointmentId, language);
+    }
+
     public Task LogoutAsync(CancellationToken ct = default)
     {
         LogoutCalls++;
@@ -217,4 +239,9 @@ public sealed class FakeDialogs : IDialogService
         Questions.Add(message);
         return Answer;
     }
+
+    /// <summary>The PDF files the app asked to open (name and size).</summary>
+    public List<(string Name, int Size)> Opened { get; } = new();
+
+    public void OpenPdf(byte[] content, string fileName) => Opened.Add((fileName, content.Length));
 }

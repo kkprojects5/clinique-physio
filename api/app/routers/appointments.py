@@ -3,13 +3,14 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, Response, status
 
 from app.core import rate_limit
 from app.core.config import settings
 from app.core.rate_limit import limiter
 from app.dependencies import CurrentPatient, CurrentUser, DbSession
 from app.models import Appointment, Service, Therapist
+from app.schemas.billing import BillingOut, PaymentLine
 from app.schemas.schedule import (
     BookingOut,
     CancelOut,
@@ -19,7 +20,7 @@ from app.schemas.schedule import (
     ServiceRef,
     TherapistRef,
 )
-from app.services import booking_service, notification_service, payment_service
+from app.services import billing_service, booking_service, notification_service, payment_service
 from app.services.slots import CLINIC_TZ
 from app.services.stripe_gateway import StripeGateway, get_gateway
 
@@ -47,6 +48,37 @@ def _out(db: DbSession, appointment: Appointment) -> BookingOut:
         therapist=TherapistRef(
             id=therapist.id, first_name=therapist.first_name, last_name=therapist.last_name
         ),
+    )
+
+
+def billing_out(billing: billing_service.Billing) -> BillingOut:
+    return BillingOut(
+        appointment_id=billing.appointment.id,
+        status=billing.appointment.status,
+        price_cents=billing.price_cents,
+        paid_cents=billing.paid_cents,
+        due_cents=billing.due_cents,
+        can_pay=billing.can_pay,
+        receipt_available=billing.receipt_available,
+        receipt_number=billing_service.receipt_number(billing.appointment),
+        payments=[
+            PaymentLine(
+                type=p.type, method=p.method, amount_cents=p.amount_cents, paid_at=p.created_at
+            )
+            for p in billing.payments
+        ],
+    )
+
+
+def pdf_response(pdf: bytes, appointment: Appointment) -> Response:
+    name = billing_service.receipt_number(appointment)
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{name}.pdf"',
+            "Cache-Control": "no-store",  # personal information: never kept by a cache
+        },
     )
 
 
@@ -149,3 +181,20 @@ def pay_deposit(
         amount_cents=payment.amount_cents,
         currency=settings.currency,
     )
+
+
+@router.get("/{appointment_id}/receipt", response_class=Response)
+def my_receipt(
+    request: Request,
+    appointment_id: uuid.UUID,
+    db: DbSession,
+    user: CurrentUser,
+    patient: CurrentPatient,
+) -> Response:
+    """The patient's receipt for their insurer (PDF), in their language (B-BKG-10)."""
+    try:
+        appointment = billing_service.own_appointment(db, patient, appointment_id)
+        pdf = billing_service.receipt_pdf(db, user, appointment, user.language, request)
+    except booking_service.BookingError as error:
+        raise _refused(error) from None
+    return pdf_response(pdf, appointment)

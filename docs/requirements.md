@@ -128,7 +128,7 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#74](https://github.com/stevatak/Khadizhat-Synth/issues/74) | US-BKG-07 | Times shown in Montréal time | Must | D1 | Done |
 | [#75](https://github.com/stevatak/Khadizhat-Synth/issues/75) | US-BKG-08 | Appointment reminders | Should | D3 | To do |
 | [#76](https://github.com/stevatak/Khadizhat-Synth/issues/76) | US-BKG-09 | Waiting list | Could | D3 | To do |
-| [#77](https://github.com/stevatak/Khadizhat-Synth/issues/77) | US-BKG-10 | Insurance receipt | Should | D3 | To do |
+| [#77](https://github.com/stevatak/Khadizhat-Synth/issues/77) | US-BKG-10 | Insurance receipt | Should | D3 | Done |
 | [#78](https://github.com/stevatak/Khadizhat-Synth/issues/78) | US-CLN-01 | My patients and their history | Must | D2 | Done |
 | [#79](https://github.com/stevatak/Khadizhat-Synth/issues/79) | US-CLN-02 | Encrypted SOAP session notes | Must | D2 | Done |
 | [#80](https://github.com/stevatak/Khadizhat-Synth/issues/80) | US-CLN-03 | Signed notes and amendments | Should | D3 | Done |
@@ -144,10 +144,10 @@ Summary: 51 stories — Must 33, Should 14, Could 4. Planned by deliverable: D1 
 | [#90](https://github.com/stevatak/Khadizhat-Synth/issues/90) | US-FRD-02 | Book for a patient on the phone | Must | D2 | Done |
 | [#91](https://github.com/stevatak/Khadizhat-Synth/issues/91) | US-FRD-03 | Check-in and no-show | Must | D2 | Done |
 | [#92](https://github.com/stevatak/Khadizhat-Synth/issues/92) | US-FRD-04 | Walk-in patients | Should | D3 | To do |
-| [#93](https://github.com/stevatak/Khadizhat-Synth/issues/93) | US-FRD-05 | Record payments at the desk | Should | D3 | To do |
+| [#93](https://github.com/stevatak/Khadizhat-Synth/issues/93) | US-FRD-05 | Record payments at the desk | Should | D3 | Done |
 | [#94](https://github.com/stevatak/Khadizhat-Synth/issues/94) | US-FRD-06 | Offline mode with conflict detection | Should | D3 | To do |
 | [#95](https://github.com/stevatak/Khadizhat-Synth/issues/95) | US-ADM-01 | Manage services, staff and rooms | Must | D3 | Done |
-| [#96](https://github.com/stevatak/Khadizhat-Synth/issues/96) | US-ADM-02 | Reports | Should | D3 | To do |
+| [#96](https://github.com/stevatak/Khadizhat-Synth/issues/96) | US-ADM-02 | Reports | Should | D3 | Done |
 | [#97](https://github.com/stevatak/Khadizhat-Synth/issues/97) | US-ADM-03 | Audit log viewer | Must | D3 | Done |
 | [#98](https://github.com/stevatak/Khadizhat-Synth/issues/98) | US-ADM-04 | Privacy requests | Should | D3 | Done |
 | [#99](https://github.com/stevatak/Khadizhat-Synth/issues/99) | US-ADM-05 | Confidentiality incident register | Should | D3 | Done |

@@ -22,6 +22,13 @@
                     Content="{Binding [schedule.refresh], Source={x:Static loc:Localizer.Instance}}" />
             <Button Command="{Binding NewBookingCommand}" Margin="16,0,8,8"
                     Content="{Binding [schedule.newBooking], Source={x:Static loc:Localizer.Instance}}" />
+            <!-- How the patient pays the balance at the desk (B-FRD-05). -->
+            <TextBlock VerticalAlignment="Center" Margin="16,0,6,8"
+                       Text="{Binding [schedule.paymentMethod], Source={x:Static loc:Localizer.Instance}}" />
+            <ComboBox Width="110" Margin="0,0,8,8" VerticalContentAlignment="Center"
+                      ItemsSource="{Binding PaymentMethods}" SelectedItem="{Binding PaymentMethod}"
+                      DisplayMemberPath="Label"
+                      AutomationProperties.Name="{Binding [schedule.paymentMethod], Source={x:Static loc:Localizer.Instance}}" />
             <Button Background="Transparent" Foreground="{StaticResource TealDark}" Command="{Binding LogoutCommand}"
                     Content="{Binding [schedule.logout], Source={x:Static loc:Localizer.Instance}}" />
         </WrapPanel>
@@ -90,6 +97,17 @@
                                                                 Command="{Binding DataContext.CancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Content="{Binding [schedule.cancel], Source={x:Static loc:Localizer.Instance}}" />
+                                                    </WrapPanel>
+                                                    <!-- The patient came: take the balance, print the receipt (B-FRD-05). -->
+                                                    <WrapPanel Visibility="{Binding HasCome, Converter={StaticResource BoolToVisibility}}">
+                                                        <Button Style="{StaticResource CardButton}"
+                                                                Command="{Binding DataContext.PayCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="{Binding [schedule.pay], Source={x:Static loc:Localizer.Instance}}" />
+                                                        <Button Style="{StaticResource CardLinkButton}"
+                                                                Command="{Binding DataContext.ReceiptCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="{Binding [schedule.receipt], Source={x:Static loc:Localizer.Instance}}" />
                                                     </WrapPanel>
                                                 </StackPanel>
                                             </Border>

@@ -5,6 +5,7 @@ import { useAuth } from '../auth/AuthContext';
 import { formatDay, formatTime } from '../utils/format';
 import { LoadError, Loading } from '../components/Status';
 import { Problem } from './ForgotPassword';
+import MyReceipts from './MyReceipts';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const CHANGEABLE = ['held', 'pending_payment', 'confirmed'];
@@ -137,6 +138,7 @@ export default function MyAppointments() {
           );
         })}
       </ul>
+      <MyReceipts />
     </section>
   );
 }

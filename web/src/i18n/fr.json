@@ -272,7 +272,8 @@
       "staff": "Personnel",
       "audit": "Journal d’audit",
       "privacy": "Demandes (Loi 25)",
-      "incidents": "Incidents"
+      "incidents": "Incidents",
+      "reports": "Rapports"
     },
     "status": "Statut",
     "actions": "Actions",
@@ -408,6 +409,30 @@
       "toNotify": "Avis à faire : risque de préjudice sérieux.",
       "markCai": "Commission avisée aujourd’hui",
       "markPersons": "Personnes avisées aujourd’hui"
+    },
+    "reports": {
+      "intro": "Rapport de la semaine (lundi au dimanche). Seulement des nombres et des totaux : aucun nom de patient.",
+      "previous": "◀ Semaine précédente",
+      "next": "Semaine suivante ▶",
+      "thisWeek": "Cette semaine",
+      "week": "Semaine du {{from}} au {{to}}",
+      "appointments": "Rendez-vous",
+      "occupancy": "Taux d’occupation",
+      "noShowRate": "Taux d’absence",
+      "revenue": "Revenus de la semaine",
+      "seen": "Patients vus",
+      "upcoming": "Confirmés, à venir",
+      "noShows": "Absences",
+      "cancelledPatient": "Annulés par le patient",
+      "cancelledClinic": "Annulés par la clinique",
+      "deposits": "Dépôts en ligne",
+      "desk": "Paiements à l’accueil",
+      "refunds": "Remboursements",
+      "byTherapist": "Par physiothérapeute",
+      "therapist": "Physiothérapeute",
+      "hours": "Heures réservées / travaillées",
+      "hoursValue": "{{booked}} h / {{working}} h",
+      "definitions": "Occupation : temps réservé (confirmés, vus, absences) divisé par les heures de travail moins les congés. Absence : absences divisées par les patients attendus. Revenus : argent reçu pendant la semaine, moins les remboursements."
     }
   },
   "myExercises": {
@@ -452,5 +477,12 @@
       "completed": "Répondue",
       "refused": "Refusée"
     }
+  },
+  "receipts": {
+    "title": "Mes reçus",
+    "intro": "Reçus de vos visites passées, pour votre assurance.",
+    "paid": "Payé : {{amount}}",
+    "download": "Télécharger le reçu (PDF)",
+    "failed": "Le reçu n’a pas pu être téléchargé. Réessayez."
   }
 }

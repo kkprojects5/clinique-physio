@@ -30,7 +30,12 @@ export function mockRoutes(routes, { loggedIn = true, me = PATIENT } = {}) {
       });
       const handler = all[key];
       const [status, data] = handler ? handler(body, u) : [404, {}];
-      return { ok: status < 300, status, json: async () => data };
+      return {
+        ok: status < 300,
+        status,
+        json: async () => data,
+        blob: async () => new Blob([data ?? ''], { type: 'application/pdf' }),
+      };
     }),
   );
   return calls;

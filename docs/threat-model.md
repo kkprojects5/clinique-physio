@@ -185,6 +185,17 @@ flowchart LR
 | T-L25-4 | T | Incident register entries are removed to hide an incident | No delete endpoint, and a database trigger refuses any deletion; every change is in the audit log | B-ADM-05 | ✅ `test_incident_entries_can_never_be_deleted` |
 | T-L25-5 | R | A serious incident is never reported | Entries with a risk of serious injury show the missing notifications until their dates are recorded | B-ADM-05 | ✅ `test_record_an_incident_and_see_missing_notifications` |
 
+### 4.9 Desk payments, receipts and reports (B-FRD-05, B-BKG-10, B-ADM-02)
+
+| ID | STRIDE | Threat | Mitigation | Req. | Status |
+|---|---|---|---|---|---|
+| T-PAY-1 | T | The desk app (or a changed copy of it) records a wrong amount | The app sends only the method; the server computes the balance (price minus what was paid) and refuses a second payment | B-FRD-05 | ✅ `test_an_amount_sent_by_the_client_is_ignored`, `test_the_balance_is_paid_once` |
+| T-PAY-2 | R | A desk agent denies recording a payment | Each desk payment keeps who recorded it, and an audit log entry is written | B-FRD-05 | ✅ `test_desk_records_the_balance_computed_by_the_server` |
+| T-PAY-3 | I | A patient downloads another patient's receipt | `/appointments/{id}/receipt` checks ownership and answers 404 for another patient's appointment; every download is logged | B-BKG-10, B-AUTH-05 | ✅ `test_no_receipt_for_another_patients_appointment` |
+| T-PAY-4 | I | A receipt reveals health information or stays in a shared cache | The receipt has practical details only (service, date, amounts, licence number), no notes; sent with `Cache-Control: no-store`; the desktop app saves it in the user's own temporary folder | B-BKG-10, NFR-02 | ✅ `test_patient_downloads_a_pdf_receipt` |
+| T-PAY-5 | I | Reports expose patients | Reports hold counts and totals only, for administrators with MFA | B-ADM-02 | ✅ `test_admin_reads_the_report_without_patient_names`, `test_other_roles_cannot_read_reports` |
+| T-PAY-6 | S | A receipt is taken for a real clinic's official document | Every receipt says it comes from a fictional clinic made for a student project | B-BKG-10 | ✅ `test_receipt_text_has_the_insurer_details` |
+
 ## 5. Residual and accepted risks
 
 | ID | Risk | Why accepted (for now) | Plan |

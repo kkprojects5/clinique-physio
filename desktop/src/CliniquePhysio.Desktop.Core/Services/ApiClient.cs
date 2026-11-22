@@ -97,6 +97,48 @@ public sealed class ApiClient : IApiClient
     public Task<DeskAppointment> MarkNoShowAsync(Guid appointmentId, CancellationToken ct = default) =>
         PostAsync<DeskAppointment>($"api/v1/desk/appointments/{appointmentId}/no-show", new { }, ct);
 
+    public Task<Billing> GetBillingAsync(Guid appointmentId, CancellationToken ct = default) =>
+        GetAsync<Billing>($"api/v1/desk/appointments/{appointmentId}/billing", ct);
+
+    public Task<Billing> RecordPaymentAsync(Guid appointmentId, string method, CancellationToken ct = default) =>
+        PostAsync<Billing>($"api/v1/desk/appointments/{appointmentId}/payments", new { method }, ct);
+
+    public async Task<byte[]> GetReceiptAsync(Guid appointmentId, string language, CancellationToken ct = default)
+    {
+        var lang = language == "en" ? "en" : "fr";
+        using var request = new HttpRequestMessage(
+            HttpMethod.Get, $"api/v1/desk/appointments/{appointmentId}/receipt?lang={lang}");
+        if (_session.AccessToken is not null)
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _session.AccessToken);
+        }
+
+        HttpResponseMessage response;
+        try
+        {
+            response = await _http.SendAsync(request, ct);
+        }
+        catch (HttpRequestException)
+        {
+            throw new ApiException(ApiErrorKind.Offline, 0);
+        }
+        catch (TaskCanceledException) when (!ct.IsCancellationRequested)
+        {
+            throw new ApiException(ApiErrorKind.Offline, 0);
+        }
+
+        using (response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                var status = (int)response.StatusCode;
+                throw new ApiException(ApiException.KindFor(status), status);
+            }
+
+            return await response.Content.ReadAsByteArrayAsync(ct);
+        }
+    }
+
     public async Task LogoutAsync(CancellationToken ct = default)
     {
         try

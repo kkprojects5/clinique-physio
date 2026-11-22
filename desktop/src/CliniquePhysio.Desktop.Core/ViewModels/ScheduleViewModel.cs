@@ -20,7 +20,13 @@ public sealed record AppointmentItem(
 
     /// <summary>Check-in, no-show, move and cancel are offered only for a confirmed appointment.</summary>
     public bool IsConfirmed => Status == "confirmed";
+
+    /// <summary>The patient came: the balance can be paid and a receipt printed (B-FRD-05).</summary>
+    public bool HasCome => Status is "checked_in" or "completed";
 }
+
+/// <summary>A way to pay at the desk, as shown in the list.</summary>
+public sealed record PaymentMethodOption(string Code, string Label);
 
 /// <summary>One column of the day grid: a therapist and their appointments (B-FRD-01).</summary>
 public sealed record TherapistColumn(string Name, IReadOnlyList<AppointmentItem> Appointments)
@@ -40,6 +46,7 @@ public sealed class ScheduleViewModel : ObservableObject
     private string? _error;
     private string? _info;
     private bool _isBusy;
+    private PaymentMethodOption _paymentMethod;
 
     /// <param name="api">The API.</param>
     /// <param name="session">The logged-in staff member.</param>
@@ -79,6 +86,21 @@ public sealed class ScheduleViewModel : ObservableObject
         CheckInCommand = new AsyncRelayCommand<AppointmentItem>(CheckInAsync);
         NoShowCommand = new AsyncRelayCommand<AppointmentItem>(NoShowAsync);
         CancelCommand = new AsyncRelayCommand<AppointmentItem>(CancelAsync);
+        PayCommand = new AsyncRelayCommand<AppointmentItem>(PayAsync);
+        ReceiptCommand = new AsyncRelayCommand<AppointmentItem>(ReceiptAsync);
+        PaymentMethods = new[] { "debit", "credit", "cash" }
+            .Select(code => new PaymentMethodOption(code, Localizer.Instance[$"method.{code}"]))
+            .ToList();
+        _paymentMethod = PaymentMethods[0];
+    }
+
+    /// <summary>Cash, debit or credit (the clinic's own terminal; no card data reaches the app).</summary>
+    public IReadOnlyList<PaymentMethodOption> PaymentMethods { get; }
+
+    public PaymentMethodOption PaymentMethod
+    {
+        get => _paymentMethod;
+        set => SetProperty(ref _paymentMethod, value ?? PaymentMethods[0]);
     }
 
     public ObservableCollection<TherapistColumn> Columns { get; } = new();
@@ -147,6 +169,16 @@ public sealed class ScheduleViewModel : ObservableObject
 
     /// <summary>Cancel for a patient who calls; deposit refunded only more than 24 hours before.</summary>
     public IAsyncRelayCommand<AppointmentItem> CancelCommand { get; }
+
+    /// <summary>The patient pays the balance at the desk (B-FRD-05). The server computes the amount.</summary>
+    public IAsyncRelayCommand<AppointmentItem> PayCommand { get; }
+
+    /// <summary>Open the receipt in the PDF reader, to print it (B-FRD-05, B-BKG-10).</summary>
+    public IAsyncRelayCommand<AppointmentItem> ReceiptCommand { get; }
+
+    /// <summary>"60,00 $" or "$60.00".</summary>
+    public static string Money(int cents, string language) =>
+        (cents / 100m).ToString("C", CultureInfo.GetCultureInfo(language == "en" ? "en-CA" : "fr-CA"));
 
     /// <summary>Builds the columns from the API answer. Pure function: easy to test.</summary>
     public static IReadOnlyList<TherapistColumn> BuildColumns(DaySchedule schedule, string language)
@@ -217,6 +249,85 @@ public sealed class ScheduleViewModel : ObservableObject
             var result = await _api.CancelByPhoneAsync(a.Id);
             return Format(result.DepositRefunded ? "schedule.cancelledRefunded" : "schedule.cancelledKept", a.PatientName);
         });
+
+    private async Task PayAsync(AppointmentItem? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        var method = PaymentMethod;
+        Billing billing;
+        try
+        {
+            billing = await _api.GetBillingAsync(item.Id);
+        }
+        catch (ApiException error) when (error.Kind == ApiErrorKind.Unauthorized)
+        {
+            _session.Clear();
+            _navigator.GoToLogin(Localizer.Instance["error.expired"]);
+            return;
+        }
+        catch (ApiException error)
+        {
+            Info = null;
+            Error = ErrorMessages.For(error);
+            return;
+        }
+
+        var language = Localizer.Instance.Language;
+        if (billing.DueCents == 0)
+        {
+            Error = null;
+            Info = Format("schedule.nothingDue", item.PatientName);
+            return;
+        }
+
+        var amount = Money(billing.DueCents, language);
+        if (_dialogs is not null && !_dialogs.Confirm(Format("schedule.confirmPay", amount, method.Label, item.PatientName)))
+        {
+            return;
+        }
+
+        await RunAsync(item, null, "schedule.payRefused", async a =>
+        {
+            await _api.RecordPaymentAsync(a.Id, method.Code);
+            return Format("schedule.paid", amount, method.Label, a.PatientName);
+        });
+    }
+
+    private async Task ReceiptAsync(AppointmentItem? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        Error = null;
+        Info = null;
+        IsBusy = true;
+        try
+        {
+            var pdf = await _api.GetReceiptAsync(item.Id, Localizer.Instance.Language);
+            var number = "R-" + item.Id.ToString("N")[..8].ToUpperInvariant();
+            _dialogs?.OpenPdf(pdf, $"{number}.pdf");
+            Info = Format("schedule.receiptOpened", item.PatientName);
+        }
+        catch (ApiException error) when (error.Kind == ApiErrorKind.Unauthorized)
+        {
+            _session.Clear();
+            _navigator.GoToLogin(Localizer.Instance["error.expired"]);
+        }
+        catch (ApiException error)
+        {
+            Error = ErrorMessages.For(error, "schedule.receiptRefused");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 
     /// <summary>Asks for confirmation if needed, runs the action, reloads the day and shows the result.</summary>
     private async Task RunAsync(

@@ -110,7 +110,10 @@ person receives care, so it is treated as **Health**.
 
 | Data | Class | Why | Who can see it | Protection | Status |
 |---|---|---|---|---|---|
-| Amounts, type, method, status | Personal | Deposits, refunds, receipts | The patient (own); front desk; admin | Card data is never sent to or stored by our systems (Stripe handles it, ADR-007) | ✅ |
+| Amounts, type, method, status | Personal | Deposits, refunds, desk payments, receipts | The patient (own); front desk; admin | Card data is never sent to or stored by our systems (Stripe or the clinic's terminal handles it, ADR-007); the desk cannot choose the amount | ✅ |
+| Who recorded a desk payment (`recorded_by`) | Internal | Accountability | Admin | Also written to the audit log | ✅ |
+| PDF receipts (made on request, never stored) | Personal | Insurance claims | The patient (own); front desk | Ownership check; `no-store`; no clinical data; download logged | ✅ |
+| Weekly reports (computed, never stored) | Internal | Manage the clinic | Admin | Counts and totals only, no names | ✅ |
 | Stripe ids and webhook events | Internal | Confirm payments exactly once | Admin | Signed webhooks; unique event id; full Stripe payload not stored | ✅ |
 
 ### consents, privacy_requests, incident_register (Law 25)

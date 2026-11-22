@@ -38,6 +38,15 @@ public interface IApiClient
     /// <summary>The patient did not come (15 minutes after the start at the earliest).</summary>
     Task<DeskAppointment> MarkNoShowAsync(Guid appointmentId, CancellationToken ct = default);
 
+    /// <summary>Price, what was paid and what is left (B-FRD-05).</summary>
+    Task<Billing> GetBillingAsync(Guid appointmentId, CancellationToken ct = default);
+
+    /// <summary>The patient paid the balance: "cash", "debit" or "credit". The server computes the amount.</summary>
+    Task<Billing> RecordPaymentAsync(Guid appointmentId, string method, CancellationToken ct = default);
+
+    /// <summary>The receipt to print, as a PDF file (B-BKG-10).</summary>
+    Task<byte[]> GetReceiptAsync(Guid appointmentId, string language, CancellationToken ct = default);
+
     Task LogoutAsync(CancellationToken ct = default);
 
     Task<bool> IsOnlineAsync(CancellationToken ct = default);

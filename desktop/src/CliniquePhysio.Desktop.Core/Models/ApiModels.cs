@@ -124,3 +124,24 @@ public sealed class CancelResult
 {
     public bool DepositRefunded { get; set; }
 }
+
+/// <summary>What an appointment costs, what was paid and what is left, in cents (B-FRD-05).</summary>
+public sealed class Billing
+{
+    public Guid AppointmentId { get; set; }
+
+    public string Status { get; set; } = "";
+
+    public int PriceCents { get; set; }
+
+    public int PaidCents { get; set; }
+
+    public int DueCents { get; set; }
+
+    /// <summary>The patient came and something is left to pay.</summary>
+    public bool CanPay { get; set; }
+
+    public bool ReceiptAvailable { get; set; }
+
+    public string ReceiptNumber { get; set; } = "";
+}

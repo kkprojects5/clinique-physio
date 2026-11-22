@@ -1,20 +1,32 @@
 """Front-desk endpoints (desktop app). Front desk or admin, with MFA.
 
 Day schedule (B-FRD-01); find a patient and book, move or cancel by phone (B-FRD-02);
-check-in and no-show (B-FRD-03). Never any clinical information.
+check-in and no-show (B-FRD-03); balance paid at the desk and receipt (B-FRD-05).
+Never any clinical information.
 """
 
 import uuid
 from datetime import date
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    HTTPException,
+    Query,
+    Request,
+    Response,
+    status,
+)
 
 from app.core import rate_limit
 from app.core.rate_limit import limiter
 from app.dependencies import DbSession, FrontDeskUser
 from app.models import Appointment, Patient, Service
 from app.routers.appointments import _out as booking_out
+from app.routers.appointments import billing_out, pdf_response
+from app.schemas.billing import BillingOut, DeskPaymentIn
 from app.schemas.schedule import (
     CancelOut,
     DaySchedule,
@@ -27,6 +39,7 @@ from app.schemas.schedule import (
     TherapistRef,
 )
 from app.services import (
+    billing_service,
     booking_service,
     front_desk_service,
     notification_service,
@@ -206,3 +219,47 @@ def no_show(appointment_id: uuid.UUID, db: DbSession, desk: FrontDeskUser) -> De
     except booking_service.BookingError as error:
         raise _refused(error) from None
     return _desk_out(db, appointment)
+
+
+@router.get("/appointments/{appointment_id}/billing")
+def read_billing(appointment_id: uuid.UUID, db: DbSession, _: FrontDeskUser) -> BillingOut:
+    """Price, what was paid (deposit online, balance at the desk) and what is left."""
+    try:
+        return billing_out(billing_service.summary(db, appointment_id))
+    except booking_service.BookingError as error:
+        raise _refused(error) from None
+
+
+@router.post("/appointments/{appointment_id}/payments", status_code=status.HTTP_201_CREATED)
+def record_payment(
+    request: Request,
+    appointment_id: uuid.UUID,
+    data: DeskPaymentIn,
+    db: DbSession,
+    desk: FrontDeskUser,
+) -> BillingOut:
+    """The patient paid the balance (cash, debit or credit). The server computes the amount."""
+    try:
+        billing = billing_service.record_balance(db, desk, appointment_id, data.method, request)
+    except booking_service.BookingError as error:
+        raise _refused(error) from None
+    return billing_out(billing)
+
+
+@router.get("/appointments/{appointment_id}/receipt", response_class=Response)
+def desk_receipt(
+    request: Request,
+    appointment_id: uuid.UUID,
+    db: DbSession,
+    desk: FrontDeskUser,
+    lang: Annotated[str, Query(pattern="^(fr|en)$")] = "fr",
+) -> Response:
+    """The receipt to print for the patient (PDF)."""
+    appointment = db.get(Appointment, appointment_id)
+    if appointment is None:
+        raise HTTPException(status_code=404, detail="Appointment not found.")
+    try:
+        pdf = billing_service.receipt_pdf(db, desk, appointment, lang, request)
+    except booking_service.BookingError as error:
+        raise _refused(error) from None
+    return pdf_response(pdf, appointment)

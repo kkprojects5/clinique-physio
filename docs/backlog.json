@@ -399,11 +399,14 @@
       "priority": "Should",
       "module": "booking",
       "deliverable": "D3",
-      "status": "open",
+      "status": "done",
       "acceptance": [
-        "Clinic info, therapist name and licence number, service, date, amount paid"
+        "PDF receipt with clinic name, address and phone, physiotherapist name and licence number, service, date, every amount paid and the total (done)",
+        "Available once the patient has come and paid; patients get only their own (done)",
+        "Patient: My receipts list under My appointments with a download button; front desk: print from the desktop app (done)",
+        "No clinical information; marked as a fictional clinic; every receipt download is in the audit log (done)"
       ],
-      "evidence": null
+      "evidence": "api/tests/test_billing.py, web/src/pages/billing.test.jsx"
     },
     {
       "id": "US-CLN-01",
@@ -664,9 +667,14 @@
       "priority": "Should",
       "module": "front-desk",
       "deliverable": "D3",
-      "status": "open",
-      "acceptance": [],
-      "evidence": null
+      "status": "done",
+      "acceptance": [
+        "The desk records the balance once the patient has arrived, by cash, debit or credit (done)",
+        "The amount is computed by the server (price minus what was paid); an amount sent by the app is ignored; paid once (done)",
+        "Each payment keeps who recorded it and is written to the audit log (done)",
+        "Desktop app: payment method list, Take payment with a confirmation showing the amount, and Receipt to print (done)"
+      ],
+      "evidence": "api/tests/test_billing.py, desktop/tests/CliniquePhysio.Desktop.Tests/DeskPaymentTests.cs"
     },
     {
       "id": "US-FRD-06",
@@ -715,9 +723,15 @@
       "priority": "Should",
       "module": "admin",
       "deliverable": "D3",
-      "status": "open",
-      "acceptance": [],
-      "evidence": null
+      "status": "done",
+      "acceptance": [
+        "Weekly report, Monday to Sunday in Montréal time, with previous and next week (done)",
+        "Appointments, patients seen, no-shows and no-show rate, cancellations by patient and by clinic (done)",
+        "Occupancy: booked time divided by working hours minus time off, for the clinic and each physiotherapist (done)",
+        "Revenue: online deposits + desk payments - refunds, by payment date (done)",
+        "Counts and totals only, no patient names; administrator with two-factor session only (done)"
+      ],
+      "evidence": "api/tests/test_reports.py, web/src/pages/billing.test.jsx"
     },
     {
       "id": "US-ADM-03",

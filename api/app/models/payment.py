@@ -1,4 +1,4 @@
-"""Payments and Stripe webhook events (B-BKG-04, B-BKG-06)."""
+"""Payments and Stripe webhook events (B-BKG-04, B-BKG-06), and desk payments (B-FRD-05)."""
 
 import uuid
 from datetime import datetime
@@ -9,22 +9,27 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
 
-PAYMENT_TYPES = ("deposit", "refund")
+PAYMENT_TYPES = ("deposit", "refund", "balance")
+PAYMENT_METHODS = ("stripe", "cash", "debit", "credit")
+DESK_METHODS = ("cash", "debit", "credit")
 PAYMENT_STATUSES = ("pending", "succeeded", "failed")
 
 
 class Payment(Base):
-    """Money for an appointment: a deposit paid online, or a refund of it.
+    """Money for an appointment: a deposit paid online, a refund of it, or the balance paid
+    at the desk (cash, debit or credit card on the clinic's own terminal).
 
-    Card details never reach our systems: Stripe handles them. We keep only the amount,
-    the status and Stripe's identifier.
+    Card details never reach our systems: Stripe or the desk terminal handles them. We keep
+    only the amount, the method, the status and Stripe's identifier.
     """
 
     __tablename__ = "payments"
     __table_args__ = (
         CheckConstraint("amount_cents > 0", name="ck_payments_amount"),
-        CheckConstraint("type IN ('deposit', 'refund')", name="ck_payments_type"),
-        CheckConstraint("method IN ('stripe', 'cash', 'debit')", name="ck_payments_method"),
+        CheckConstraint("type IN ('deposit', 'refund', 'balance')", name="ck_payments_type"),
+        CheckConstraint(
+            "method IN ('stripe', 'cash', 'debit', 'credit')", name="ck_payments_method"
+        ),
         CheckConstraint("status IN ('pending', 'succeeded', 'failed')", name="ck_payments_status"),
     )
 
@@ -37,6 +42,7 @@ class Payment(Base):
     method: Mapped[str] = mapped_column(Text, server_default=text("'stripe'"))
     status: Mapped[str] = mapped_column(Text)
     stripe_id: Mapped[str | None] = mapped_column(Text, unique=True)
+    recorded_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))  # desk agent
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
 

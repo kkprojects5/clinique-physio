@@ -109,8 +109,9 @@ TABLES = {
     ),
     "payments": (
         "Booking",
-        "Deposits paid online and their refunds. Card details are never stored: Stripe handles them.",
-        "B-BKG-04, B-BKG-06",
+        "Deposits paid online, their refunds, and balances paid at the desk. Card details are"
+        " never stored.",
+        "B-BKG-04, B-BKG-06, B-FRD-05",
     ),
     "payment_events": (
         "Booking",
@@ -404,12 +405,14 @@ COLUMNS = {
     ("payments", "appointment_id"): ("The appointment the money is for.", PER),
     ("payments", "amount_cents"): ("Amount in cents (3000 = 30,00 $), always positive.", PER),
     ("payments", "type"): (
-        "deposit (paid online when booking) or refund (deposit given back).",
+        "deposit (paid online when booking), refund (deposit given back) or balance (rest of"
+        " the price, paid at the desk).",
         PER,
     ),
-    ("payments", "method"): ("stripe online; cash or debit at the desk (D3).", PER),
+    ("payments", "method"): ("stripe online; cash, debit or credit at the desk.", PER),
     ("payments", "status"): ("pending, succeeded or failed, as reported by Stripe.", PER),
     ("payments", "stripe_id"): ("Stripe's PaymentIntent or Refund id. Never a card number.", INT),
+    ("payments", "recorded_by"): ("The desk agent who recorded a desk payment.", INT),
     ("payments", "created_at"): CREATED,
     ("payments", "updated_at"): ("Last status change (UTC).", INT),
     ("payment_events", "id"): ID,

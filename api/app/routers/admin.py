@@ -1,6 +1,7 @@
-"""Clinic administration (B-ADM-01, B-ADM-03). Administrators with MFA only."""
+"""Clinic administration (B-ADM-01, B-ADM-02, B-ADM-03). Administrators with MFA only."""
 
 import uuid
+from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query, Request, status
@@ -17,8 +18,10 @@ from app.schemas.admin import (
     StaffCreate,
     StaffOut,
 )
-from app.services import admin_service
+from app.schemas.billing import TherapistWeekOut, WeekReportOut
+from app.services import admin_service, report_service
 from app.services.admin_service import AdminError, AuditFilter
+from app.services.availability_service import today_local
 
 router = APIRouter(prefix="/admin", tags=["administration"])
 
@@ -183,4 +186,47 @@ def read_audit(
             for r in rows
         ],
         next_before_id=next_id,
+    )
+
+
+# --- Weekly report (B-ADM-02) ----------------------------------------------------------------
+
+
+@router.get("/reports/weekly")
+def weekly_report(
+    admin: AdminUser, db: DbSession, week: Annotated[date | None, Query()] = None
+) -> WeekReportOut:
+    """The week (Monday to Sunday, Montréal time) that contains `week`; this week by default.
+
+    Counts and totals only: no patient is named."""
+    report = report_service.weekly(db, week or today_local())
+    return WeekReportOut(
+        week_start=report.week_start,
+        week_end=report.week_end,
+        appointments=report.appointments,
+        seen=report.seen,
+        no_shows=report.no_shows,
+        cancelled_by_patient=report.statuses["cancelled_by_patient"],
+        cancelled_by_clinic=report.statuses["cancelled_by_clinic"],
+        confirmed=report.statuses["confirmed"],
+        no_show_rate=report.no_show_rate,
+        occupancy=report.occupancy,
+        revenue_cents=report.revenue_cents,
+        deposits_cents=report.deposits_cents,
+        desk_cents=report.desk_cents,
+        refunds_cents=report.refunds_cents,
+        therapists=[
+            TherapistWeekOut(
+                therapist_id=t.therapist.id,
+                first_name=t.therapist.first_name,
+                last_name=t.therapist.last_name,
+                appointments=t.appointments,
+                seen=t.seen,
+                no_shows=t.no_shows,
+                booked_minutes=t.booked_minutes,
+                working_minutes=t.working_minutes,
+                occupancy=t.occupancy,
+            )
+            for t in report.therapists
+        ],
     )

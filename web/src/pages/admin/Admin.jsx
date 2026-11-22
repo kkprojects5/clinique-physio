@@ -5,6 +5,7 @@ import StaffAdmin from './StaffAdmin';
 import AuditAdmin from './AuditAdmin';
 import PrivacyAdmin from './PrivacyAdmin';
 import IncidentsAdmin from './IncidentsAdmin';
+import ReportsAdmin from './ReportsAdmin';
 
 const TABS = [
   ['services', ServicesAdmin],
@@ -12,9 +13,10 @@ const TABS = [
   ['audit', AuditAdmin],
   ['privacy', PrivacyAdmin],
   ['incidents', IncidentsAdmin],
+  ['reports', ReportsAdmin],
 ];
 
-/** Clinic administration (B-ADM-01, B-ADM-03). The API checks the admin role and MFA. */
+/** Clinic administration (B-ADM-01 to 05). The API checks the admin role and MFA. */
 export default function Admin() {
   const { t } = useTranslation();
   const [tab, setTab] = useState('services');
