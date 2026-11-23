@@ -77,6 +77,7 @@ export default function Register() {
           max: clinicToday(),
           autoComplete: 'bday',
         })}
+        <p className="hint">{t('register.ageHint')}</p>
         {field('phone', 'tel', { required: true, autoComplete: 'tel', maxLength: 20 })}
         {field('email', 'email', { required: true, autoComplete: 'email' })}
         {field('password', 'password', {
@@ -95,7 +96,12 @@ export default function Register() {
             checked={form.accept_privacy_policy}
             onChange={set('accept_privacy_policy')}
           />
-          <label htmlFor="accept_privacy_policy">{t('register.privacy')}</label>
+          <label htmlFor="accept_privacy_policy">
+            {t('register.privacy')}{' '}
+            <Link to="/confidentialite" target="_blank" rel="noopener">
+              {t('register.readPolicy')}
+            </Link>
+          </label>
         </div>
         <div className="check">
           <input

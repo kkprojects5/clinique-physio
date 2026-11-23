@@ -16,9 +16,12 @@
         "Name, date of birth, email, phone, preferred language; optional emergency contact (encrypted)",
         "Privacy policy consent required; electronic communications consent optional; consent version and date stored",
         "Email address confirmed with a link",
-        "Only the minimum data is collected (justified in docs/data-classification.md)"
+        "Only the minimum data is collected (justified in docs/data-classification.md)",
+        "Consents can be seen, given and withdrawn later in \"My data\"; a new policy version is accepted again, every version kept (D3, done)",
+        "Online accounts for people aged 14 or more; a younger child's parent or tutor contacts the clinic (Law 25, D3, done)",
+        "Public privacy policy page in French and English, linked from every page and from the consent box (D3, done)"
       ],
-      "evidence": "api/tests/test_register.py"
+      "evidence": "api/tests/test_register.py, api/tests/test_consents.py, web/src/pages/consents.test.jsx"
     },
     {
       "id": "US-AUTH-02",

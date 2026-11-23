@@ -902,3 +902,11 @@ td.actions,
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+/* Privacy policy: readable line length. */
+.policy {
+  max-width: 72ch;
+}
+.policy li {
+  margin-bottom: 0.4rem;
+}

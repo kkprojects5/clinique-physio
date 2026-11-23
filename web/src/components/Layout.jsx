@@ -109,6 +109,8 @@ export default function Layout() {
         <p>{t('footer.address')}</p>
         <p>{t('footer.fictional')}</p>
         <p>
+          <Link to="/confidentialite">{t('footer.privacy')}</Link>
+          {' · '}
           <Link to="/mot-de-passe-oublie">{t('account.forgot.link')}</Link>
         </p>
       </footer>

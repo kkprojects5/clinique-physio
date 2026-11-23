@@ -133,3 +133,21 @@ def test_verify_email_refuses_bad_expired_or_wrong_purpose_tokens(client, db):
         assert response.status_code == 400
 
     assert get_user(db).email_verified_at is None
+
+
+def test_under_14_cannot_open_an_account(client, db):
+    """Law 25: under 14, a parent or tutor consents; they contact the clinic instead."""
+    from datetime import timedelta
+
+    from app.schemas.auth import MIN_AGE, _years_ago
+
+    turns_14_tomorrow = _years_ago(MIN_AGE) + timedelta(days=1)
+    turned_14_today = _years_ago(MIN_AGE)
+
+    young = client.post(URL, json=valid_payload(date_of_birth=str(turns_14_tomorrow)))
+    old_enough = client.post(
+        URL, json=valid_payload(date_of_birth=str(turned_14_today), email="ado@example.com")
+    )
+
+    assert young.status_code == 422
+    assert old_enough.status_code == 202
