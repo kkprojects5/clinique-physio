@@ -54,6 +54,7 @@ class Index:
             frequency.update(counts.keys())
         self._idf = {t: math.log((1 + count) / (1 + n)) + 1 for t, n in frequency.items()}
         self._vectors = {i: self._weigh(c) for i, c in self._docs.items()}
+        self.vocabulary = frozenset(self._idf)
 
     def _weigh(self, counts: Counter[str]) -> dict[str, float]:
         vector = {t: (1 + math.log(n)) * self._idf.get(t, 0.0) for t, n in counts.items()}
@@ -82,3 +83,15 @@ def search(question: str, limit: int = 3) -> list[Hit]:
             best[hit.id] = max(best.get(hit.id, 0.0), hit.score)
     ranked = sorted(best.items(), key=lambda item: item[1], reverse=True)
     return [Hit(i, s) for i, s in ranked[:limit] if s >= MIN_SCORE]
+
+
+def known_words(question: str) -> tuple[int, int]:
+    """(words of the question found in the clinic's documents, all words of the question).
+
+    "What is the capital of France?" shares only "France" (from "français") with the
+    documents: (1, 2). Used when the AI found no answer, to decide whether a keyword hit is
+    a real match or a single shared word (D3 adversarial evaluation).
+    """
+    words_ = tokens(question)
+    known = set().union(*(index.vocabulary for index in _indexes().values()))
+    return sum(w in known for w in words_), len(words_)

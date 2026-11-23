@@ -877,9 +877,10 @@
       "status": "done",
       "acceptance": [
         "40 questions including adversarial ones (done: api/eval/chatbot_eval.json, checked in CI)",
-        "Hit rate, correctness, citation accuracy, refusal accuracy, latency (done: docs/chatbot-evaluation.md)"
+        "Hit rate, correctness, citation accuracy, refusal accuracy, latency (done: docs/chatbot-evaluation.md)",
+        "D3: 24 adversarial questions added (64 in all); v1 and v2 compared on the same run; improvements and known limitations in docs/rag-v2-evaluation.md (done)"
       ],
-      "evidence": "api/tests/test_chatbot.py, api/tests/test_chatbot_ai.py, web/src/components/chat.test.jsx, docs/chatbot-evaluation.md"
+      "evidence": "api/tests/test_chatbot.py, api/tests/test_chatbot_ai.py, web/src/components/chat.test.jsx, docs/chatbot-evaluation.md, docs/rag-v2-evaluation.md, docs/chatbot-comparison.md"
     },
     {
       "id": "US-BOT-05",

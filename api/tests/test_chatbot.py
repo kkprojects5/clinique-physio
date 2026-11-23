@@ -146,6 +146,12 @@ def test_diagnosis_and_treatment_requests_are_refused(client, message):
         "What should I wear?",
         "Quelle est votre adresse ?",
         "How much is the deposit?",
+        "Can I export my exercise instructions?",
+        "Is it okay if I come 5 minutes late?",
+        "Which patients can book online?",
+        "Comment voir la liste de mes rendez-vous ?",
+        "Est-ce normal d'attendre une semaine pour un rendez-vous ?",
+        "Mon fils ne parle pas français, avez-vous un service en anglais ?",
     ],
 )
 def test_ordinary_questions_are_not_refused(message):
@@ -342,6 +348,30 @@ def test_ai_no_answer_is_overruled_when_the_keyword_search_finds_the_passage(db)
     assert reply.kind == Kind.ANSWER
     assert reply.sources[0].id == "parking"
     assert reply.mode == "passage"
+
+
+def test_ai_no_answer_stands_when_only_one_word_matches(db):
+    """D3 adversarial set: "France" matches "français" in the languages passage, nothing else."""
+    finder = lambda q: [search.Hit("languages", 0.31)]  # noqa: E731
+
+    reply = ask(db, "What is the capital of France?", "en", FakeWriter("NO_ANSWER"), finder)
+
+    assert reply.kind == Kind.UNKNOWN
+
+
+def test_ai_no_answer_is_overruled_when_two_words_match(db):
+    """Found by the v2 run: "mal au dos" is not in the documents, "service" and "réserver" are."""
+    finder = lambda q: [search.Hit("booking", 0.4)]  # noqa: E731
+
+    reply = ask(
+        db,
+        "J'ai mal au dos, quel service dois-je réserver ?",
+        "fr",
+        FakeWriter("NO_ANSWER"),
+        finder,
+    )
+
+    assert reply.kind == Kind.ANSWER
 
 
 def test_provider_error_falls_back_to_the_passage(db):
