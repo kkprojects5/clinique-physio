@@ -15,6 +15,10 @@ const ACTIONS = [
   'deactivate',
   'activate',
   'invite',
+  'payment',
+  'receipt',
+  'consent_given',
+  'consent_withdrawn',
 ];
 
 // Audit log viewer (B-ADM-03): who opened or changed what, when and from which app.

@@ -138,7 +138,9 @@
     "submit": "Create my account",
     "sent": "Account created. Open the link we emailed you to confirm your address, then log in.",
     "invalid": "Check the fields: some information is not valid.",
-    "haveAccount": "I already have an account"
+    "haveAccount": "I already have an account",
+    "readPolicy": "(read the policy)",
+    "ageHint": "Online accounts are for people aged 14 or more. For a younger child, the parent or tutor calls the clinic."
   },
   "book": {
     "title": "Book an appointment",
@@ -365,7 +367,11 @@
         "erase": "Erasure",
         "in_progress": "In progress",
         "completed": "Answered",
-        "refused": "Refused"
+        "refused": "Refused",
+        "payment": "Payment",
+        "receipt": "Receipt",
+        "consent_given": "Consent given",
+        "consent_withdrawn": "Consent withdrawn"
       },
       "resources": {
         "clinical_note": "Clinical note",
@@ -375,7 +381,9 @@
         "user": "Account",
         "audit_log": "Audit log",
         "privacy_request": "Privacy request",
-        "incident": "Incident"
+        "incident": "Incident",
+        "consent": "Consent",
+        "appointment": "Appointment"
       },
       "patientFilter": "Patient: {{name}}",
       "removePatient": "Remove the patient filter",
@@ -494,5 +502,23 @@
     "paid": "Paid: {{amount}}",
     "download": "Download the receipt (PDF)",
     "failed": "The receipt could not be downloaded. Please try again."
+  },
+  "consents": {
+    "title": "My consents",
+    "policy": "Privacy policy",
+    "policyGiven": "Accepted (version {{version}}) on {{date}}.",
+    "policyNew": "The policy has changed (version {{version}}). Read it, then accept it to keep using your account.",
+    "accept": "I accept the new version",
+    "read": "Read the policy",
+    "policyHint": "It is needed to have an account. To stop all use of your information, ask for your account to be deleted above.",
+    "comms": "Electronic messages (optional)",
+    "commsGiven": "You agreed to receive reminders and clinic news since {{date}}.",
+    "commsWithdrawn": "Withdrawn on {{date}}: you no longer receive reminders or news.",
+    "commsNever": "You have not given this consent: you receive no reminders or news.",
+    "give": "I want to receive messages",
+    "withdraw": "Withdraw my consent",
+    "commsHint": "Necessary messages (booking confirmation, password, answer to a request) are sent in every case.",
+    "saved": "Your choice is saved.",
+    "loadError": "Your consents cannot be shown right now."
   }
 }

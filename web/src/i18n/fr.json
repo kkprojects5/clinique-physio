@@ -138,7 +138,9 @@
     "submit": "Créer mon compte",
     "sent": "Compte créé. Ouvrez le lien reçu par courriel pour confirmer votre adresse, puis connectez-vous.",
     "invalid": "Vérifiez les champs : un renseignement n’est pas valide.",
-    "haveAccount": "J’ai déjà un compte"
+    "haveAccount": "J’ai déjà un compte",
+    "readPolicy": "(lire la politique)",
+    "ageHint": "Le compte en ligne est réservé aux personnes de 14 ans et plus. Pour un enfant plus jeune, le parent ou le tuteur appelle la clinique."
   },
   "book": {
     "title": "Réserver un rendez-vous",
@@ -365,7 +367,11 @@
         "erase": "Effacement",
         "in_progress": "En traitement",
         "completed": "Réponse",
-        "refused": "Refus"
+        "refused": "Refus",
+        "payment": "Paiement",
+        "receipt": "Reçu",
+        "consent_given": "Consentement donné",
+        "consent_withdrawn": "Consentement retiré"
       },
       "resources": {
         "clinical_note": "Note clinique",
@@ -375,7 +381,9 @@
         "user": "Compte",
         "audit_log": "Journal d’audit",
         "privacy_request": "Demande Loi 25",
-        "incident": "Incident"
+        "incident": "Incident",
+        "consent": "Consentement",
+        "appointment": "Rendez-vous"
       },
       "patientFilter": "Patient : {{name}}",
       "removePatient": "Retirer le filtre patient",
@@ -494,5 +502,23 @@
     "paid": "Payé : {{amount}}",
     "download": "Télécharger le reçu (PDF)",
     "failed": "Le reçu n’a pas pu être téléchargé. Réessayez."
+  },
+  "consents": {
+    "title": "Mes consentements",
+    "policy": "Politique de confidentialité",
+    "policyGiven": "Acceptée (version {{version}}) le {{date}}.",
+    "policyNew": "La politique a changé (version {{version}}). Lisez-la, puis acceptez-la pour continuer à utiliser votre compte.",
+    "accept": "J’accepte la nouvelle version",
+    "read": "Lire la politique",
+    "policyHint": "Elle est nécessaire pour avoir un compte. Pour cesser toute utilisation de vos renseignements, demandez la suppression de votre compte ci-dessus.",
+    "comms": "Communications électroniques (facultatif)",
+    "commsGiven": "Vous acceptez de recevoir des rappels et des nouvelles de la clinique depuis le {{date}}.",
+    "commsWithdrawn": "Retiré le {{date}} : vous ne recevez plus de rappels ni de nouvelles.",
+    "commsNever": "Vous n’avez pas donné ce consentement : vous ne recevez ni rappels ni nouvelles.",
+    "give": "Je veux recevoir les communications",
+    "withdraw": "Retirer mon consentement",
+    "commsHint": "Les messages nécessaires (confirmation de rendez-vous, mot de passe, réponse à une demande) sont envoyés dans tous les cas.",
+    "saved": "Votre choix est enregistré.",
+    "loadError": "Impossible d’afficher vos consentements pour le moment."
   }
 }

@@ -3035,6 +3035,111 @@
         ]
       }
     },
+    "/api/v1/me/consents": {
+      "get": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "My Consents",
+        "description": "What the patient agreed to, which version and when (Law 25: consent is visible).",
+        "operationId": "my_consents_api_v1_me_consents_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ConsentOut"
+                  },
+                  "type": "array",
+                  "title": "Response My Consents Api V1 Me Consents Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/me/consents/electronic_comms": {
+      "put": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "Set Electronic Comms",
+        "description": "Give or withdraw the optional consent to non-essential messages, at any time.",
+        "operationId": "set_electronic_comms_api_v1_me_consents_electronic_comms_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/me/consents/privacy_policy": {
+      "post": {
+        "tags": [
+          "privacy (Law 25)"
+        ],
+        "summary": "Accept Privacy Policy",
+        "description": "Accept the current version of the privacy policy. It cannot be withdrawn here: closing\nthe account (a deletion request) is how a patient stops all processing.",
+        "operationId": "accept_privacy_policy_api_v1_me_consents_privacy_policy_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/admin/privacy-requests": {
       "get": {
         "tags": [
@@ -3944,6 +4049,90 @@
           "pain_level"
         ],
         "title": "CheckOffOut"
+      },
+      "ConsentOut": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "privacy_policy",
+              "electronic_comms"
+            ],
+            "title": "Type"
+          },
+          "given": {
+            "type": "boolean",
+            "title": "Given"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          },
+          "granted_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Granted At"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "current_version": {
+            "type": "string",
+            "title": "Current Version"
+          },
+          "up_to_date": {
+            "type": "boolean",
+            "title": "Up To Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "given",
+          "version",
+          "granted_at",
+          "revoked_at",
+          "current_version",
+          "up_to_date"
+        ],
+        "title": "ConsentOut",
+        "description": "One consent as it stands now. up_to_date: given for the current policy version."
+      },
+      "ConsentUpdate": {
+        "properties": {
+          "given": {
+            "type": "boolean",
+            "title": "Given"
+          }
+        },
+        "type": "object",
+        "required": [
+          "given"
+        ],
+        "title": "ConsentUpdate"
       },
       "DaySchedule": {
         "properties": {

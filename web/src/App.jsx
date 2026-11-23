@@ -15,6 +15,7 @@ import BookingDone from './pages/BookingDone';
 import MyAppointments from './pages/MyAppointments';
 import MyExercises from './pages/MyExercises';
 import MyData from './pages/MyData';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import { AuthProvider } from './auth/AuthContext';
 import RequireAuth from './auth/RequireAuth';
 import TherapistPatients from './pages/therapist/Patients';
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="verify-email" element={<VerifyEmail />} />
           <Route path="connexion" element={<Login />} />
           <Route path="inscription" element={<Register />} />
+          <Route path="confidentialite" element={<PrivacyPolicy />} />
           <Route
             path="reserver"
             element={

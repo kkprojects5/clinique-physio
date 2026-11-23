@@ -8,6 +8,17 @@ from pydantic import BaseModel, EmailStr, Field, field_validator, model_validato
 PASSWORD_MIN_LENGTH = 12
 
 
+MIN_AGE = 14
+
+
+def _years_ago(years: int) -> date:
+    today = date.today()
+    try:
+        return today.replace(year=today.year - years)
+    except ValueError:  # 29 February
+        return today.replace(year=today.year - years, day=28)
+
+
 class RegisterRequest(BaseModel):
     """Patient registration (B-AUTH-01). Each field is justified in the data dictionary."""
 
@@ -27,6 +38,9 @@ class RegisterRequest(BaseModel):
     def birth_date_in_past(cls, value: date) -> date:
         if value >= date.today() or value.year < 1900:
             raise ValueError("date_of_birth must be a real date in the past")
+        if value > _years_ago(MIN_AGE):
+            # Law 25: under 14, consent comes from a parent or tutor, who contacts the clinic.
+            raise ValueError(f"an online account needs a person aged {MIN_AGE} or more")
         return value
 
     @field_validator("accept_privacy_policy")

@@ -5,6 +5,7 @@ import { useApiData } from '../auth/useApiData';
 import { formatDay } from '../utils/format';
 import { LoadError, Loading } from '../components/Status';
 import { Problem } from './ForgotPassword';
+import MyConsents from './MyConsents';
 
 const TYPES = ['access', 'correction', 'deletion'];
 
@@ -79,6 +80,7 @@ export default function MyData() {
           {t('myData.send')}
         </button>
       </form>
+      <MyConsents />
       <h2>{t('myData.myRequests')}</h2>
       {requests.data.length === 0 ? (
         <p>{t('myData.none')}</p>

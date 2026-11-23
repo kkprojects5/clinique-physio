@@ -7,7 +7,10 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, status
 from app.core import rate_limit
 from app.core.rate_limit import limiter
 from app.dependencies import AdminUser, CurrentPatient, DbSession
+from app.models import User
 from app.schemas.privacy import (
+    ConsentOut,
+    ConsentUpdate,
     IncidentIn,
     IncidentOut,
     IncidentUpdate,
@@ -16,7 +19,7 @@ from app.schemas.privacy import (
     PrivacyRequestOut,
     PrivacyRequestUpdate,
 )
-from app.services import notification_service, privacy_service
+from app.services import consent_service, notification_service, privacy_service
 from app.services.privacy_service import PrivacyError
 
 router = APIRouter(tags=["privacy (Law 25)"])
@@ -90,6 +93,44 @@ def my_requests(db: DbSession, patient: CurrentPatient) -> list[PrivacyRequestOu
 
 
 # --- Administrator ------------------------------------------------------------------------------
+
+
+def _consent_out(state: consent_service.ConsentState) -> ConsentOut:
+    return ConsentOut(
+        type=state.type,
+        given=state.given,
+        version=state.version,
+        granted_at=state.granted_at,
+        revoked_at=state.revoked_at,
+        current_version=state.current_version,
+        up_to_date=state.up_to_date,
+    )
+
+
+@router.get("/me/consents")
+def my_consents(db: DbSession, patient: CurrentPatient) -> list[ConsentOut]:
+    """What the patient agreed to, which version and when (Law 25: consent is visible)."""
+    user = db.get(User, patient.user_id)
+    return [_consent_out(s) for s in consent_service.my_consents(db, user)]
+
+
+@router.put("/me/consents/electronic_comms")
+def set_electronic_comms(
+    request: Request, body: ConsentUpdate, db: DbSession, patient: CurrentPatient
+) -> ConsentOut:
+    """Give or withdraw the optional consent to non-essential messages, at any time."""
+    user = db.get(User, patient.user_id)
+    return _consent_out(
+        consent_service.set_electronic_comms(db, user, patient, body.given, request)
+    )
+
+
+@router.post("/me/consents/privacy_policy")
+def accept_privacy_policy(request: Request, db: DbSession, patient: CurrentPatient) -> ConsentOut:
+    """Accept the current version of the privacy policy. It cannot be withdrawn here: closing
+    the account (a deletion request) is how a patient stops all processing."""
+    user = db.get(User, patient.user_id)
+    return _consent_out(consent_service.accept_policy(db, user, patient, request))
 
 
 @router.get("/admin/privacy-requests")

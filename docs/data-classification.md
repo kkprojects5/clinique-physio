@@ -155,8 +155,18 @@ person receives care, so it is treated as **Health**.
 |---|---|
 | Clinical notes | Kept 5 years after the last visit (professional order rule, fictional for this project), then anonymized; never physically deleted before |
 | Chatbot conversation logs | 30 days |
-| Refresh tokens | Deleted after expiry |
+| Refresh tokens | Expire after 7 days (patients) or 15 minutes without activity (staff); expired rows can no longer be used. Planned: a cleanup job deleting expired rows (not built) |
 | Accounts without any appointment | Anonymized on request (Law 25 right to deletion), at once |
 | Accounts with a health record | On request: closed at once, contact details erased, consents withdrawn; the health record is kept 5 years after the last visit, then anonymized (reason written in the answer to the request) |
 | Privacy requests | Kept with their answer, to prove the clinic answered within 30 days |
 | Confidentiality incident register | At least 5 years after the clinic became aware of the incident; entries can never be deleted (database trigger) |
+| Payments (amounts, type, method) | As long as the appointment and its health record exist (receipts for insurers, accounting); anonymized with the record |
+| Consents | Every version given or withdrawn is kept with its dates while the account exists, then with the closed account, as proof of what the person agreed to (Law 25) |
+| Audit log (access to patient files) | At least as long as the health record (5 years after the last visit); append-only (database trigger) |
+| Password reset tokens | 30 minutes, single use |
+| Email verification links | 24 hours |
+| PDF receipts and weekly reports | Never stored: made on request |
+
+In this version only the chatbot logs are deleted automatically (each new question removes
+rows older than 30 days). The other end-of-period actions (anonymizing a health record 5 years
+after the last visit) are done by the administrator; an automatic job is a known limitation.

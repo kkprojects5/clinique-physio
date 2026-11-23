@@ -65,3 +65,19 @@ class IncidentOut(IncidentIn):
     created_at: datetime
     updated_at: datetime
     to_notify: list[str]  # "cai" and/or "persons" still to notify (serious risk only)
+
+
+class ConsentOut(BaseModel):
+    """One consent as it stands now. up_to_date: given for the current policy version."""
+
+    type: Literal["privacy_policy", "electronic_comms"]
+    given: bool
+    version: str | None
+    granted_at: datetime | None
+    revoked_at: datetime | None
+    current_version: str
+    up_to_date: bool
+
+
+class ConsentUpdate(BaseModel):
+    given: bool
