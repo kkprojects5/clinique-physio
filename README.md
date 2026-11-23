@@ -47,7 +47,8 @@ More detail: [docs/requirements.md](docs/requirements.md) (vision and product ba
 [docs/architecture.md](docs/architecture.md), [docs/erd.md](docs/erd.md) (data model),
 [docs/data-dictionary.md](docs/data-dictionary.md), [docs/management](docs/management/README.md)
 (method, sprints, risks) and
-[docs/openapi.json](docs/openapi.json) (API contract).
+[docs/openapi.json](docs/openapi.json) (API contract),
+[docs/security/security-audit.md](docs/security/security-audit.md) (OWASP Top 10, ZAP scans, dependency audit).
 
 ## Repository structure
 

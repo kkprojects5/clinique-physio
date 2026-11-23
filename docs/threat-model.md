@@ -201,9 +201,11 @@ flowchart LR
 
 ## 5. Residual and accepted risks
 
+The D3 security audit ([security/security-audit.md](security/security-audit.md)) checks every OWASP Top 10 category and records the ZAP scans before and after the fixes.
+
 | ID | Risk | Why accepted (for now) | Plan |
 |---|---|---|---|
-| R-1 | `zod` (build tooling of Expo SDK 58) has a known "high" advisory | Only validates our own configuration at build time; not shipped in the app; fixing requires a newer Expo release | Update Expo when the fix ships |
+| R-1 | 3 moderate advisories (`minimatch`, `glob`) in Expo's build tools; the former high ones (`zod`, `@expo/cli`) were fixed with `npm audit fix` in D3 | Build-time tools on the developer's machine, not shipped in the app; the rest needs a newer Expo SDK | Update Expo when the next SDK is allowed |
 | R-2 | Demo hosting (Render, Neon) is in the United States, not Québec | All data is fictional; a real deployment would need a Law 25 assessment for transfers outside Québec | Documented; out of scope for the student project |
 | R-3 | Rate-limit counters are kept in the API's memory: they reset on restart and are not shared between instances | One instance on the free plan; lockout (stored in the database) still protects each account | Shared store (e.g. Redis) if the API ever runs on several instances |
 | R-4 | Refresh cookie is `SameSite=None` in production because the website and the API are on different sites | Cookie is httpOnly, Secure, limited to `/api/v1/auth`; CORS stops other sites from reading tokens; worst case of a forged request is an unwanted logout or token rotation | Check the `Origin` header on auth endpoints (D2), or serve the API under the website's domain |
@@ -212,7 +214,9 @@ flowchart LR
 | R-7 | Single signing key (HS256) shared by all tokens | Simple and safe while only the API issues and verifies tokens | Key rotation procedure in the D3 runbook |
 | R-8 | .NET 8 reaches end of support in November 2026; ESLint 9 is deprecated | No known vulnerability; the spec requires .NET 8; ESLint 10 not yet supported by the React plugins | Upgrade when allowed and supported |
 | R-9 | No email provider is connected yet: in production, account confirmation, password reset, staff invitation and booking emails are only logged (with a masked address), not delivered | Demo accounts are already confirmed; the flows are proven by automated tests and shown locally, where the email is printed in the API console | Connect a transactional email provider (planned with reminders, B-BKG-08) |
-| R-10 | `picomatch` (used inside Vite and Vitest, the build and test tools) has a "high" advisory (GHSA-fc5q-39xc-vjpf, ReDoS) with no fixed version yet | Build tools only: they match our own file patterns on the developer's machine and in CI, never attacker input, and are not shipped to the browser. CI blocks any high advisory in the website's own dependencies and any critical one in the tools | Dependabot proposes the fixed version when it ships; then CI blocks high advisories in the tools again |
+| R-10 | ~~`picomatch` advisory in the website build tools~~ **Closed in D3**: the fixed version is installed and `npm audit` reports nothing | — | — |
+| R-11 | No Cross-Origin-Embedder-Policy on the website (ZAP Low) | `require-corp` would block Stripe's payment frames; the site uses no feature that needs cross-origin isolation | Revisit if Stripe supports it |
+| R-12 | The ZAP active scan runs without login, so logged-in routes are only checked for refusal | Authorization of logged-in routes is covered by the automated tests (security audit, A01 and A07) | Add an authenticated ZAP context if the project continues |
 
 ## 6. Review
 
