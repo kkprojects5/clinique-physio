@@ -1,0 +1,3 @@
+# ZAP rules for the security-scan workflow (D3 security audit).
+# Format: rule id <TAB> IGNORE, WARN or FAIL <TAB> (rule name) <TAB> reason.
+# Each IGNORE must have a reason and appear in docs/security/security-audit.md.
