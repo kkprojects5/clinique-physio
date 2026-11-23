@@ -41,6 +41,18 @@ class Reply:
 Finder = Callable[[str], list[search.Hit]]
 
 
+def _real_match(question: str) -> bool:
+    """When the AI finds no answer, a keyword passage overrules it only if the question shares
+    more than one word with the documents, or almost all its words (D3 adversarial set).
+
+    "What is the capital of France?": 1 of 2 words ("France" ~ "français"): not a match.
+    "J'ai mal au dos, quel service dois-je réserver ?": 2 of 4 ("service", "réserver"): a match.
+    "Où se garer ?": 1 of 1: a match.
+    """
+    known, total = search.known_words(question)
+    return known >= 2 or (total > 0 and known / total >= 0.6)
+
+
 def _decide(
     question: str, language: str, writer: Writer | None, finder: Finder | None = None
 ) -> Reply:
@@ -62,8 +74,10 @@ def _decide(
             # The AI found no answer in the passages. If the keyword search agrees (nothing
             # found), say so; if it found a passage, show that passage as written (the AI can
             # be too cautious, a wrong "I don't know" is better avoided).
-            keyword_hits = search.search(MASK_LABEL.sub(" ", question))
-            if not keyword_hits:
+            topic = MASK_LABEL.sub(" ", question)
+            keyword_hits = search.search(topic)
+            # D3: a single shared word ("France" / "français") is not a match.
+            if not keyword_hits or not _real_match(topic):
                 return Reply(uuid.uuid4(), Kind.UNKNOWN, MESSAGES[Kind.UNKNOWN][language], [], "ai")
             best = by_id[keyword_hits[0].id]
             return Reply(uuid.uuid4(), Kind.ANSWER, best.text, [best])

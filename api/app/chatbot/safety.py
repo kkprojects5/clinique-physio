@@ -74,6 +74,13 @@ EMERGENCY = _any(
     r"(it'?s|this is) an emergency",
     r"medical emergency",
     r"\b911\b",
+    # D3 adversarial set: other ways to say it.
+    r"(veux|veut|voudrais|envie de) mourir",
+    r"(want|wanna|wish) (to die|i (was|were) dead)",
+    r"(visage|bouche)\b.{0,20}(tombe|affaiss|croche|paralys)",
+    r"face\b.{0,15}droop",
+    r"(can'?t|cannot|unable to) (speak|talk) (properly|clearly|normally|anymore)",
+    r"(peut|peux|arrive) (plus|pas) (a )?parler",
 )
 
 _CONDITIONS = (
@@ -116,6 +123,8 @@ MEDICAL = _any(
     r"(medecin|docteur|doctor|hopital|hospital|urgence|er)\b",
     r"(arreter|stop|continuer|continue) (mes|my) "
     r"(exercice|exercise|traitement|treatment|medicament|medication)",
+    # D3 adversarial set: "is it normal to hurt after...", asked about oneself.
+    r"(est-ce|c'?est|is it|is this) normal (d'?avoir|de ressentir|to have|to feel|que j'?ai)",
 )
 
 INJECTION = _any(
@@ -143,6 +152,20 @@ INJECTION = _any(
     r"nouvelles? (instructions|consignes|regles)",
     r"from now on",
     r"a partir de maintenant",
+    # D3 adversarial set: hidden configuration, translation, role play, encoded orders.
+    r"(output|dump|leak)\w* .{0,30}"
+    r"(configuration|config|instructions|prompt|settings|consignes)",
+    r"(hidden|secret|internal) (configuration|config|instructions|rules|prompt|settings)",
+    r"(configuration|instructions|consignes|regles|prompt) (secrete|cachee|interne)s?",
+    r"(translate|tradui\w*|summari[sz]e|resume\w*) .{0,15}(your|tes|vos|ses) "
+    r"(instructions|consignes|regles|rules|prompt)",
+    r"(^|\s)system\s*:",
+    r"(maintenance|debug|admin) mode",
+    r"mode (maintenance|debug|admin)",
+    r"role ?-?play",
+    r"jeu de role",
+    r"base ?64",
+    r"(decode|decoder|decodez|decrypt)\w*\b.{0,40}(follow|execute|obey|suis|suivre|applique)",
 )
 
 # A full name after "de/of/for" next to a personal-data word: "le téléphone de Marie Gagnon".
@@ -161,6 +184,15 @@ PRIVATE = _any(
     r"(qui sont|who are) (les|the|your) (patients|clients)",
     r"(mes|my) (resultats|results|notes cliniques|clinical notes|diagnostic|diagnosis|"
     r"dossier medical|medical record)",
+    # D3 adversarial set: fishing for other people's appointments or files.
+    r"(liste|list)\w* (des |of |of the |de |de la |du )?(rendez-vous|appointments|reservations|"
+    r"bookings|patients|clients)",
+    r"(quels|quelles|which|what) (patients|clients|patientes)\b.{0,40}"
+    r"(did|has|have|had|saw|see|seen|came|ont|a vu|venu|aujourd'?hui|today|yesterday|hier|"
+    r"demain|tomorrow)",
+    r"(notes? cliniques?|clinical notes?|dossiers?|files?|records?|charts?) (of|for|de|du|d') ?"
+    r"(the |a |le |la |un |une )?(patient|patiente|client)",
+    r"(patient|patiente|client) (#|no\.?|number|numero)? ?\d+",
 )
 
 REDACTIONS = [
