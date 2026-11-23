@@ -62,12 +62,25 @@ def test_refresh_adds_appointments_on_empty_days_only(db):
     db.query(Appointment).delete()  # simulate the demo appointments being in the past
     db.commit()
 
+    def days_with_appointments():
+        return {
+            (a.therapist_id, a.during.lower.astimezone(CLINIC_TZ).date())
+            for a in db.scalars(select(Appointment))
+        }
+
     first = refresh_appointments(db, rng_seed=1)
+    busy_after_first = days_with_appointments()
+    before_second = {a.id for a in db.scalars(select(Appointment))}
     second = refresh_appointments(db, rng_seed=2)
 
     assert first > 0
-    assert second == 0  # every day already has appointments: nothing added, nothing doubled
-    assert count(db, Appointment) == first
+    # A (therapist, day) that already had appointments gets nothing more. A day the first
+    # run left empty by chance (late in the evening, tomorrow has only a few free slots
+    # left) may be filled by the second run: that is what "empty days only" means.
+    added = [a for a in db.scalars(select(Appointment)) if a.id not in before_second]
+    assert len(added) == second
+    for a in added:
+        assert (a.therapist_id, a.during.lower.astimezone(CLINIC_TZ).date()) not in busy_after_first
 
 
 def test_refresh_never_creates_overlaps(db):

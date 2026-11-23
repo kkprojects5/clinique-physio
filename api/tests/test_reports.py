@@ -5,6 +5,7 @@ from datetime import timedelta
 from sqlalchemy.dialects.postgresql import Range
 
 from app.models import AvailabilityException, Payment
+from app.services.availability_service import today_local
 from app.services.report_service import monday_of, weekly
 from tests.test_availability import next_monday
 from tests.test_booking import at, clinic, place  # noqa: F401  (fixture)
@@ -80,9 +81,9 @@ def test_time_off_reduces_working_hours(db, clinic):  # noqa: F811
 def test_revenue_is_money_received_minus_refunds(db, clinic):  # noqa: F811
     busy_week(db, clinic)
 
-    from datetime import date
-
-    report = weekly(db, date.today())  # payments are dated today
+    # Payments are dated now; the report week is the clinic's (Montréal) week. In the evening
+    # the server's UTC date is already tomorrow, so "today" must be Montréal's today.
+    report = weekly(db, today_local())
 
     assert (report.deposits_cents, report.desk_cents, report.refunds_cents) == (2000, 6000, 2000)
     assert report.revenue_cents == 6000
