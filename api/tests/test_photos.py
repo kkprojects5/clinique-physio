@@ -91,6 +91,7 @@ def test_admin_uploads_and_the_team_page_shows_it(client, db, clinic, headers): 
     assert photo.status_code == 200
     assert photo.headers["content-type"] == "image/jpeg"
     assert photo.headers["x-content-type-options"] == "nosniff"
+    assert photo.headers["cross-origin-resource-policy"] == "cross-origin"  # shown by the website
     assert photo.content.startswith(b"\xff\xd8")
     assert db.scalar(select(AuditLog).where(AuditLog.resource_type == "therapist_photo"))
 

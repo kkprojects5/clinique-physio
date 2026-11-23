@@ -46,6 +46,10 @@ async def security_headers(request: Request, call_next):
     response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Cache-Control"] = response.headers.get("Cache-Control", "no-store")
+    # Other sites may not embed our answers with <img> or <script> (Spectre-type leaks).
+    # The browser apps call the API with CORS, which this header does not affect. Routes
+    # meant to be embedded, like therapist photos, set "cross-origin" themselves.
+    response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
     if settings.environment == "production":
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response

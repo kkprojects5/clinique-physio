@@ -62,7 +62,11 @@ def therapist_photo(therapist_id: uuid.UUID, db: DbSession) -> Response:
     return Response(
         content=content,
         media_type="image/jpeg",
-        headers={"Cache-Control": "public, max-age=86400"},
+        # Shown on the website (another origin) with <img>: allowed to be embedded.
+        headers={
+            "Cache-Control": "public, max-age=86400",
+            "Cross-Origin-Resource-Policy": "cross-origin",
+        },
     )
 
 

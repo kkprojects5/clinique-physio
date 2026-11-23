@@ -30,6 +30,7 @@ def test_security_headers_on_every_response(client):
     assert response.headers["X-Content-Type-Options"] == "nosniff"
     assert response.headers["Referrer-Policy"] == "no-referrer"
     assert response.headers["X-Frame-Options"] == "DENY"
+    assert response.headers["Cross-Origin-Resource-Policy"] == "same-origin"
 
 
 def test_cors_allows_the_web_app_and_refuses_other_sites(client):
