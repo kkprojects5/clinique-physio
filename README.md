@@ -46,9 +46,14 @@ about a minute. Demo account credentials are given to the supervisor privately, 
 More detail: [docs/requirements.md](docs/requirements.md) (vision and product backlog),
 [docs/architecture.md](docs/architecture.md), [docs/erd.md](docs/erd.md) (data model),
 [docs/data-dictionary.md](docs/data-dictionary.md), [docs/management](docs/management/README.md)
-(method, sprints, risks) and
+(method, sprints, risks),
 [docs/openapi.json](docs/openapi.json) (API contract),
-[docs/security/security-audit.md](docs/security/security-audit.md) (OWASP Top 10, ZAP scans, dependency audit).
+[docs/security/security-audit.md](docs/security/security-audit.md) (OWASP Top 10, ZAP scans, dependency audit),
+[docs/deployment.md](docs/deployment.md) (hosting, setup from nothing, every environment variable),
+[docs/runbook.md](docs/runbook.md) (redeploy and roll back, key rotation, backup and restore),
+[docs/privacy](docs/privacy/README.md) (Law 25 package),
+[docs/rag-v2-evaluation.md](docs/rag-v2-evaluation.md) (chatbot v1 / v2 evaluation).
+API reference: https://clinique-physio-api.onrender.com/docs.
 
 ## Repository structure
 
