@@ -37,7 +37,7 @@ jobs:
       - name: Wake the API up (the free plan sleeps when idle)
         run: curl -s -o /dev/null --retry 6 --retry-delay 10 "${{ inputs.api_url }}/health" || true
       - name: ZAP baseline scan of the website (passive)
-        uses: zaproxy/action-baseline@v0.14.0
+        uses: zaproxy/action-baseline@v0.15.0
         with:
           target: ${{ inputs.web_url }}
           rules_file_name: .zap/rules.tsv
