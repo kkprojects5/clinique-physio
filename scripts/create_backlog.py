@@ -40,7 +40,12 @@ MILESTONES = {
     "D2": "Deliverable 2 (week 6): booking and payment, clinical, exercises, chatbot",
     "D3": "Deliverable 3 (week 8): front-desk offline mode, admin, Law 25, polish",
 }
-STATUS_TEXT = {"done": "Done", "partial": "In progress", "open": "To do"}
+STATUS_TEXT = {
+    "done": "Done",
+    "partial": "In progress",
+    "open": "To do",
+    "out_of_scope": "Out of scope (v1.0.0)",
+}
 
 
 def gh(*args: str, dry: bool = False, soft: bool = False) -> str:
@@ -86,6 +91,8 @@ def issue_body(story: dict) -> str:
     ]
     if story.get("evidence"):
         lines += ["", f"**Evidence:** `{story['evidence']}`"]
+    if story.get("out_of_scope_reason"):
+        lines += ["", f"**Out of scope for v1.0.0:** {story['out_of_scope_reason']}"]
     lines += ["", "_Created from `docs/backlog.json` by `scripts/create_backlog.py`._"]
     return "\n".join(lines)
 
@@ -209,17 +216,21 @@ def create_issues(repo: str, stories: list[dict], dry: bool) -> dict[str, int]:
 
 
 def close_done(repo: str, stories: list[dict], found: dict[str, dict], dry: bool) -> None:
-    print("4. Close the stories that are done")
+    print("4. Close the stories that are done or out of scope")
     closed = 0
     for story in stories:
         info = found.get(story["id"])
-        if story["status"] != "done" or (info and info["state"] != "OPEN"):
+        if story["status"] not in ("done", "out_of_scope") or (info and info["state"] != "OPEN"):
             continue
         number = str(info["number"]) if info else "<new>"
+        reason = "completed"
         comment = (
             f"Done in {story['deliverable']}. All acceptance criteria are met.\n\n"
             f"Evidence (automated tests run by CI): `{story.get('evidence') or 'see the PR'}`"
         )
+        if story["status"] == "out_of_scope":
+            reason = "not planned"
+            comment = f"Out of scope for v1.0.0. {story['out_of_scope_reason']}"
         gh(
             "issue",
             "close",
@@ -227,7 +238,7 @@ def close_done(repo: str, stories: list[dict], found: dict[str, dict], dry: bool
             "--repo",
             repo,
             "--reason",
-            "completed",
+            reason,
             "--comment",
             comment,
             dry=dry,

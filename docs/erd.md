@@ -1,7 +1,7 @@
 # Entity-Relationship Diagram — Clinique Physio Mont-Royal
 
 Source: cahier des charges, section B.6 (data model), plus the requirements in B.4.  
-Status: **draft for D1** (v0.1.0).
+Status: **D3 (v1.0.0)**. Matches migrations 0001 to 0015, except `rooms` (designed, not built).
 
 The model is split into an overview and six modules so each diagram stays readable. In the module diagrams, tables from other modules appear with their `id` only.
 
@@ -79,6 +79,8 @@ erDiagram
         text languages "array"
         text bio_fr
         text bio_en
+        bytea photo "re-encoded JPEG, nullable"
+        timestamptz photo_updated_at
     }
     refresh_tokens {
         uuid id PK
@@ -163,7 +165,7 @@ erDiagram
 - `therapist_services` is the many-to-many link: which therapist can provide which service.
 - Bookable slots are not stored. They are computed: availability rules, minus exceptions, minus existing appointments (B-AVL-03).
 - Rules use local `time`, so Monday 8:00 stays 8:00 clinic time across DST changes.
-- `rooms` is a Should requirement (B-AVL-04).
+- `rooms` (B-AVL-04, Should) is designed but not built in v1.0.0: out of scope, see the backlog.
 
 ## 3. Booking and payments
 
@@ -207,10 +209,11 @@ erDiagram
         uuid id PK
         uuid appointment_id FK
         int amount_cents
-        text type "deposit, refund"
-        text method "stripe, cash, debit"
+        text type "deposit, balance, refund"
+        text method "stripe, cash, debit, credit"
         text status "pending, succeeded, failed"
         text stripe_id UK "nullable"
+        uuid recorded_by FK "desk agent, nullable"
         timestamptz created_at
         timestamptz updated_at
     }

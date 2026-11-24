@@ -1,6 +1,6 @@
 # Project management — Clinique Physio Mont-Royal
 
-Status: **D1 (v0.1.0)**. Solo project: one developer (KK) and one supervisor.
+Status: **D3 (v1.0.0)**. Solo project: one developer (KK) and one supervisor.
 
 | Document | Content | How it is kept up to date |
 |---|---|---|

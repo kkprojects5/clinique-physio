@@ -25,7 +25,7 @@ setup_logging()
 
 app = FastAPI(
     title="Clinique Physio Mont-Royal API",
-    version="0.1.0",
+    version="1.0.0",
 )
 
 # Only our own web apps may call the API from a browser, with cookies (NFR-03).

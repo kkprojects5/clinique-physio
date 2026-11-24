@@ -127,8 +127,31 @@ if patient information may have been seen (section 6).
 
 ## 4. Releasing a version (desktop installer, Android app)
 
-Written with release v1.0.0 (D3): version tag, desktop installer attached to the GitHub
-release, Android APK or Expo link.
+The workflow `.github/workflows/release.yml` builds the Windows installer (Inno Setup, .NET
+included) and the Android APK, runs the tests first, and publishes them on a GitHub release.
+It needs no secret.
+
+1. **Test run first** (nothing is published): GitHub → **Actions → release → Run workflow**
+   on `main`. After about 20 minutes, the run's **Artifacts** hold `desktop` (installer and
+   portable zip, version `0.0.0-test`) and `android` (APK). Install both and try a login.
+2. **Prepare the version** in a pull request: version numbers (`mobile/app.json` `version`
+   and `android.versionCode` + 1, `mobile/package.json`, `web/package.json`, `api/app/main.py`),
+   and the release notes `docs/releases/vX.Y.Z.md`. Merge, then `git push deploy main`.
+3. **Tag and publish:**
+   ```
+   git checkout main
+   git pull
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+   The workflow starts by itself and creates the release **v1.0.0** with
+   `CliniquePhysio-Accueil-Setup-1.0.0.exe`, the portable zip and `CliniquePhysio-1.0.0.apk`.
+4. If a build fails, fix it in a pull request, then move the tag to the fixed commit:
+   `git tag -d v1.0.0`, `git push origin :refs/tags/v1.0.0`, and step 3 again.
+
+The installer is not code-signed and the APK is signed with the debug key (students cannot
+buy certificates): Windows and Android warn before installing, and the release notes say how
+to continue. For a real clinic, both would be signed and the app published in the stores.
 
 ## 5. Backup and restore
 

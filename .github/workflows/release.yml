@@ -1,0 +1,142 @@
+# Release (D3, spec section 7.2): builds the desktop installer and the Android app, and
+# publishes them on a GitHub release with the release notes from docs/releases/<tag>.md.
+#
+# Two ways to start it:
+# - Push a version tag:  git tag v1.0.0  then  git push origin v1.0.0   -> builds and publishes.
+# - Actions > release > Run workflow -> builds only (a test run): the files are in the run's
+#   artifacts, nothing is published.
+#
+# No secret is needed: the release is created with the run's own token, the Android app is
+# built on the runner (signed with the debug key, for installing by hand), and the installer
+# is not code-signed (student project).
+name: release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desktop-installer:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version from the tag (1.0.0), or 0.0.0-test for a test run
+        id: version
+        shell: pwsh
+        run: |
+          $v = if ("${{ github.ref_type }}" -eq "tag") { "${{ github.ref_name }}".TrimStart("v") } else { "0.0.0-test" }
+          "value=$v" >> $env:GITHUB_OUTPUT
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Tests first (a release is never built from failing code)
+        working-directory: desktop
+        run: dotnet test CliniquePhysio.Desktop.sln --configuration Release
+
+      - name: Publish (self-contained, one .exe, .NET not needed on the computer)
+        run: >
+          dotnet publish desktop/src/CliniquePhysio.Desktop/CliniquePhysio.Desktop.csproj
+          --configuration Release --runtime win-x64 --self-contained true
+          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:Version=${{ steps.version.outputs.value }}
+          --output publish
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build the installer
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" `
+            "/DAppVersion=${{ steps.version.outputs.value }}" `
+            "/DSourceDir=$env:GITHUB_WORKSPACE\publish" `
+            "/O$env:GITHUB_WORKSPACE\installer-output" `
+            desktop\installer\CliniquePhysio.iss
+          Compress-Archive -Path publish\* -DestinationPath "installer-output\CliniquePhysio-Accueil-${{ steps.version.outputs.value }}-portable.zip"
+          Get-ChildItem installer-output
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop
+          path: installer-output/*
+          if-no-files-found: error
+
+  android-apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install exact dependencies
+        run: npm ci
+
+      - name: Tests first
+        run: npm test -- --ci
+
+      - name: Create the Android project (Expo prebuild)
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Build the APK (release build, API address of production)
+        working-directory: mobile/android
+        env:
+          EXPO_PUBLIC_API_URL: https://clinique-physio-api.onrender.com
+          EXPO_PUBLIC_WEB_URL: https://clinique-physio.vercel.app
+          NODE_ENV: production
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Name the file with the version
+        run: |
+          version=$(node -p "require('./app.json').expo.version")
+          mkdir -p ../apk-output
+          cp android/app/build/outputs/apk/release/app-release.apk "../apk-output/CliniquePhysio-${version}.apk"
+          ls -l ../apk-output
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: apk-output/*.apk
+          if-no-files-found: error
+
+  publish:
+    if: github.ref_type == 'tag'
+    needs: [desktop-installer, android-apk]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-files
+          merge-multiple: true
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          notes="docs/releases/${TAG}.md"
+          test -f "$notes" || { echo "Missing $notes"; exit 1; }
+          ls -l release-files
+          gh release create "$TAG" release-files/* --title "Clinique Physio Mont-Royal $TAG" --notes-file "$notes" --verify-tag

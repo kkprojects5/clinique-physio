@@ -57,8 +57,8 @@ must respect Québec's **Law 25** on the protection of personal information.
 
 - REST API (FastAPI, PostgreSQL) holding every business rule and permission check
 - Website (React): public pages, booking, patient portal, therapist workspace, administration
-- Desktop app (C# WPF) for the front desk, with offline mode in D3
-- Mobile app (Expo) for patients: appointments, exercise program, reminders
+- Desktop app (C# WPF) for the front desk
+- Mobile app (Expo) for patients: appointments, exercise program
 - Payments of deposits in Stripe **test mode** only
 - Chatbot answering practical questions from the clinic's documents only
 - French by default, English available; accessibility (WCAG 2.1 AA target on the website)
@@ -70,6 +70,7 @@ must respect Québec's **Law 25** on the protection of personal information.
 - Medical diagnosis or treatment advice by the chatbot (it refuses)
 - Several clinics, online video consultations, and SMS messages
 - Publication to the app stores (the mobile app is delivered as an Expo link or APK)
+- Nine stories set out of scope for v1.0.0, each with its reason in the backlog: offline desktop mode, reminders, rooms, waiting list, walk-in quick create, document upload, exercise reminders, knowledge base upload page, break-the-glass access
 
 ## 6. Actors
 

@@ -1,6 +1,6 @@
 # Architecture — Clinique Physio Mont-Royal
 
-Status: **D1 (v0.1.0)**. Diagrams follow the [C4 model](https://c4model.com) (levels 1 and 2,
+Status: **D3 (v1.0.0)**. Diagrams follow the [C4 model](https://c4model.com) (levels 1 and 2,
 plus a short level 3 for the API). Design decisions are recorded as ADRs in [adr/](adr/).
 
 Related documents: [requirements.md](requirements.md), [erd.md](erd.md) (data model),
