@@ -12,8 +12,8 @@ Architecture: [architecture.md](architecture.md). API reference: https://cliniqu
 | Database (PostgreSQL 16 + pgvector) | Neon | Free, AWS us-east-1 (Virginia) | Migrations run by the API at start |
 | API (FastAPI) | Render, from `render.yaml` | Free web service, Virginia (next to the database) | Automatically, when the deployment copy changes |
 | Website (React) | Vercel, folder `web` | Hobby, global CDN | Automatically, when the deployment copy changes |
-| Desktop app (WPF, front desk) | GitHub Releases | Windows installer | By hand, for each version tag |
-| Mobile app (Expo, patients) | Expo / APK | Android | By hand (EAS build or Expo Go link) |
+| Desktop app (WPF, front desk) | GitHub Releases | Windows installer | `release` workflow, on a version tag |
+| Mobile app (Expo, patients) | Expo / APK | Android APK (and Expo Go for the demo) | `release` workflow, on a version tag |
 | Online payments | Stripe | **Test mode (Sandbox) only** | Keys in Render |
 | Chatbot AI | OpenAI | Pay per use (a few cents per day of demo) | Key in Render |
 
@@ -86,14 +86,15 @@ to the supervisor privately, never written in the README.
 
 1. `desktop/src/CliniquePhysio.Desktop/appsettings.json`: `ApiBaseUrl` is the API address
    (already the live API).
-2. Build the installer for a version (section 4 of the runbook) and attach it to the GitHub
-   release.
+2. The installer is built and attached to the GitHub release by the `release` workflow
+   (runbook section 4).
 
 ### 2.7 Mobile app
 
 `mobile/.env`: `EXPO_PUBLIC_API_URL` and `EXPO_PUBLIC_WEB_URL` (both default to the live
 addresses). For the demo, share the app with Expo Go (`npx expo start --tunnel`, then scan the
-QR code); the Android APK for the release is built with EAS (runbook section 4).
+QR code); the Android APK is built by the `release` workflow and attached to the GitHub release
+(runbook section 4).
 
 ## 3. Environment variables
 

@@ -587,7 +587,7 @@ def render() -> str:
     lines = [
         "# Data dictionary — Clinique Physio Mont-Royal",
         "",
-        "Status: **D1 (v0.1.0)**. Generated from the code by `api/scripts/data_dictionary.py`;",
+        "Status: **D3 (v1.0.0)**. Generated from the code by `api/scripts/data_dictionary.py`;",
         "do not edit by hand. Run `python -m scripts.data_dictionary` in `api/` after changing a model.",
         "",
         "Related: [erd.md](erd.md) (diagrams), [data-classification.md](data-classification.md)",

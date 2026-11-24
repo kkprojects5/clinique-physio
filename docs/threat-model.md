@@ -1,6 +1,6 @@
 # Threat model — Clinique Physio Mont-Royal
 
-Status: **D1 (v0.1.0)**, to be updated at D2 and D3.
+Status: **D3 (v1.0.0)**.
 Method: STRIDE (Spoofing, Tampering, Repudiation, Information disclosure, Denial of service,
 Elevation of privilege), applied to each main data flow.
 Companion document: [data-classification.md](data-classification.md).

@@ -145,12 +145,13 @@
       "priority": "Could",
       "module": "auth",
       "deliverable": "D3",
-      "status": "open",
+      "status": "out_of_scope",
       "acceptance": [
         "Mandatory reason",
         "Logged and flagged in the audit dashboard"
       ],
-      "evidence": null
+      "evidence": null,
+      "out_of_scope_reason": "Needs a reviewed emergency-access workflow (reason, alert to the administrator, review after the fact). Doing it quickly would weaken access control; normal access by role and MFA covers the demo. Kept as accepted risk in the threat model."
     },
     {
       "id": "US-AVL-01",
@@ -214,12 +215,13 @@
       "priority": "Should",
       "module": "availability",
       "deliverable": "D3",
-      "status": "open",
+      "status": "out_of_scope",
       "acceptance": [
         "4 rooms",
         "Same no-overlap guarantee as therapists"
       ],
-      "evidence": null
+      "evidence": null,
+      "out_of_scope_reason": "The fictional clinic gives each physiotherapist their own treatment room, so the therapist's schedule already prevents double booking. The table is designed in the ERD and can be added without changing the booking rules."
     },
     {
       "id": "US-AVL-05",
@@ -370,12 +372,13 @@
       "priority": "Should",
       "module": "booking",
       "deliverable": "D3",
-      "status": "open",
+      "status": "out_of_scope",
       "acceptance": [
         "Email and mobile push",
         "No clinical information in the message"
       ],
-      "evidence": null
+      "evidence": null,
+      "out_of_scope_reason": "No email or SMS provider is connected (cost and sender verification). The consent to electronic messages is already recorded and checked (consent_service.wants_electronic_comms), so reminders can be added without new privacy work."
     },
     {
       "id": "US-BKG-09",
@@ -387,12 +390,13 @@
       "priority": "Could",
       "module": "booking",
       "deliverable": "D3",
-      "status": "open",
+      "status": "out_of_scope",
       "acceptance": [
         "Subscribe and unsubscribe",
         "Notification when a matching slot frees up"
       ],
-      "evidence": null
+      "evidence": null,
+      "out_of_scope_reason": "Depends on reminders (US-BKG-08) to tell the patient a slot is free. Patients can already see and book freed slots online at any time."
     },
     {
       "id": "US-BKG-10",
@@ -504,11 +508,12 @@
       "priority": "Could",
       "module": "clinical",
       "deliverable": "D3",
-      "status": "open",
+      "status": "out_of_scope",
       "acceptance": [
         "Type and size checks; private storage; short-lived signed links"
       ],
-      "evidence": null
+      "evidence": null,
+      "out_of_scope_reason": "Storing medical documents safely needs file storage, malware scanning and size limits. Not worth the risk for a demo with fictional data."
     },
     {
       "id": "US-EXE-01",
@@ -586,11 +591,12 @@
       "priority": "Could",
       "module": "exercises",
       "deliverable": "D3",
-      "status": "open",
+      "status": "out_of_scope",
       "acceptance": [
         "Configurable by the patient"
       ],
-      "evidence": null
+      "evidence": null,
+      "out_of_scope_reason": "Needs push notifications (Expo push service and device tokens) and a scheduler. Patients see their program and check off exercises in the app."
     },
     {
       "id": "US-FRD-01",
@@ -658,9 +664,10 @@
       "priority": "Should",
       "module": "front-desk",
       "deliverable": "D3",
-      "status": "open",
+      "status": "out_of_scope",
       "acceptance": [],
-      "evidence": null
+      "evidence": null,
+      "out_of_scope_reason": "The desk books walk-ins in the next free slot for patients who have an account (POST /desk/appointments). A quick-create form for a patient without email was not built: the account and consent come from the patient's own registration (Law 25)."
     },
     {
       "id": "US-FRD-05",
@@ -691,12 +698,13 @@
       "priority": "Should",
       "module": "front-desk",
       "deliverable": "D3",
-      "status": "open",
+      "status": "out_of_scope",
       "acceptance": [
         "Encrypted read-only cache of today's schedule",
         "Queued check-ins synchronized later, conflicts detected and reported"
       ],
-      "evidence": null
+      "evidence": null,
+      "out_of_scope_reason": "Offline booking with conflict detection needs a local encrypted store and a sync protocol. Too large for the time left; the desktop shows a clear error when the API cannot be reached."
     },
     {
       "id": "US-ADM-01",
@@ -803,11 +811,12 @@
       "priority": "Should",
       "module": "admin",
       "deliverable": "D3",
-      "status": "open",
+      "status": "out_of_scope",
       "acceptance": [
         "Feedback statistics"
       ],
-      "evidence": null
+      "evidence": null,
+      "out_of_scope_reason": "The knowledge base is two Markdown files in the code (app/knowledge), reviewed through pull requests and loaded at each deploy. An upload page would add a file-upload attack surface for little gain."
     },
     {
       "id": "US-BOT-01",

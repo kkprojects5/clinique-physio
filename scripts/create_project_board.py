@@ -3,9 +3,11 @@
 What it does (safe to run again):
   1. Finds your project "Clinique Physio Mont-Royal", or creates it.
   2. Adds every issue of the repository that is not on the board yet.
-  3. Sets the Status column: Done (closed issues), In Progress (stories partly done
-     in docs/backlog.json), Todo (everything else). Statuses you changed by hand on
-     the board are kept, except that closed issues always move to Done.
+  3. Sets the Status column: Done (issues closed as completed), In Progress (stories
+     partly done in docs/backlog.json), Todo (everything else). Statuses you changed by
+     hand on the board are kept, except that closed issues always move to Done.
+     Issues closed as "not planned" (out of scope) are archived: hidden from the board,
+     still listed in the project's archive.
 
 Needs the GitHub CLI with the "project" permission (once):
     gh auth refresh -s project
@@ -109,14 +111,20 @@ def main() -> None:
         "--limit",
         "1000",
         "--json",
-        "number,title,state,url",
+        "number,title,state,stateReason,url",
     )
     partial = partial_story_ids()
-    added = updated = 0
+    added = updated = archived = 0
     print(f"2. {len(issues)} issues in {repo}, {len(on_board)} already on the board")
     for issue in sorted(issues, key=lambda i: i["number"]):
         status = wanted_status(issue, partial)
         item = on_board.get(issue["number"])
+        if issue["state"] == "CLOSED" and issue.get("stateReason") == "NOT_PLANNED":
+            if item is not None:  # out of scope: archived, never added back
+                gh("project", "item-archive", str(number), "--owner", OWNER, "--id", item["id"])
+                archived += 1
+                time.sleep(PAUSE)
+            continue
         if item is None:
             new = gh_json(
                 "project",
@@ -149,7 +157,7 @@ def main() -> None:
         )
         updated += 1
         time.sleep(PAUSE)
-    print(f"3. {added} issues added, {updated} statuses set")
+    print(f"3. {added} issues added, {updated} statuses set, {archived} out of scope archived")
     print(f"Finished. Open the board: {url}")
 
 

@@ -1,6 +1,6 @@
 # Data classification — Clinique Physio Mont-Royal
 
-Status: **D1 (v0.1.0)**. Companion document: [threat-model.md](threat-model.md).
+Status: **D3 (v1.0.0)**. Companion document: [threat-model.md](threat-model.md).
 Data model: [erd.md](erd.md).
 
 All data in this project is fictional. This classification is written as if the data were real,
