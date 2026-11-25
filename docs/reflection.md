@@ -1,4 +1,4 @@
-# Individual reflection — KK
+# Individual reflection — Khadizhat Khizrieva 
 
 Capstone, Vanier College AEC Software Development (Secure Desktop, Mobile and Web Applications),
 Project B: Clinique Physio Mont-Royal. **I worked alone**, without a team: I was responsible
