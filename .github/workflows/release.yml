@@ -2,7 +2,8 @@
 # publishes them on a GitHub release with the release notes from docs/releases/<tag>.md.
 #
 # Two ways to start it:
-# - Push a version tag:  git tag v1.0.0  then  git push origin v1.0.0   -> builds and publishes.
+# It runs on the deployment copy (kkprojects5/clinique-physio, public: free minutes):
+# - Push a version tag:  git tag v1.0.0  then  git push deploy v1.0.0   -> builds and publishes.
 # - Actions > release > Run workflow -> builds only (a test run): the files are in the run's
 #   artifacts, nothing is published.
 #

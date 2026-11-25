@@ -131,8 +131,12 @@ The workflow `.github/workflows/release.yml` builds the Windows installer (Inno 
 included) and the Android APK, runs the tests first, and publishes them on a GitHub release.
 It needs no secret.
 
-1. **Test run first** (nothing is published): GitHub → **Actions → release → Run workflow**
-   on `main`. After about 20 minutes, the run's **Artifacts** hold `desktop` (installer and
+The release runs on the **deployment copy** (`kkprojects5/clinique-physio`, public, so its
+Actions minutes are free) and is published there, where the supervisor sees it. The
+development repository's minutes are kept for the pull request checks.
+
+1. **Test run first** (nothing is published):
+   `gh workflow run release.yml --ref main -R kkprojects5/clinique-physio`. After about 20 minutes, the run's **Artifacts** hold `desktop` (installer and
    portable zip, version `0.0.0-test`) and `android` (APK). Install both and try a login.
 2. **Prepare the version** in a pull request: version numbers (`mobile/app.json` `version`
    and `android.versionCode` + 1, `mobile/package.json`, `web/package.json`, `api/app/main.py`),
@@ -142,12 +146,12 @@ It needs no secret.
    git checkout main
    git pull
    git tag v1.0.0
-   git push origin v1.0.0
+   git push deploy v1.0.0
    ```
    The workflow starts by itself and creates the release **v1.0.0** with
    `CliniquePhysio-Accueil-Setup-1.0.0.exe`, the portable zip and `CliniquePhysio-1.0.0.apk`.
 4. If a build fails, fix it in a pull request, then move the tag to the fixed commit:
-   `git tag -d v1.0.0`, `git push origin :refs/tags/v1.0.0`, and step 3 again.
+   `git tag -d v1.0.0`, `git push deploy :refs/tags/v1.0.0`, and step 3 again.
 
 The installer is not code-signed and the APK is signed with the debug key (students cannot
 buy certificates): Windows and Android warn before installing, and the release notes say how
