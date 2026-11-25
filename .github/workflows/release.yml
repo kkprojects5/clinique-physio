@@ -96,6 +96,12 @@ jobs:
       - name: Create the Android project (Expo prebuild)
         run: npx expo prebuild --platform android --no-install
 
+      # Stripe's library refers to its Google Wallet "push provisioning" classes, shipped
+      # separately and not used by the app. R8 (the code shrinker) stops on missing classes,
+      # so it is told to ignore these ones (the workaround documented by Stripe).
+      - name: Shrinker rule for Stripe's unused Google Wallet classes
+        run: echo "-dontwarn com.stripe.android.pushProvisioning.**" >> android/app/proguard-rules.pro
+
       - name: Build the APK (release build, API address of production)
         working-directory: mobile/android
         env:
@@ -106,9 +112,11 @@ jobs:
         # downloads com.google.android.gms:play-services-tapandpay, a private Google package
         # (Google Wallet push provisioning) that the app does not use, so the build failed
         # before compiling. The code is still checked by ESLint and Jest in mobile-ci.
+        # Only two processor types are built: arm64-v8a (phones) and x86_64 (emulator).
         run: >
           ./gradlew assembleRelease --no-daemon
           -x lintVitalAnalyzeRelease -x lintVitalReportRelease -x lintVitalRelease
+          -PreactNativeArchitectures=arm64-v8a,x86_64
 
       - name: Name the file with the version
         run: |
