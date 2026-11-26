@@ -38,6 +38,9 @@ public interface IApiClient
     /// <summary>The patient did not come (15 minutes after the start at the earliest).</summary>
     Task<DeskAppointment> MarkNoShowAsync(Guid appointmentId, CancellationToken ct = default);
 
+    /// <summary>Send the check-ins and no-shows recorded offline (B-C5). The server's state wins.</summary>
+    Task<List<SyncResult>> SyncAsync(IReadOnlyList<PendingAction> actions, CancellationToken ct = default);
+
     /// <summary>Price, what was paid and what is left (B-FRD-05).</summary>
     Task<Billing> GetBillingAsync(Guid appointmentId, CancellationToken ct = default);
 

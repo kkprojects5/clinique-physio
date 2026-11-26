@@ -1,0 +1,11 @@
+build	Formatting (dotnet format)	﻿2026-11-26T05:00:44.6542857Z ##[group]Run dotnet format CliniquePhysio.Desktop.sln --verify-no-changes --no-restore
+build	Formatting (dotnet format)	2026-11-26T05:00:44.6543452Z ^[[36;1mdotnet format CliniquePhysio.Desktop.sln --verify-no-changes --no-restore^[[0m
+build	Formatting (dotnet format)	2026-11-26T05:00:44.6597516Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+build	Formatting (dotnet format)	2026-11-26T05:00:44.6598154Z env:
+build	Formatting (dotnet format)	2026-11-26T05:00:44.6598323Z   DOTNET_ROOT: C:\Program Files\dotnet
+build	Formatting (dotnet format)	2026-11-26T05:00:44.6598534Z ##[endgroup]
+build	Formatting (dotnet format)	2026-11-26T05:00:51.7303649Z Warnings were encountered while loading the workspace. Set the verbosity option to the 'diagnostic' level to log warnings.
+build	Formatting (dotnet format)	2026-11-26T05:00:53.4592888Z D:\a\clinique-physio\clinique-physio\desktop\tests\CliniquePhysio.Desktop.Tests\OfflineSyncTests.cs(98,23): error WHITESPACE: Fix whitespace formatting. Replace 1 characters with '\r\n\s\s\s\s\s\s\s\s\s\s\s\s'. [D:\a\clinique-physio\clinique-physio\desktop\tests\CliniquePhysio.Desktop.Tests\CliniquePhysio.Desktop.Tests.csproj]
+build	Formatting (dotnet format)	2026-11-26T05:00:53.4596104Z D:\a\clinique-physio\clinique-physio\desktop\tests\CliniquePhysio.Desktop.Tests\OfflineSyncTests.cs(98,56): error WHITESPACE: Fix whitespace formatting. Replace 1 characters with '\r\n\s\s\s\s\s\s\s\s\s\s\s\s'. [D:\a\clinique-physio\clinique-physio\desktop\tests\CliniquePhysio.Desktop.Tests\CliniquePhysio.Desktop.Tests.csproj]
+build	Formatting (dotnet format)	2026-11-26T05:00:53.4599299Z D:\a\clinique-physio\clinique-physio\desktop\tests\CliniquePhysio.Desktop.Tests\OfflineSyncTests.cs(98,77): error WHITESPACE: Fix whitespace formatting. Replace 1 characters with '\r\n\s\s\s\s\s\s\s\s\s\s\s\s'. [D:\a\clinique-physio\clinique-physio\desktop\tests\CliniquePhysio.Desktop.Tests\CliniquePhysio.Desktop.Tests.csproj]
+build	Formatting (dotnet format)	2026-11-26T05:00:57.8289369Z ##[error]Process completed with exit code 1.

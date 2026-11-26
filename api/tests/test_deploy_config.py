@@ -46,3 +46,28 @@ def test_cors_allows_the_web_app_and_refuses_other_sites(client):
     assert allowed.headers.get("access-control-allow-origin") == "http://localhost:5173"
     assert allowed.headers.get("access-control-allow-credentials") == "true"
     assert "access-control-allow-origin" not in other.headers
+
+
+def test_website_csp_only_runs_scripts_from_known_places():
+    """Challenge B-C4: even if a script got into the page, the browser refuses to run it.
+
+    No inline script, no eval, no plugins, no framing; scripts only from the site and Stripe.
+    """
+    import json
+    from pathlib import Path
+
+    config = json.loads((Path(__file__).parents[2] / "web" / "vercel.json").read_text("utf-8"))
+    headers = {h["key"]: h["value"] for rule in config["headers"] for h in rule["headers"]}
+    policy = dict(
+        (part.split()[0], part.split()[1:])
+        for part in headers["Content-Security-Policy"].split(";")
+        if part.strip()
+    )
+
+    assert policy["script-src"][0] == "'self'"
+    assert all(source.startswith("https://") for source in policy["script-src"][1:])
+    assert "'unsafe-inline'" not in policy["script-src"]
+    assert "'unsafe-eval'" not in policy["script-src"]
+    assert policy["object-src"] == ["'none'"]
+    assert policy["frame-ancestors"] == ["'none'"]
+    assert policy["base-uri"] == ["'self'"]

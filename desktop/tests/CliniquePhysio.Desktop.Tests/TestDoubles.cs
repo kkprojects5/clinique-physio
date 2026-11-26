@@ -70,6 +70,13 @@ public sealed class FakeApi : IApiClient
 
     public Func<Guid, Task<DeskAppointment>> NoShow { get; set; } = _ => Task.FromResult(new DeskAppointment());
 
+    public Func<IReadOnlyList<PendingAction>, Task<List<SyncResult>>> Sync { get; set; } =
+        actions => Task.FromResult(actions
+            .Select(a => new SyncResult { Id = a.Id, AppointmentId = a.AppointmentId, Result = "applied" })
+            .ToList());
+
+    public List<IReadOnlyList<PendingAction>> Synced { get; } = new();
+
     public Func<Guid, Task<Billing>> GetBilling { get; set; } =
         id => Task.FromResult(new Billing { AppointmentId = id, PriceCents = 8000, PaidCents = 2000, DueCents = 6000, CanPay = true });
 
@@ -155,6 +162,12 @@ public sealed class FakeApi : IApiClient
     {
         Actions.Add($"no-show {appointmentId}");
         return NoShow(appointmentId);
+    }
+
+    public Task<List<SyncResult>> SyncAsync(IReadOnlyList<PendingAction> actions, CancellationToken ct = default)
+    {
+        Synced.Add(actions.ToList());
+        return Sync(actions);
     }
 
     public Task<Billing> GetBillingAsync(Guid appointmentId, CancellationToken ct = default) => GetBilling(appointmentId);

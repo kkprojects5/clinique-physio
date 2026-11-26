@@ -97,6 +97,23 @@ public sealed class ApiClient : IApiClient
     public Task<DeskAppointment> MarkNoShowAsync(Guid appointmentId, CancellationToken ct = default) =>
         PostAsync<DeskAppointment>($"api/v1/desk/appointments/{appointmentId}/no-show", new { }, ct);
 
+    public Task<List<SyncResult>> SyncAsync(IReadOnlyList<PendingAction> actions, CancellationToken ct = default) =>
+        PostAsync<List<SyncResult>>(
+            "api/v1/desk/sync",
+            new
+            {
+                // The patient's name stays on this computer: only ids, action, status and time are sent.
+                actions = actions.Select(a => new
+                {
+                    id = a.Id,
+                    appointment_id = a.AppointmentId,
+                    action = a.Action,
+                    seen_status = a.SeenStatus,
+                    done_at = a.DoneAt,
+                }).ToList(),
+            },
+            ct);
+
     public Task<Billing> GetBillingAsync(Guid appointmentId, CancellationToken ct = default) =>
         GetAsync<Billing>($"api/v1/desk/appointments/{appointmentId}/billing", ct);
 

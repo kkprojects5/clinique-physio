@@ -70,7 +70,7 @@ must respect Québec's **Law 25** on the protection of personal information.
 - Medical diagnosis or treatment advice by the chatbot (it refuses)
 - Several clinics, online video consultations, and SMS messages
 - Publication to the app stores (the mobile app is delivered as an Expo link or APK)
-- Nine stories set out of scope for v1.0.0, each with its reason in the backlog: offline desktop mode, reminders, rooms, waiting list, walk-in quick create, document upload, exercise reminders, knowledge base upload page, break-the-glass access
+- Eight stories set out of scope, each with its reason in the backlog: reminders, rooms, waiting list, walk-in quick create, document upload, exercise reminders, knowledge base upload page, break-the-glass access. Offline desktop mode is partly built: check-ins and no-shows (challenge B-C5)
 
 ## 6. Actors
 

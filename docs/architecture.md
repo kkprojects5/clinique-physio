@@ -184,6 +184,7 @@ All routes start with `/api/v1`. `…` repeats the route of the line.
 | `GET /desk/appointments/{id}/billing`, `POST …/payments`, `GET …/receipt?lang=` | Price, what was paid, balance paid at the desk (amount computed by the server), PDF receipt | Front desk or admin with MFA |
 | `GET /me/receipts`, `GET /appointments/{id}/receipt?lang=` | My visits with a receipt; download the PDF for my insurer | Patient (own) |
 | `GET /admin/reports/weekly?week=` | Weekly report: appointments, occupancy, no-shows, revenue (no patient names) | Admin with MFA |
+| `POST /desk/sync` | Check-ins and no-shows recorded while the desktop was offline; the server's state wins, conflicts reported and audited (challenge B-C5) | Front desk or admin with MFA |
 | `PUT`, `DELETE /admin/therapists/{id}/photo` | Therapist photo (re-encoded, metadata removed) | Admin with MFA |
 | `GET /therapists/{id}/photo` | Therapist photo for the team page | Public |
 | `GET /me/consents`, `PUT /me/consents/electronic_comms`, `POST /me/consents/privacy_policy` | See consents; give or withdraw the optional one; accept a new policy version (Law 25) | Patient (own) |
@@ -193,7 +194,6 @@ All routes start with `/api/v1`. `…` repeats the route of the line.
 
 | Route | Why |
 |---|---|
-| `POST /desk/sync` | Offline mode of the desktop app (US-FRD-06): out of scope for this version, see the backlog |
 | `GET /therapist/schedule` | A therapist's own day: therapists open their patients and notes; the day view is in the desktop app for the front desk |
 
 ## 5. Deployment and delivery

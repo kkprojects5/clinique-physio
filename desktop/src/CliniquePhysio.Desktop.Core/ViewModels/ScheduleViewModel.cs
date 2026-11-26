@@ -18,8 +18,11 @@ public sealed record AppointmentItem(
 
     public Guid TherapistId { get; init; }
 
+    /// <summary>A check-in or no-show was clicked offline and waits to be sent (B-C5).</summary>
+    public bool IsPendingSync { get; init; }
+
     /// <summary>Check-in, no-show, move and cancel are offered only for a confirmed appointment.</summary>
-    public bool IsConfirmed => Status == "confirmed";
+    public bool IsConfirmed => Status == "confirmed" && !IsPendingSync;
 
     /// <summary>The patient came: the balance can be paid and a receipt printed (B-FRD-05).</summary>
     public bool HasCome => Status is "checked_in" or "completed";
@@ -47,6 +50,7 @@ public sealed class ScheduleViewModel : ObservableObject
     private string? _info;
     private bool _isBusy;
     private PaymentMethodOption _paymentMethod;
+    private DaySchedule? _shown;
 
     /// <param name="api">The API.</param>
     /// <param name="session">The logged-in staff member.</param>
@@ -88,6 +92,7 @@ public sealed class ScheduleViewModel : ObservableObject
         CancelCommand = new AsyncRelayCommand<AppointmentItem>(CancelAsync);
         PayCommand = new AsyncRelayCommand<AppointmentItem>(PayAsync);
         ReceiptCommand = new AsyncRelayCommand<AppointmentItem>(ReceiptAsync);
+        SyncCommand = new AsyncRelayCommand(() => SyncAsync(reload: true));
         PaymentMethods = new[] { "debit", "credit", "cash" }
             .Select(code => new PaymentMethodOption(code, Localizer.Instance[$"method.{code}"]))
             .ToList();
@@ -176,12 +181,21 @@ public sealed class ScheduleViewModel : ObservableObject
     /// <summary>Open the receipt in the PDF reader, to print it (B-FRD-05, B-BKG-10).</summary>
     public IAsyncRelayCommand<AppointmentItem> ReceiptCommand { get; }
 
+    /// <summary>Send the actions recorded offline now (also done before each reload).</summary>
+    public IAsyncRelayCommand SyncCommand { get; }
+
+    public bool HasPending => _session.Pending.Count > 0;
+
+    /// <summary>"2 actions waiting to be sent (offline)."</summary>
+    public string PendingText => Format("schedule.pending", _session.Pending.Count);
+
     /// <summary>"60,00 $" or "$60.00".</summary>
     public static string Money(int cents, string language) =>
         (cents / 100m).ToString("C", CultureInfo.GetCultureInfo(language == "en" ? "en-CA" : "fr-CA"));
 
     /// <summary>Builds the columns from the API answer. Pure function: easy to test.</summary>
-    public static IReadOnlyList<TherapistColumn> BuildColumns(DaySchedule schedule, string language)
+    public static IReadOnlyList<TherapistColumn> BuildColumns(
+        DaySchedule schedule, string language, OfflineQueue? pending = null)
     {
         return schedule.Therapists
             .Select(t => new TherapistColumn(
@@ -189,12 +203,12 @@ public sealed class ScheduleViewModel : ObservableObject
                 schedule.Appointments
                     .Where(a => a.TherapistId == t.Id)
                     .OrderBy(a => a.Start)
-                    .Select(a => ToItem(a, language))
+                    .Select(a => ToItem(a, language, pending?.Contains(a.Id) == true))
                     .ToList()))
             .ToList();
     }
 
-    private static AppointmentItem ToItem(DeskAppointment a, string language)
+    private static AppointmentItem ToItem(DeskAppointment a, string language, bool pendingSync)
     {
         var item = new AppointmentItem(
             a.Id,
@@ -203,8 +217,14 @@ public sealed class ScheduleViewModel : ObservableObject
             a.Patient.Phone,
             language == "en" ? a.Service.NameEn : a.Service.NameFr,
             a.Status,
-            Localizer.Instance[$"status.{a.Status}"]);
-        return item with { PatientId = a.Patient.Id, ServiceId = a.Service.Id, TherapistId = a.TherapistId };
+            Localizer.Instance[pendingSync ? "status.pending_sync" : $"status.{a.Status}"]);
+        return item with
+        {
+            PatientId = a.Patient.Id,
+            ServiceId = a.Service.Id,
+            TherapistId = a.TherapistId,
+            IsPendingSync = pendingSync,
+        };
     }
 
     /// <summary>"09:00–09:30" in Montréal time, using the offset the API gives.</summary>
@@ -234,14 +254,115 @@ public sealed class ScheduleViewModel : ObservableObject
         {
             await _api.CheckInAsync(a.Id);
             return Format("schedule.checkedIn", a.PatientName);
-        });
+        }, offlineAction: "check_in");
 
     private Task NoShowAsync(AppointmentItem? item) =>
         RunAsync(item, "schedule.confirmNoShow", "schedule.noShowRefused", async a =>
         {
             await _api.MarkNoShowAsync(a.Id);
             return Format("schedule.markedNoShow", a.PatientName);
-        });
+        }, offlineAction: "no_show");
+
+    /// <summary>
+    /// Offline (challenge B-C5): the check-in or no-show is kept in memory and shown as waiting.
+    /// It is sent before the next reload or with "Send now". The server's state wins: if the
+    /// appointment changed meanwhile (e.g. the patient cancelled online), the action is not
+    /// applied and the desk sees the conflict.
+    /// </summary>
+    private void KeepOffline(AppointmentItem item, string action)
+    {
+        _session.Pending.Add(new PendingAction(
+            Guid.NewGuid(), item.Id, item.PatientName, action, item.Status, DateTimeOffset.Now));
+        if (_shown is not null)
+        {
+            ShowColumns(_shown);
+        }
+
+        Error = null;
+        Info = Format("schedule.savedOffline", item.PatientName);
+        OnPropertyChanged(nameof(HasPending));
+        OnPropertyChanged(nameof(PendingText));
+    }
+
+    /// <summary>Sends the waiting actions. Returns false if the server still cannot be reached.</summary>
+    private async Task<bool> SyncAsync(bool reload)
+    {
+        var waiting = _session.Pending.Items.ToList();
+        if (waiting.Count == 0)
+        {
+            if (reload)
+            {
+                await LoadAsync();
+            }
+
+            return true;
+        }
+
+        Error = null;
+        Info = null;
+        IsBusy = true;
+        List<SyncResult> results;
+        try
+        {
+            results = await _api.SyncAsync(waiting);
+        }
+        catch (ApiException error) when (error.Kind == ApiErrorKind.Unauthorized)
+        {
+            // The actions stay in memory and are sent after the next login.
+            _session.Clear();
+            _navigator.GoToLogin(Localizer.Instance["error.expired"]);
+            return false;
+        }
+        catch (ApiException error) when (error.Kind == ApiErrorKind.Offline)
+        {
+            Error = Localizer.Instance["schedule.stillOffline"];
+            return false;
+        }
+        catch (ApiException error)
+        {
+            Error = ErrorMessages.For(error);
+            return false;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+        _session.Pending.Remove(results.Select(r => r.Id));
+        OnPropertyChanged(nameof(HasPending));
+        OnPropertyChanged(nameof(PendingText));
+        var messages = DescribeSync(waiting, results);
+        if (reload)
+        {
+            await LoadAsync();
+        }
+
+        Info = messages.Info;
+        Error = messages.Problems;
+        return true;
+    }
+
+    /// <summary>What to tell the desk after a synchronization. Pure function: easy to test.</summary>
+    public static (string? Info, string? Problems) DescribeSync(
+        IReadOnlyList<PendingAction> sent, IReadOnlyList<SyncResult> results)
+    {
+        var names = sent.ToDictionary(a => a.Id, a => a.PatientName);
+        var applied = results.Count(r => r.Result is "applied" or "already_done");
+        var problems = results
+            .Where(r => r.Result is "conflict" or "refused")
+            .Select(r =>
+            {
+                var name = names.GetValueOrDefault(r.Id, "?");
+                var status = r.Status is null ? "?" : Localizer.Instance[$"status.{r.Status}"];
+                return r.Result == "conflict"
+                    ? Format("schedule.syncConflict", name, status)
+                    : Format("schedule.syncRefused", name, status);
+            })
+            .ToList();
+        return (
+            applied > 0 ? Format("schedule.synced", applied) : null,
+            problems.Count > 0 ? string.Join(Environment.NewLine, problems) : null);
+    }
 
     private Task CancelAsync(AppointmentItem? item) =>
         RunAsync(item, "schedule.confirmCancel", "schedule.cancelRefused", async a =>
@@ -331,7 +452,11 @@ public sealed class ScheduleViewModel : ObservableObject
 
     /// <summary>Asks for confirmation if needed, runs the action, reloads the day and shows the result.</summary>
     private async Task RunAsync(
-        AppointmentItem? item, string? confirmKey, string conflictKey, Func<AppointmentItem, Task<string>> action)
+        AppointmentItem? item,
+        string? confirmKey,
+        string conflictKey,
+        Func<AppointmentItem, Task<string>> action,
+        string? offlineAction = null)
     {
         if (item is null)
         {
@@ -356,6 +481,11 @@ public sealed class ScheduleViewModel : ObservableObject
         {
             _session.Clear();
             _navigator.GoToLogin(Localizer.Instance["error.expired"]);
+            return;
+        }
+        catch (ApiException error) when (error.Kind == ApiErrorKind.Offline && offlineAction is not null)
+        {
+            KeepOffline(item, offlineAction);
             return;
         }
         catch (ApiException error)
@@ -385,6 +515,18 @@ public sealed class ScheduleViewModel : ObservableObject
             return;
         }
 
+        // Offline actions first, so the day shows the server's real state afterwards (B-C5).
+        string? syncInfo = null, syncProblems = null;
+        if (_session.Pending.Count > 0)
+        {
+            if (!await SyncAsync(reload: false))
+            {
+                return; // still offline (message shown) or logged out
+            }
+
+            (syncInfo, syncProblems) = (Info, Error);
+        }
+
         var language = Localizer.Instance.Language;
         Title = day.ToString("dddd d MMMM yyyy", CultureInfo.GetCultureInfo(language == "en" ? "en-CA" : "fr-CA"));
         Error = null;
@@ -392,11 +534,9 @@ public sealed class ScheduleViewModel : ObservableObject
         try
         {
             var schedule = await _api.GetDayScheduleAsync(DateOnly.FromDateTime(day));
-            Columns.Clear();
-            foreach (var column in BuildColumns(schedule, language))
-            {
-                Columns.Add(column);
-            }
+            ShowColumns(schedule);
+            Info = syncInfo ?? Info;
+            Error = syncProblems;
         }
         catch (ApiException error) when (error.Kind == ApiErrorKind.Unauthorized)
         {
@@ -414,8 +554,24 @@ public sealed class ScheduleViewModel : ObservableObject
         }
     }
 
+    private void ShowColumns(DaySchedule schedule)
+    {
+        _shown = schedule;
+        Columns.Clear();
+        foreach (var column in BuildColumns(schedule, Localizer.Instance.Language, _session.Pending))
+        {
+            Columns.Add(column);
+        }
+    }
+
     private async Task LogoutAsync()
     {
+        if (_session.Pending.Count > 0 && _dialogs is not null
+            && !_dialogs.Confirm(Format("schedule.confirmLogoutPending", _session.Pending.Count)))
+        {
+            return;
+        }
+
         await _api.LogoutAsync();
         _session.Clear();
         _navigator.GoToLogin();

@@ -12,6 +12,12 @@ public sealed class Session
 
     public bool IsActive => AccessToken is not null;
 
+    /// <summary>
+    /// Check-ins and no-shows waiting for the connection (B-C5). Not cleared when the session
+    /// ends: if the 10-minute token expired while offline, they are sent after the next login.
+    /// </summary>
+    public OfflineQueue Pending { get; } = new();
+
     public void Start(string accessToken, string email)
     {
         AccessToken = accessToken;

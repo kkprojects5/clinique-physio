@@ -1892,6 +1892,57 @@
         }
       }
     },
+    "/api/v1/desk/sync": {
+      "post": {
+        "tags": [
+          "front desk"
+        ],
+        "summary": "Sync Offline Actions",
+        "description": "Check-ins and no-shows recorded while the desk was offline (challenge B-C5).\n\nThe server's state wins: an action is applied only if the appointment has not changed\nsince the desk saw it; otherwise the result is a conflict, written in the audit log.",
+        "operationId": "sync_offline_actions_api_v1_desk_sync_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SyncResult"
+                  },
+                  "type": "array",
+                  "title": "Response Sync Offline Actions Api V1 Desk Sync Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/desk/appointments/{appointment_id}/billing": {
       "get": {
         "tags": [
@@ -6729,6 +6780,121 @@
           "mfa"
         ],
         "title": "StaffSessionResponse"
+      },
+      "SyncAction": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "appointment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Appointment Id"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "check_in",
+              "no_show"
+            ],
+            "title": "Action"
+          },
+          "seen_status": {
+            "type": "string",
+            "maxLength": 40,
+            "title": "Seen Status"
+          },
+          "done_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Done At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "appointment_id",
+          "action",
+          "seen_status",
+          "done_at"
+        ],
+        "title": "SyncAction",
+        "description": "An action the desk recorded while the API could not be reached (challenge B-C5)."
+      },
+      "SyncRequest": {
+        "properties": {
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/SyncAction"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Actions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "actions"
+        ],
+        "title": "SyncRequest"
+      },
+      "SyncResult": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "appointment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Appointment Id"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "applied",
+              "already_done",
+              "conflict",
+              "refused"
+            ],
+            "title": "Result"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "appointment_id",
+          "result",
+          "status"
+        ],
+        "title": "SyncResult",
+        "description": "applied: done now. already_done: nothing to do. conflict: the appointment changed while\nthe desk was offline; the server's state is kept. refused: a rule says no (too early...)."
       },
       "TherapistFields": {
         "properties": {
