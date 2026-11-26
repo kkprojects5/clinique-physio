@@ -95,7 +95,10 @@ public class OfflineSyncTests
         w.Online = true;
         w.Api.Sync = actions => Task.FromResult(actions.Select(a => new SyncResult
         {
-            Id = a.Id, AppointmentId = a.AppointmentId, Result = "conflict", Status = "cancelled_by_patient",
+            Id = a.Id,
+            AppointmentId = a.AppointmentId,
+            Result = "conflict",
+            Status = "cancelled_by_patient",
         }).ToList());
         await w.Vm.SyncCommand.ExecuteAsync(null);
 
