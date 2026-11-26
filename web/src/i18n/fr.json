@@ -520,5 +520,38 @@
     "commsHint": "Les messages nécessaires (confirmation de rendez-vous, mot de passe, réponse à une demande) sont envoyés dans tous les cas.",
     "saved": "Votre choix est enregistré.",
     "loadError": "Impossible d’afficher vos consentements pour le moment."
+  },
+  "hours": {
+    "title": "Mes heures et congés",
+    "intro": "Les patients peuvent réserver seulement pendant vos heures de travail, en dehors de vos congés. Heures de Montréal.",
+    "weekly": "Heures de travail de chaque semaine",
+    "noHours": "Aucune heure de travail : personne ne peut réserver avec vous.",
+    "day": "Jour",
+    "from": "de",
+    "to": "à",
+    "remove": "Retirer",
+    "addHours": "Ajouter une plage",
+    "save": "Enregistrer les heures",
+    "saved": "Heures enregistrées.",
+    "invalid": "Vérifiez les plages : le début doit être avant la fin, sans chevauchement le même jour.",
+    "timeOff": "Congés et absences",
+    "noTimeOff": "Aucun congé prévu.",
+    "fromDay": "Du",
+    "toDay": "au",
+    "at": "à",
+    "reason": "Motif (facultatif)",
+    "reasonHint": "Par exemple « formation » ou « vacances ». N’écrivez pas de renseignements de santé.",
+    "addTimeOff": "Ajouter le congé",
+    "added": "Congé ajouté : ces heures ne sont plus offertes aux patients.",
+    "invalidTimeOff": "Vérifiez les dates : le début doit être avant la fin.",
+    "days": {
+      "1": "lundi",
+      "2": "mardi",
+      "3": "mercredi",
+      "4": "jeudi",
+      "5": "vendredi",
+      "6": "samedi",
+      "7": "dimanche"
+    }
   }
 }

@@ -185,7 +185,7 @@
         "Weekly hours per weekday, no overlap on the same day",
         "Time off as date-time ranges; a therapist can delete only their own"
       ],
-      "evidence": "api/tests/test_availability.py"
+      "evidence": "api/tests/test_availability.py, web/src/pages/hours.test.jsx"
     },
     {
       "id": "US-AVL-03",
