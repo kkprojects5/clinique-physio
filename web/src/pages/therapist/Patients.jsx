@@ -20,6 +20,9 @@ export default function Patients() {
           {t('workspace.hello', { name: `${me.data.first_name} ${me.data.last_name}` })}
         </p>
       )}
+      <p>
+        <Link to="/espace-therapeute/heures">{t('hours.title')}</Link>
+      </p>
       <h2>{t('workspace.patients')}</h2>
       {patients.data.length === 0 ? (
         <p>{t('workspace.noPatients')}</p>

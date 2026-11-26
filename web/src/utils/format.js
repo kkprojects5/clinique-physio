@@ -67,3 +67,29 @@ export function sortServices(services, language) {
       name(a).localeCompare(name(b), language),
   );
 }
+
+/**
+ * A clinic date and time ("2026-11-02", "08:00") as an ISO string with Montréal's offset of
+ * that day ("2026-11-02T08:00:00-05:00"), as the API expects for time off.
+ */
+export function clinicIso(dateKey, hhmm) {
+  const [y, m, d] = dateKey.split('-').map(Number);
+  const [h, mi] = hhmm.split(':').map(Number);
+  const offsetAt = (instant) => {
+    const name = new Intl.DateTimeFormat('en-US', {
+      timeZone: CLINIC_TIME_ZONE,
+      timeZoneName: 'longOffset',
+    })
+      .formatToParts(instant)
+      .find((p) => p.type === 'timeZoneName').value; // "GMT-05:00"
+    const match = /GMT([+-])(\d{2}):(\d{2})/.exec(name);
+    return match ? (match[1] === '-' ? -1 : 1) * (Number(match[2]) * 60 + Number(match[3])) : 0;
+  };
+  const wall = Date.UTC(y, m - 1, d, h, mi);
+  let offset = offsetAt(new Date(wall));
+  offset = offsetAt(new Date(wall - offset * 60000)); // again, in case the guess crossed a change
+  const sign = offset < 0 ? '-' : '+';
+  const abs = Math.abs(offset);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${dateKey}T${pad(h)}:${pad(mi)}:00${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)}`;
+}

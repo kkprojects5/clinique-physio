@@ -20,6 +20,7 @@ import { AuthProvider } from './auth/AuthContext';
 import RequireAuth from './auth/RequireAuth';
 import TherapistPatients from './pages/therapist/Patients';
 import PatientFile from './pages/therapist/PatientFile';
+import MyHours from './pages/therapist/MyHours';
 import Admin from './pages/admin/Admin';
 
 export default function App() {
@@ -58,6 +59,14 @@ export default function App() {
             element={
               <RequireAuth needRole="therapist">
                 <TherapistPatients />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="espace-therapeute/heures"
+            element={
+              <RequireAuth needRole="therapist">
+                <MyHours />
               </RequireAuth>
             }
           />

@@ -520,5 +520,38 @@
     "commsHint": "Necessary messages (booking confirmation, password, answer to a request) are sent in every case.",
     "saved": "Your choice is saved.",
     "loadError": "Your consents cannot be shown right now."
+  },
+  "hours": {
+    "title": "My hours and time off",
+    "intro": "Patients can book only during your working hours, outside your time off. Montréal time.",
+    "weekly": "Weekly working hours",
+    "noHours": "No working hours: nobody can book with you.",
+    "day": "Day",
+    "from": "from",
+    "to": "to",
+    "remove": "Remove",
+    "addHours": "Add hours",
+    "save": "Save hours",
+    "saved": "Hours saved.",
+    "invalid": "Check the hours: the start must be before the end, with no overlap on the same day.",
+    "timeOff": "Time off",
+    "noTimeOff": "No time off planned.",
+    "fromDay": "From",
+    "toDay": "to",
+    "at": "at",
+    "reason": "Reason (optional)",
+    "reasonHint": "For example \"training\" or \"vacation\". Do not write health information.",
+    "addTimeOff": "Add time off",
+    "added": "Time off added: these hours are no longer offered to patients.",
+    "invalidTimeOff": "Check the dates: the start must be before the end.",
+    "days": {
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday",
+      "7": "Sunday"
+    }
   }
 }

@@ -910,3 +910,12 @@ td.actions,
 .policy li {
   margin-bottom: 0.4rem;
 }
+
+/* Several small fields on one line (working hours, time off); wraps on a phone. */
+.field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
