@@ -46,6 +46,16 @@
                     Visibility="{Binding Info, Converter={StaticResource NullToCollapsed}}">
                 <TextBlock TextWrapping="Wrap" Text="{Binding Info}" />
             </Border>
+            <!-- Actions clicked while offline, waiting to be sent (challenge B-C5). -->
+            <Border Margin="0,8,0,0" Padding="10,6" CornerRadius="6" BorderThickness="1"
+                    BorderBrush="{StaticResource ErrorText}"
+                    Visibility="{Binding HasPending, Converter={StaticResource BoolToVisibility}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Margin="8,0,0,0" Command="{Binding SyncCommand}"
+                            Content="{Binding [schedule.sync], Source={x:Static loc:Localizer.Instance}}" />
+                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PendingText}" />
+                </DockPanel>
+            </Border>
         </StackPanel>
 
         <!-- One column per therapist (B-FRD-01). -->

@@ -145,3 +145,18 @@ public sealed class Billing
 
     public string ReceiptNumber { get; set; } = "";
 }
+
+/// <summary>One answer of POST /desk/sync (challenge B-C5).</summary>
+public sealed class SyncResult
+{
+    public Guid Id { get; set; }
+    public Guid AppointmentId { get; set; }
+
+    /// <summary>"applied", "already_done", "conflict" or "refused".</summary>
+    public string Result { get; set; } = "";
+
+    /// <summary>The appointment's status now, on the server.</summary>
+    public string? Status { get; set; }
+
+    public string? Detail { get; set; }
+}

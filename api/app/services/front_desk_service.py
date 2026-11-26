@@ -1,4 +1,5 @@
-"""Front desk: find a patient, check-in and no-show (B-FRD-02, B-FRD-03).
+"""Front desk: find a patient, check-in and no-show (B-FRD-02, B-FRD-03), and the
+synchronization of actions recorded offline by the desktop app (challenge B-C5).
 
 Booking, moving and cancelling by phone reuse the booking rules (booking_service), so the desk
 and the website can never disagree. Every status change keeps who made it (status history).
@@ -6,13 +7,16 @@ and the website can never disagree. Every status change keeps who made it (statu
 
 import re
 import uuid
+from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 
+from fastapi import Request
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.models import Appointment, Patient, User
-from app.services.booking_service import BookingError, locked_appointment, record
+from app.services import audit_service
+from app.services.booking_service import BookingError, NotFound, locked_appointment, record
 from app.services.slots import CLINIC_TZ
 
 SEARCH_LIMIT = 20
@@ -82,3 +86,102 @@ def mark_no_show(
     record(db, appointment, "no_show", actor.id, "did not come; deposit kept")
     db.commit()
     return appointment
+
+
+# --- Offline synchronization (challenge B-C5) -----------------------------------------------
+#
+# When the API cannot be reached, the desktop app keeps the desk's check-ins and no-shows in
+# memory (never on disk: no patient data is stored on the computer) and sends them here when
+# the connection returns. Rule, documented in docs/challenges.md:
+#
+#   The server's state wins. An offline action is applied only if the appointment is still in
+#   the status the desk saw when it acted. If it changed meanwhile (the patient cancelled
+#   online, a colleague acted, the clinic cancelled), the action is NOT applied: the desk gets
+#   a conflict with the current status and handles it with the patient (rebook if they are
+#   here). Every conflict is written in the audit log.
+#
+# The time rules still apply, using the moment the desk clicked: a check-in only on the day of
+# the appointment, a no-show only 15 minutes after the start. An action older than 12 hours or
+# in the future is refused.
+
+TARGET = {"check_in": "checked_in", "no_show": "no_show"}
+MAX_OFFLINE_AGE = timedelta(hours=12)
+
+
+@dataclass
+class SyncOutcome:
+    id: uuid.UUID
+    appointment_id: uuid.UUID
+    result: str
+    status: str | None
+    detail: str | None = None
+
+
+def _current_status(db: Session, appointment_id: uuid.UUID) -> str | None:
+    appointment = db.get(Appointment, appointment_id, populate_existing=True)
+    return appointment.status if appointment else None
+
+
+def sync_offline_actions(
+    db: Session,
+    actor: User,
+    actions: list,
+    request: Request | None = None,
+    now: datetime | None = None,
+) -> list[SyncOutcome]:
+    """Apply the desk's offline actions in the order they were done, one by one."""
+    moment = now or datetime.now(UTC)
+    outcomes = []
+    for action in sorted(actions, key=lambda a: a.done_at):
+        target = TARGET[action.action]
+        current = _current_status(db, action.appointment_id)
+
+        def outcome(result, detail=None, status=None, action=action, current=current):
+            return SyncOutcome(action.id, action.appointment_id, result, status or current, detail)
+
+        if current is None:
+            outcomes.append(outcome("refused", "This appointment does not exist."))
+            continue
+        if current == target:
+            outcomes.append(outcome("already_done"))
+            continue
+        if current != action.seen_status:
+            appointment = db.get(Appointment, action.appointment_id)
+            audit_service.log(
+                db,
+                actor.id,
+                "sync_conflict",
+                "appointment",
+                appointment.id,
+                appointment.patient_id,
+                request,
+            )
+            db.commit()
+            outcomes.append(
+                outcome(
+                    "conflict",
+                    f"Changed to {current} while the desk was offline; the offline "
+                    f"{action.action.replace('_', '-')} was not applied.",
+                )
+            )
+            continue
+        done_at = action.done_at.astimezone(UTC)
+        if done_at > moment + timedelta(minutes=5) or moment - done_at > MAX_OFFLINE_AGE:
+            outcomes.append(outcome("refused", "Recorded too long ago, or in the future."))
+            continue
+        try:
+            apply = check_in if action.action == "check_in" else mark_no_show
+            appointment = apply(db, actor, action.appointment_id, now=done_at)
+        except NotFound:
+            outcomes.append(outcome("refused", "This appointment does not exist."))
+            continue
+        except BookingError as error:
+            # Changed between the check and the lock (another desk at the same moment)?
+            now_status = _current_status(db, action.appointment_id)
+            if now_status != action.seen_status and now_status != target:
+                outcomes.append(outcome("conflict", str(error), now_status))
+            else:
+                outcomes.append(outcome("refused", str(error), now_status))
+            continue
+        outcomes.append(outcome("applied", status=appointment.status))
+    return outcomes

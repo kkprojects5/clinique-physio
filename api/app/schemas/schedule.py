@@ -2,8 +2,9 @@
 
 import uuid
 from datetime import date, datetime
+from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TherapistRef(BaseModel):
@@ -109,3 +110,28 @@ class DeskBookingIn(BaseModel):
     service_id: uuid.UUID
     therapist_id: uuid.UUID | None = None  # empty: first available therapist
     start: datetime  # with time zone, as returned by GET /availability
+
+
+class SyncAction(BaseModel):
+    """An action the desk recorded while the API could not be reached (challenge B-C5)."""
+
+    id: uuid.UUID  # made by the desktop app, to match the result to the action
+    appointment_id: uuid.UUID
+    action: Literal["check_in", "no_show"]
+    seen_status: str = Field(max_length=40)  # the status the desk saw when it acted
+    done_at: datetime  # when the desk clicked, offline
+
+
+class SyncRequest(BaseModel):
+    actions: list[SyncAction] = Field(min_length=1, max_length=100)
+
+
+class SyncResult(BaseModel):
+    """applied: done now. already_done: nothing to do. conflict: the appointment changed while
+    the desk was offline; the server's state is kept. refused: a rule says no (too early...)."""
+
+    id: uuid.UUID
+    appointment_id: uuid.UUID
+    result: Literal["applied", "already_done", "conflict", "refused"]
+    status: str | None  # the appointment's status now
+    detail: str | None = None

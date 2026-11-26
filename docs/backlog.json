@@ -698,13 +698,12 @@
       "priority": "Should",
       "module": "front-desk",
       "deliverable": "D3",
-      "status": "out_of_scope",
+      "status": "partial",
       "acceptance": [
-        "Encrypted read-only cache of today's schedule",
-        "Queued check-ins synchronized later, conflicts detected and reported"
+        "Encrypted read-only cache of today's schedule: not built by choice (no patient data on disk); the day already shown stays on screen during an outage",
+        "Queued check-ins synchronized later, conflicts detected and reported (D3, done: check-ins and no-shows, server's state wins, challenge B-C5)"
       ],
-      "evidence": null,
-      "out_of_scope_reason": "Offline booking with conflict detection needs a local encrypted store and a sync protocol. Too large for the time left; the desktop shows a clear error when the API cannot be reached."
+      "evidence": "api/tests/test_offline_sync.py, desktop/tests/CliniquePhysio.Desktop.Tests/OfflineSyncTests.cs, docs/challenges.md"
     },
     {
       "id": "US-ADM-01",

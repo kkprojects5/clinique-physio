@@ -36,6 +36,8 @@ from app.schemas.schedule import (
     PatientRef,
     RescheduleRequest,
     ServiceRef,
+    SyncRequest,
+    SyncResult,
     TherapistRef,
 )
 from app.services import (
@@ -219,6 +221,18 @@ def no_show(appointment_id: uuid.UUID, db: DbSession, desk: FrontDeskUser) -> De
     except booking_service.BookingError as error:
         raise _refused(error) from None
     return _desk_out(db, appointment)
+
+
+@router.post("/sync")
+def sync_offline_actions(
+    request: Request, body: SyncRequest, db: DbSession, desk: FrontDeskUser
+) -> list[SyncResult]:
+    """Check-ins and no-shows recorded while the desk was offline (challenge B-C5).
+
+    The server's state wins: an action is applied only if the appointment has not changed
+    since the desk saw it; otherwise the result is a conflict, written in the audit log."""
+    outcomes = front_desk_service.sync_offline_actions(db, desk, body.actions, request)
+    return [SyncResult(**vars(o)) for o in outcomes]
 
 
 @router.get("/appointments/{appointment_id}/billing")

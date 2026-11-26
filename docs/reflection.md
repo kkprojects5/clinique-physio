@@ -52,12 +52,13 @@ is in the repository's closed pull requests.
 
 - No email or SMS provider is connected: emails are prepared but not delivered, and there are
   no reminders.
-- The desktop app needs the API; there is no offline mode.
+- Offline, the desktop app keeps only check-ins and no-shows (sent when the connection returns);
+  booking, moving, cancelling and payments need the API.
 - The installer and the APK are not signed for a store; they are installed by hand.
 - The free hosting sleeps when idle (first page up to a minute) and keeps a limited database
   history.
-- Five Should stories and four Could stories are out of scope for v1.0.0, each with its reason
-  in the backlog.
+- Four Should stories and four Could stories are out of scope, each with its reason in the
+  backlog; offline mode is partly built.
 
 ## 4. What I am proudest of
 
