@@ -10,7 +10,7 @@ the screenshots are fictional. Payments are in Stripe test mode (card `4242 4242
 | Physiotherapist | Website, **Espace thérapeute** | [therapist.md](therapist.md) |
 | Administrator | Website, **Administration** | [admin.md](admin.md) |
 
-**Demo video (3 to 5 minutes):** _link to add_ — one short scenario per role.
+**Demo video (3 to 5 minutes):** https://github.com/kkprojects5/clinique-physio/releases/download/v1.0.0/clinique-physio-demo.mp4 — one short scenario per role.
 
 ## Good to know for everyone
 
